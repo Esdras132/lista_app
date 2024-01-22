@@ -34,10 +34,19 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             builder: (BuildContext context,
                 AsyncSnapshot<List<ListaModel>> snapshot) {
               if (snapshot.hasData) {
+                if (snapshot.data!.isEmpty) {
+                  Center(child: Image.asset("assets/naotemnada.png",));
+                  return const Center(
+                  child: Text(
+                    "Não tem listas",
+                     style: TextStyle(fontSize: 27),
+                  ));
+                }
                 return ListView.builder(
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, i) {
-                    TextEditingController controller = TextEditingController(text: snapshot.data![i].descricao);
+                    TextEditingController controller = TextEditingController(
+                        text: snapshot.data![i].descricao);
                     return Dismissible(
                       key: UniqueKey(),
                       background: Container(
@@ -107,7 +116,11 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                 // Tratar erro, se necessário
                 return Text('Erro: ${snapshot.error}');
               } else {
-                return const CircularProgressIndicator();
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.green,
+                  backgroundColor: Colors.grey,
+                ));
               }
             },
           ))
@@ -119,7 +132,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   Future<void> _showEmptyFieldsDialog() async {
     return showDialog<void>(
       context: context,
-      
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Atenção'),
@@ -140,7 +152,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   Future<void> _showInvalidInputAlert() async {
     return showDialog<void>(
       context: context,
-      
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Atenção'),
@@ -162,7 +173,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   Future<void> _showAlertDialog() async {
     return showDialog<void>(
       context: context,
-      
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Item para Comprar'),
@@ -194,13 +204,13 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                   if (_nomeController.text.contains(RegExp(r'[.,].*[.,]'))) {
                     _showInvalidInputAlert();
                   } else {
-                      setState(() {
-                        ListaModel model = ListaModel(
-                            descricao: _nomeController.text, items: []);
-                        DBService.createLista(model);
-                        _nomeController.text = '';
-                        Navigator.pop(context);
-                      });
+                    setState(() {
+                      ListaModel model = ListaModel(
+                          descricao: _nomeController.text, items: []);
+                      DBService.createLista(model);
+                      _nomeController.text = '';
+                      Navigator.pop(context);
+                    });
                   }
                   // Verifica se há mais de duas vírgulas ou dois pontos nos campos
                   // Adiciona o item à lista se todos os campos estiverem preenchidos
