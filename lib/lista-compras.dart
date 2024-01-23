@@ -26,105 +26,110 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
           _showAlertDialog();
         },
       ),
-      body: Column(
-        children: [
-          Expanded(
-              child: StreamBuilder(
-            stream: DBService.fetchAll(),
-            builder: (BuildContext context,
-                AsyncSnapshot<List<ListaModel>> snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isEmpty) {
-                  Center(child: Image.asset("assets/naotemnada.png",));
-                  return const Center(
-                  child: Text(
-                    "Não tem listas",
-                     style: TextStyle(fontSize: 27),
-                  ));
-                }
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, i) {
-                    TextEditingController controller = TextEditingController(
-                        text: snapshot.data![i].descricao);
-                    return Dismissible(
-                      key: UniqueKey(),
-                      background: Container(
-                        color: Colors.red,
-                        child: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                          ),
+      body: StreamBuilder(
+        stream: DBService.fetchAll(),
+        builder:
+            (BuildContext context, AsyncSnapshot<List<ListaModel>> snapshot) {
+          if (snapshot.hasData) {
+            if (snapshot.data!.isEmpty) {
+              return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Image.asset(
+                          "assets/naotemnada.png",
                         ),
                       ),
-                      secondaryBackground: Container(
-                        color: Colors.red,
-                        child: const Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                          ),
+                      const Text(
+                        "Não tem listas",
+                        style: TextStyle(fontSize: 27),
+                      ),
+                    ],
+                  );
+            }
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (context, i) {
+                TextEditingController controller =
+                    TextEditingController(text: snapshot.data![i].descricao);
+                return Dismissible(
+                  key: UniqueKey(),
+                  background: Container(
+                    color: Colors.red,
+                    child: const Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
                         ),
                       ),
-                      onDismissed: (direction) {
-                        if (direction == DismissDirection.endToStart) {
-                          snapshot.data![i].reference!.delete();
-                        } else if (direction == DismissDirection.startToEnd) {
-                          snapshot.data![i].reference!.delete();
-                        }
-                      },
-                      child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => ItemsPage(
-                                      model: snapshot.data![i],
-                                    )));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: TextField(
-                              controller: controller,
-                              decoration: InputDecoration(
-                                  suffixIcon: IconButton(
-                                icon: const Icon(Icons.folder_open),
-                                onPressed: () {
-                                  Navigator.of(context).push(MaterialPageRoute(
-                                      builder: (context) => ItemsPage(
-                                            model: snapshot.data![i],
-                                          )));
-                                },
-                              )),
-                              onSubmitted: (String value) {
-                                snapshot.data![i].reference!
-                                    .update({"descricao": controller.text});
-                              },
-                            ),
-                          )),
-                    );
+                    ),
+                  ),
+                  secondaryBackground: Container(
+                    color: Colors.red,
+                    child: const Align(
+                      alignment: Alignment.centerRight,
+                      child: Padding(
+                        padding: EdgeInsets.all(10),
+                        child: Icon(
+                          Icons.delete,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                  onDismissed: (direction) {
+                    if (direction == DismissDirection.endToStart) {
+                      snapshot.data![i].reference!.delete();
+                    } else if (direction == DismissDirection.startToEnd) {
+                      snapshot.data![i].reference!.delete();
+                    }
                   },
+                  child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => ItemsPage(
+                                  model: snapshot.data![i],
+                                )));
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextField(
+                          controller: controller,
+                          decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                            icon: const Icon(Icons.folder_open),
+                            onPressed: () {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => ItemsPage(
+                                        model: snapshot.data![i],
+                                      )));
+                            },
+                          )),
+                          onSubmitted: (String value) {
+                            snapshot.data![i].reference!
+                                .update({"descricao": controller.text});
+                          },
+                        ),
+                      )),
                 );
-              } else if (snapshot.hasError) {
-                // Tratar erro, se necessário
-                return Text('Erro: ${snapshot.error}');
-              } else {
-                return const Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.green,
-                  backgroundColor: Colors.grey,
-                ));
-              }
-            },
-          ))
-        ],
+              },
+            );
+          } else if (snapshot.hasError) {
+            // Tratar erro, se necessário
+            return Text('Erro: ${snapshot.error}');
+          } else {
+            return const Center(
+                child: CircularProgressIndicator(
+              color: Colors.green,
+              backgroundColor: Colors.grey,
+            ));
+          }
+        },
       ),
     );
   }
@@ -180,6 +185,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               TextField(
+                autofocus: true,
                 controller: _nomeController,
                 decoration: const InputDecoration(labelText: 'Nome do Item'),
               ),
@@ -196,9 +202,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             TextButton(
               child: const Text('Adicionar'),
               onPressed: () {
-                // Verifica se os campos são preenchidos
                 if (_nomeController.text.isEmpty) {
-                  // Exibe uma mensagem de alerta se algum campo estiver vazio
                   _showEmptyFieldsDialog();
                 } else {
                   if (_nomeController.text.contains(RegExp(r'[.,].*[.,]'))) {

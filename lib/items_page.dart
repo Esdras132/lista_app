@@ -51,6 +51,24 @@ class _ItemsPageState extends State<ItemsPage> {
       body: ListView.builder(
         itemCount: widget.model.items!.length,
         itemBuilder: (context, index) {
+          if(widget.model.items!.isEmpty){
+            return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Image.asset(
+                          "assets/naotemnada.png",
+                        ),
+                      ),
+                      const Text(
+                        "Não tem listas",
+                        style: TextStyle(fontSize: 27),
+                      ),
+                    ],
+                  );
+          }
           return ListTile(
             onTap: () {
               setState(() {
@@ -96,6 +114,7 @@ class _ItemsPageState extends State<ItemsPage> {
           },
         ),
       ]),
+    
     );
   }
 
@@ -110,7 +129,7 @@ class _ItemsPageState extends State<ItemsPage> {
             TextField(
               autofocus: true,
               controller: _items,
-              decoration: const InputDecoration(labelText: 'nome do item'),
+              decoration: const InputDecoration(labelText: 'Nome do item'),
             ),
             TextField(
               controller: _quantidade,
@@ -274,7 +293,7 @@ class _ItemsPageState extends State<ItemsPage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Atenção'),
-          content: const Text('Todos os campos são obrigatórios'),
+          content: const Text('Os campo nome é necessário para adicionar'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
