@@ -51,7 +51,7 @@ class _ItemsPageState extends State<ItemsPage> {
       body: ListView.builder(
         itemCount: widget.model.items!.length,
         itemBuilder: (context, index) {
-          if(widget.model.items!.isEmpty){
+                    if(widget.model.items![index].descricao!.isEmpty){
             return Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -67,7 +67,7 @@ class _ItemsPageState extends State<ItemsPage> {
                         style: TextStyle(fontSize: 27),
                       ),
                     ],
-                  );
+                  );  
           }
           return ListTile(
             onTap: () {
