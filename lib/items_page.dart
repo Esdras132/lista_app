@@ -25,16 +25,17 @@ class _ItemsPageState extends State<ItemsPage> {
     return Scaffold(
       appBar: AppBar(
         flexibleSpace: Container(
-          margin: const EdgeInsets.only(top: 40),
+          margin: const EdgeInsets.only(top: 35),
           alignment: Alignment.topCenter,
           child: Column(
             children: [
               Text(
-                '${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} Quantidade ${widget.model.items!.length.toString()}',
-                style: const TextStyle(fontSize: 17),
+                '   ${widget.model.descricao!.length > 25 ? '${widget.model.descricao!.substring(0, 25)}...' : widget.model.descricao!} ',
+                style: const TextStyle(fontSize: 20),
               ),
               Text(
-                  "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())}")
+                  "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
+                  style: const TextStyle(fontSize: 17)),
             ],
           ),
         ),
@@ -51,24 +52,6 @@ class _ItemsPageState extends State<ItemsPage> {
       body: ListView.builder(
         itemCount: widget.model.items!.length,
         itemBuilder: (context, index) {
-                    if(widget.model.items![index].descricao!.isEmpty){
-            return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Image.asset(
-                          "assets/naotemnada.png",
-                        ),
-                      ),
-                      const Text(
-                        "Não tem listas",
-                        style: TextStyle(fontSize: 27),
-                      ),
-                    ],
-                  );  
-          }
           return ListTile(
             onTap: () {
               setState(() {
@@ -114,14 +97,12 @@ class _ItemsPageState extends State<ItemsPage> {
           },
         ),
       ]),
-    
     );
   }
 
   Future<void> _showAlertDialog() async {
     return showDialog<void>(
       context: context,
-      
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('itens para adicionar'),
@@ -160,24 +141,28 @@ class _ItemsPageState extends State<ItemsPage> {
                 if (_items.text.isEmpty) {
                   _showEmptyFieldsDialog();
                 } else {
-                  if (_quantidade.text.isEmpty || _valor.text.isEmpty) {
-                    _quantidade.text = '0.0';
+                  if (_valor.text.isEmpty) {
                     _valor.text = '0.0';
                   } else {
-                    setState(() {
-                      ItemModel item = ItemModel(
-                          descricao: _items.text,
-                          quantidade: double.parse(
-                              _quantidade.text.replaceAll(',', '.')),
-                          valor:
-                              double.parse(_valor.text.replaceAll(',', '.')));
-                      widget.model.items!.add(item);
-                      widget.model.update();
-                      _valor.text = '';
-                      _quantidade.text = '';
-                      _items.text = '';
-                      Navigator.of(context).pop();
-                    });
+                    if (_quantidade.text.isEmpty || _valor.text.isEmpty) {
+                      _quantidade.text = '0.0';
+                      _valor.text = '0.0';
+                    } else {
+                      setState(() {
+                        ItemModel item = ItemModel(
+                            descricao: _items.text,
+                            quantidade: double.parse(
+                                _quantidade.text.replaceAll(',', '.')),
+                            valor:
+                                double.parse(_valor.text.replaceAll(',', '.')));
+                        widget.model.items!.add(item);
+                        widget.model.update();
+                        _valor.text = '';
+                        _quantidade.text = '';
+                        _items.text = '';
+                        Navigator.of(context).pop();
+                      });
+                    }
                   }
                 }
               },
@@ -199,19 +184,18 @@ class _ItemsPageState extends State<ItemsPage> {
 
     return showDialog<void>(
       context: context,
-      
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Editar'),
           content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
             TextField(
               controller: controller,
-              decoration: const InputDecoration(labelText: 'editar'),
+              decoration: const InputDecoration(labelText: 'Nome'),
             ),
             TextField(
               controller: controllerqtd,
               decoration: const InputDecoration(labelText: 'Quantidade'),
-               keyboardType:
+              keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
             ),
             TextField(
@@ -223,6 +207,12 @@ class _ItemsPageState extends State<ItemsPage> {
           ]),
           actions: <Widget>[
             TextButton(
+                onPressed: () {
+                  controllerqtd.text = '';
+                  controllervalor.text = '';
+                },
+                child: const Text('limpar')),
+            TextButton(
               child: const Text('cancelar'),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -232,18 +222,26 @@ class _ItemsPageState extends State<ItemsPage> {
             TextButton(
               child: const Text('Atualizar'),
               onPressed: () {
-                if (controller.text.isEmpty ||
-                    controllerqtd.text.isEmpty ||
-                    controllerqtd.text.isEmpty) {
+                if (controller.text.isEmpty) {
                   _showEmptyFieldsDialog();
                 } else {
-                  widget.model.items![index].valor =
-                      double.parse(controllervalor.text);
-                  widget.model.items![index].quantidade =
-                      double.parse(controllerqtd.text);
-                  widget.model.items![index].descricao = controller.text;
-                  widget.model.update();
-                  Navigator.of(context).pop();
+                  if (controllervalor.text.isEmpty) {
+                    controllervalor.text = '0';
+                  } else {
+                    if (controllervalor.text.isEmpty ||
+                        controllerqtd.text.isEmpty) {
+                      controllerqtd.text = '0';
+                      controllervalor.text = '0';
+                    } else {
+                      widget.model.items![index].valor =
+                          double.parse(controllervalor.text);
+                      widget.model.items![index].quantidade =
+                          double.parse(controllerqtd.text);
+                      widget.model.items![index].descricao = controller.text;
+                      widget.model.update();
+                      Navigator.of(context).pop();
+                    }
+                  }
                 }
                 setState(() {});
               },
@@ -289,11 +287,10 @@ class _ItemsPageState extends State<ItemsPage> {
   Future<void> _showEmptyFieldsDialog() async {
     return showDialog<void>(
       context: context,
-      
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Atenção'),
-          content: const Text('Os campo nome é necessário para adicionar'),
+          content: const Text('Precisa ter Pelomenos o Nome'),
           actions: <Widget>[
             TextButton(
               onPressed: () {

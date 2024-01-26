@@ -33,21 +33,21 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
           if (snapshot.hasData) {
             if (snapshot.data!.isEmpty) {
               return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Image.asset(
-                          "assets/naotemnada.png",
-                        ),
-                      ),
-                      const Text(
-                        "Não tem listas",
-                        style: TextStyle(fontSize: 27),
-                      ),
-                    ],
-                  );
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Image.asset(
+                      "assets/naotemnada.png",
+                    ),
+                  ),
+                  const Text(
+                    "Não tem listas",
+                    style: TextStyle(fontSize: 27),
+                  ),
+                ],
+              );
             }
             return ListView.builder(
               itemCount: snapshot.data!.length,
@@ -102,6 +102,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                           controller: controller,
                           decoration: InputDecoration(
                               suffixIcon: IconButton(
+                            color: Colors.black,
                             icon: const Icon(Icons.folder_open),
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
