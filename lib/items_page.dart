@@ -24,20 +24,17 @@ class _ItemsPageState extends State<ItemsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        flexibleSpace: Container(
-          margin: const EdgeInsets.only(top: 35),
-          alignment: Alignment.topCenter,
-          child: Column(
-            children: [
-              Text(
-                '   ${widget.model.descricao!.length > 25 ? '${widget.model.descricao!.substring(0, 25)}...' : widget.model.descricao!} ',
-                style: const TextStyle(fontSize: 20),
-              ),
-              Text(
-                  "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
-                  style: const TextStyle(fontSize: 17)),
-            ],
-          ),
+        flexibleSpace: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text(
+              '   ${widget.model.descricao!.length > 25 ? '${widget.model.descricao!.substring(0, 25)}...' : widget.model.descricao!} ',
+              style: const TextStyle(fontSize: 20),
+            ),
+            Text(
+                "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
+                style: const TextStyle(fontSize: 17)),
+          ],
         ),
         actions: <Widget>[
           (widget.model.items!.where((a) => a.checked == true).isNotEmpty)
@@ -49,47 +46,65 @@ class _ItemsPageState extends State<ItemsPage> {
               : Container(),
         ],
       ),
-      body: ListView.builder(
-        itemCount: widget.model.items!.length,
-        itemBuilder: (context, index) {
-          return ListTile(
-            onTap: () {
-              setState(() {
-                widget.model.items![index].checked =
-                    !widget.model.items![index].checked;
-              });
-            },
-            onLongPress: () {
-              _edicaolista(index);
-            },
-            leading: Checkbox(
-              value: widget.model.items![index].checked,
-              onChanged: (bool? value) {
-                setState(() {
-                  widget.model.items![index].checked = value!;
-                });
+      body: widget.model.items!.isEmpty
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Image.asset(
+                    "assets/naotemnada.png",
+                  ),
+                ),
+                const Text(
+                  "Não tem Produtos",
+                  style: TextStyle(fontSize: 27),
+                ),
+              ],
+            )
+          : ListView.builder(
+              itemCount: widget.model.items!.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  onTap: () {
+                    setState(() {
+                      widget.model.items![index].checked =
+                          !widget.model.items![index].checked;
+                    });
+                  },
+                  onLongPress: () {
+                    _edicaolista(index);
+                  },
+                  leading: Checkbox(
+                    value: widget.model.items![index].checked,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        widget.model.items![index].checked = value!;
+                      });
+                    },
+                  ),
+                  title: Text(
+                    widget.model.items![index].descricao!,
+                    style: const TextStyle(fontSize: 25),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                          'Quantidade ${widget.model.items![index].quantidade} ${widget.model.items![index].quantidade?.truncateToDouble() == widget.model.items![index].quantidade ? 'UN' : 'KG'}'),
+                      Text(
+                          'Valor ${UtilBrasilFields.obterReal(widget.model.items![index].valor!)}'),
+                      Text(
+                          'Valor Total ${UtilBrasilFields.obterReal(widget.model.items![index].getTotal())}')
+                    ],
+                  ),
+                );
               },
             ),
-            title: Text(
-              widget.model.items![index].descricao!,
-              style: const TextStyle(fontSize: 25),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                    'Quantidade ${widget.model.items![index].quantidade} ${widget.model.items![index].quantidade?.truncateToDouble() == widget.model.items![index].quantidade ? 'UN' : 'KG'}'),
-                Text(
-                    'Valor ${UtilBrasilFields.obterReal(widget.model.items![index].valor!)}'),
-                Text(
-                    'Valor Total ${UtilBrasilFields.obterReal(widget.model.items![index].getTotal())}')
-              ],
-            ),
-          );
-        },
-      ),
       floatingActionButton:
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+          Row(
+        mainAxisAlignment: MainAxisAlignment.end, 
+        children: [
         FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
@@ -103,31 +118,45 @@ class _ItemsPageState extends State<ItemsPage> {
   Future<void> _showAlertDialog() async {
     return showDialog<void>(
       context: context,
-      builder: (BuildContext context) {
+      builder: (BuildContext context) {      
         return AlertDialog(
           title: const Text('itens para adicionar'),
-          content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          content: Column(mainAxisSize: MainAxisSize.min, 
+          children: <Widget>[
             TextField(
+              cursorColor: Colors.green,
               autofocus: true,
               controller: _items,
               decoration: const InputDecoration(labelText: 'Nome do item'),
+              textInputAction: TextInputAction.next,
             ),
             TextField(
+              cursorColor: Colors.green,
               controller: _quantidade,
               decoration: const InputDecoration(labelText: 'Quantidade'),
               keyboardType:
                   const TextInputType.numberWithOptions(decimal: true),
+              textInputAction: TextInputAction.next,
             ),
             TextField(
+              cursorColor: Colors.green,
               controller: _valor,
               decoration: const InputDecoration(labelText: 'Valor'),
               keyboardType: const TextInputType.numberWithOptions(
                   decimal: true, signed: false),
+                textInputAction: TextInputAction.done,
             )
           ]),
           actions: <Widget>[
+            IconButton(
+             onPressed: () {
+               _valor.text = '';
+               _quantidade.text = '';
+             },
+             icon: const Icon(Icons.clear_sharp, color: Colors.green)
+             ),
             TextButton(
-              child: const Text('cancelar'),
+              child: const Text('cancelar',selectionColor: Colors.green),
               onPressed: () {
                 Navigator.of(context).pop();
                 _valor.text = '';
@@ -136,7 +165,7 @@ class _ItemsPageState extends State<ItemsPage> {
               },
             ),
             TextButton(
-              child: const Text('adicionar'),
+              child: const Text('adicionar', selectionColor: Colors.green),
               onPressed: () {
                 if (_items.text.isEmpty) {
                   _showEmptyFieldsDialog();
