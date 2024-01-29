@@ -171,12 +171,16 @@ class _ItemsPageState extends State<ItemsPage> {
                   _showEmptyFieldsDialog();
                 } else {
                   if (_valor.text.isEmpty) {
-                    _valor.text = '0.0';
+                    _valor.text = '0';
                   } else {
-                    if (_quantidade.text.isEmpty || _valor.text.isEmpty) {
-                      _quantidade.text = '0.0';
-                      _valor.text = '0.0';
-                    } else {
+                    if(_quantidade.text.isEmpty){
+                      _quantidade.text = '0';
+                    }
+                    else{
+                    if (_quantidade.text.isEmpty || _valor.text.isEmpty){
+                      _quantidade.text = '0';
+                      _valor.text = '0';
+                    }else{
                       setState(() {
                         ItemModel item = ItemModel(
                             descricao: _items.text,
@@ -192,6 +196,7 @@ class _ItemsPageState extends State<ItemsPage> {
                         Navigator.of(context).pop();
                       });
                     }
+                  }
                   }
                 }
               },
