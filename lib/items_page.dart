@@ -28,7 +28,7 @@ class _ItemsPageState extends State<ItemsPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              '   ${widget.model.descricao!.length > 25 ? '${widget.model.descricao!.substring(0, 25)}...' : widget.model.descricao!} ',
+              '    ${widget.model.descricao!.length > 30 ? '${widget.model.descricao!.substring(0, 30)}...' : widget.model.descricao!} ',
               style: const TextStyle(fontSize: 20),
             ),
             Text(
@@ -102,12 +102,13 @@ class _ItemsPageState extends State<ItemsPage> {
               },
             ),
       floatingActionButton:
-          Row(
-        mainAxisAlignment: MainAxisAlignment.end, 
-        children: [
+          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
         FloatingActionButton(
           child: const Icon(Icons.add),
           onPressed: () {
+            _quantidade.text = '';
+            _valor.text = '';
+            _items.text = '';
             _showAlertDialog();
           },
         ),
@@ -118,11 +119,10 @@ class _ItemsPageState extends State<ItemsPage> {
   Future<void> _showAlertDialog() async {
     return showDialog<void>(
       context: context,
-      builder: (BuildContext context) {      
+      builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('itens para adicionar'),
-          content: Column(mainAxisSize: MainAxisSize.min, 
-          children: <Widget>[
+          content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
             TextField(
               cursorColor: Colors.green,
               autofocus: true,
@@ -144,19 +144,29 @@ class _ItemsPageState extends State<ItemsPage> {
               decoration: const InputDecoration(labelText: 'Valor'),
               keyboardType: const TextInputType.numberWithOptions(
                   decimal: true, signed: false),
-                textInputAction: TextInputAction.done,
+              textInputAction: TextInputAction.done,
             )
           ]),
           actions: <Widget>[
-            IconButton(
-             onPressed: () {
-               _valor.text = '';
-               _quantidade.text = '';
-             },
-             icon: const Icon(Icons.clear_sharp, color: Colors.green)
-             ),
+            Ink(
+              decoration: const ShapeDecoration(
+                  color: Colors.green, shape: CircleBorder()),
+              child: IconButton(
+                color: Colors.white,
+                onPressed: () {
+                  if (_quantidade.text.isNotEmpty || _valor.text.isNotEmpty) {
+                    _valor.text = '';
+                    _quantidade.text = '';
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  } else {
+                    _naotemitensqtd();
+                  }
+                },
+                icon: const Icon(Icons.clear_sharp),
+              ),
+            ),
             TextButton(
-              child: const Text('cancelar',selectionColor: Colors.green),
+              child: const Text('cancelar', selectionColor: Colors.green),
               onPressed: () {
                 Navigator.of(context).pop();
                 _valor.text = '';
@@ -173,30 +183,29 @@ class _ItemsPageState extends State<ItemsPage> {
                   if (_valor.text.isEmpty) {
                     _valor.text = '0';
                   } else {
-                    if(_quantidade.text.isEmpty){
+                    if (_quantidade.text.isEmpty) {
                       _quantidade.text = '0';
+                    } else {
+                      if (_quantidade.text.isEmpty || _valor.text.isEmpty) {
+                        _quantidade.text = '0';
+                        _valor.text = '0';
+                      } else {
+                        setState(() {
+                          ItemModel item = ItemModel(
+                              descricao: _items.text,
+                              quantidade: double.parse(
+                                  _quantidade.text.replaceAll(',', '.')),
+                              valor: double.parse(
+                                  _valor.text.replaceAll(',', '.')));
+                          widget.model.items!.add(item);
+                          widget.model.update();
+                          _valor.text = '';
+                          _quantidade.text = '';
+                          _items.text = '';
+                          Navigator.of(context).pop();
+                        });
+                      }
                     }
-                    else{
-                    if (_quantidade.text.isEmpty || _valor.text.isEmpty){
-                      _quantidade.text = '0';
-                      _valor.text = '0';
-                    }else{
-                      setState(() {
-                        ItemModel item = ItemModel(
-                            descricao: _items.text,
-                            quantidade: double.parse(
-                                _quantidade.text.replaceAll(',', '.')),
-                            valor:
-                                double.parse(_valor.text.replaceAll(',', '.')));
-                        widget.model.items!.add(item);
-                        widget.model.update();
-                        _valor.text = '';
-                        _quantidade.text = '';
-                        _items.text = '';
-                        Navigator.of(context).pop();
-                      });
-                    }
-                  }
                   }
                 }
               },
@@ -336,5 +345,23 @@ class _ItemsPageState extends State<ItemsPage> {
         );
       },
     );
+  }
+
+  Future<void> _naotemitensqtd() async {
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+              title: const Text('Atenção'),
+              content:
+                  const Text('Não tem quantidade nem valor Quantidade e Valor'),
+              actions: <Widget>[
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('OK'))
+              ]);
+        });
   }
 }

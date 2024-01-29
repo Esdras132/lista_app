@@ -18,7 +18,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Minhas Listas'),
+        title: const Text('Minhas Listas '),
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),

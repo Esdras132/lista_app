@@ -1,4 +1,4 @@
-import 'package:Lista_de_compras/lista-compras.dart';
+import 'package:Lista_de_compras/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
           colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
           appBarTheme: AppBarTheme(backgroundColor: Colors.green)),
-      home: const ListaComprasPage(),
+      home: const loginpage(),
     );
   }
 }

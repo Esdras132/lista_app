@@ -17,7 +17,7 @@ class ListaModel {
     return total;
   }
 
-  ListaModel({this.descricao = '', this.items = const []});
+  ListaModel({ this.descricao = '', this.items = const []});
 
   update(){
     reference!.update(toMap());
@@ -30,7 +30,7 @@ class ListaModel {
   }
 
   toMap() {
-    return {
+    return {      
       "descricao": descricao,
       "items": items!.map((e) => e.toMap()).toList()
     };
