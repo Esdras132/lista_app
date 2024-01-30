@@ -1,5 +1,6 @@
 import 'package:Lista_de_compras/items_page.dart';
 import 'package:Lista_de_compras/model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Lista_de_compras/db.service.dart';
 
@@ -19,6 +20,12 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Minhas Listas '),
+        actions: [
+          IconButton(onPressed: () async {
+            //FirebaseAuth.instance.createUserWithEmailAndPassword(email: "teste@gmail.com", password: "1234567");
+            await FirebaseAuth.instance.signOut();
+          }, icon: const Icon(Icons.exit_to_app))
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
@@ -212,7 +219,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                     setState(() {
                       ListaModel model = ListaModel(
                           descricao: _nomeController.text, items: []);
-                      DBService.createLista(model);
+                      DBService.createMyList(model);
                       _nomeController.text = '';
                       Navigator.pop(context);
                     });
