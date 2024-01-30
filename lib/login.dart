@@ -67,15 +67,14 @@ class _loginState extends State<loginpage> {
             ),
           ),          
           Container(
-  alignment: Alignment.centerLeft,
-  child: TextButton(
-    onPressed: () {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => sign-up_page()));
-    },
-    child: const Text('Não tem conta'),
-  ),
-),
-
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                   MaterialPageRoute(builder: (context) => const SignUpPage()));
+                }, child: const Text('Não tem conta')),
+          ),
         ],
       ),
     );
