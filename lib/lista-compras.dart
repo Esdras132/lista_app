@@ -19,12 +19,15 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Minhas Listas '),
+        title: const Text('Minhas Listas'),
         actions: [
-          IconButton(onPressed: () async {
-            //FirebaseAuth.instance.createUserWithEmailAndPassword(email: "teste@gmail.com", password: "1234567");
-            await FirebaseAuth.instance.signOut();
-          }, icon: const Icon(Icons.exit_to_app))
+          IconButton(
+              onPressed: () async {
+                //FirebaseAuth.instance.createUserWithEmailAndPassword(email: "teste@gmail.com", password: "1234567");
+                // await FirebaseAuth.instance.signOut();
+                _sair();
+              },
+              icon: const Icon(Icons.exit_to_app))
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -227,6 +230,32 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                   // Verifica se há mais de duas vírgulas ou dois pontos nos campos
                   // Adiciona o item à lista se todos os campos estiverem preenchidos
                 }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _sair() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Atenção'),
+          content: const Text('Você deseja sair da sua conta?'),
+          actions: <Widget>[
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text('Não')),
+            TextButton(
+              child: const Text('sim'),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pop(context);
               },
             ),
           ],

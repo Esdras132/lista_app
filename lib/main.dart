@@ -1,4 +1,3 @@
-import 'package:Lista_de_compras/home_page.dart';
 import 'package:Lista_de_compras/lista-compras.dart';
 import 'package:Lista_de_compras/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
