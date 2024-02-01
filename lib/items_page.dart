@@ -15,6 +15,7 @@ class _ItemsPageState extends State<ItemsPage> {
   TextEditingController _quantidade = TextEditingController();
   TextEditingController _valor = TextEditingController();
 
+
   @override
   void initState() {
     super.initState();
@@ -123,11 +124,17 @@ class _ItemsPageState extends State<ItemsPage> {
         return AlertDialog(
           title: const Text('itens para adicionar'),
           content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            TextField(
+            TextFormField(
               cursorColor: Colors.green,
               autofocus: true,
               controller: _items,
               decoration: const InputDecoration(labelText: 'Nome do item'),
+              validator: (value) {
+                      if (!value!.contains('')) {
+                        return 'Este campo é obrigatorio';
+                      }
+                      return null;
+                    },
               textInputAction: TextInputAction.next,
             ),
             TextField(
@@ -145,6 +152,39 @@ class _ItemsPageState extends State<ItemsPage> {
               keyboardType: const TextInputType.numberWithOptions(
                   decimal: true, signed: false),
               textInputAction: TextInputAction.done,
+              onEditingComplete: (){
+                if (_items.text.isEmpty) {
+                  _showEmptyFieldsDialog();
+                } else {
+                  if (_valor.text.isEmpty && _quantidade.text.isNotEmpty) {
+                    _valor.text = '0';
+                  } else {
+                    if (_quantidade.text.isEmpty && _valor.text.isNotEmpty) {
+                      _quantidade.text = '0';
+                    } else {
+                      if (_quantidade.text.isEmpty || _valor.text.isEmpty) {
+                        _quantidade.text = '0';
+                        _valor.text = '0';
+                      } else {
+                        setState(() {
+                          ItemModel item = ItemModel(
+                              descricao: _items.text,
+                              quantidade: double.parse(
+                                  _quantidade.text.replaceAll(',', '.')),
+                              valor: double.parse(
+                                  _valor.text.replaceAll(',', '.')));
+                          widget.model.items!.add(item);
+                          widget.model.update();
+                          _valor.text = '';
+                          _quantidade.text = '';
+                          _items.text = '';
+                          Navigator.of(context).pop();
+                        });
+                      }
+                    }
+                  }
+                }
+              },
             )
           ]),
           actions: <Widget>[
@@ -180,10 +220,10 @@ class _ItemsPageState extends State<ItemsPage> {
                 if (_items.text.isEmpty) {
                   _showEmptyFieldsDialog();
                 } else {
-                  if (_valor.text.isEmpty) {
+                  if (_valor.text.isEmpty && _quantidade.text.isNotEmpty) {
                     _valor.text = '0';
                   } else {
-                    if (_quantidade.text.isEmpty) {
+                    if (_quantidade.text.isEmpty && _valor.text.isNotEmpty) {
                       _quantidade.text = '0';
                     } else {
                       if (_quantidade.text.isEmpty || _valor.text.isEmpty) {
