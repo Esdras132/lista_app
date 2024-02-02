@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Lista_de_compras/model.dart';
+import 'package:Lista_de_compras/firebase/model.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 
 class ItemsPage extends StatefulWidget {

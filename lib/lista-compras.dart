@@ -1,8 +1,8 @@
 import 'package:Lista_de_compras/items_page.dart';
-import 'package:Lista_de_compras/model.dart';
+import 'package:Lista_de_compras/firebase/model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:Lista_de_compras/db.service.dart';
+import 'package:Lista_de_compras/firebase/db.service.dart';
 
 class ListaComprasPage extends StatefulWidget {
   const ListaComprasPage({super.key});

@@ -1,5 +1,5 @@
 import "dart:developer";
-import 'package:Lista_de_compras/sign-up_page.dart';
+import 'package:Lista_de_compras/login/sign-up_page.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";

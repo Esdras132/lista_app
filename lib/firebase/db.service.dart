@@ -1,4 +1,4 @@
-import 'package:Lista_de_compras/model.dart';
+import 'package:Lista_de_compras/firebase/model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
