@@ -165,8 +165,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                   TextInput.finishAutofillContext();
                                   await FirebaseAuth.instance
                                       .createUserWithEmailAndPassword(
-                                          email: _email.text,
-                                          password: _senha.text);
+                                          email: _email.text.trim(),
+                                          password: _senha.text.trim());
                                   // ignore: use_build_context_synchronously
                                   Navigator.pop(context);
                                 } catch (e) {
