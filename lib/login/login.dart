@@ -1,6 +1,7 @@
 import "dart:developer";
 import "package:Lista_de_compras/login/Redefinir_senha.dart";
 import 'package:Lista_de_compras/login/sign-up_page.dart';
+import "package:email_validator/email_validator.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:flutter/services.dart";
@@ -47,12 +48,14 @@ class _loginState extends State<loginpage> {
                 autofillHints: const [AutofillHints.email],
                 cursorColor: Colors.green,
                 controller: _login,
-                validator: (String? value) {
-                  if (!value!.contains('@gmail.com') &&
-                      !value.contains('@outlook.com')) {
-                    return 'E-mail inválido!';
+                validator: (value) {
+                  if (value == null) {
+                    return 'coloque um email valido';
+                  } else if (!EmailValidator.validate(value)) {
+                    return 'coloque um email valido';
+                  } else {
+                    return null;
                   }
-                  return null;
                 },
                 decoration: const InputDecoration(
                     labelText: 'Login',
@@ -108,13 +111,13 @@ class _loginState extends State<loginpage> {
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       try {
-                        await FirebaseAuth.instance.signInWithEmailAndPassword(
-                            email: _login.text, password: _senha.text);
                         const Center(
                             child: CircularProgressIndicator(
                           color: Colors.green,
                           backgroundColor: Colors.grey,
                         ));
+                        await FirebaseAuth.instance.signInWithEmailAndPassword(
+                            email: _login.text, password: _senha.text);
                       } catch (e) {
                         //mensagem de senha incorreta
                         _senhaOuEmailErro();
@@ -144,6 +147,8 @@ class _loginState extends State<loginpage> {
                 ),
                 TextButton(
                   onPressed: () {
+                    _login.text = '';
+                    _senha.text = '';
                     Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -170,6 +175,7 @@ class _loginState extends State<loginpage> {
               TextButton(
                   onPressed: () {
                     Navigator.pop(context);
+                    _senha.text = '';
                   },
                   child: const Text('OK'))
             ],

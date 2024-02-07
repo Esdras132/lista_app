@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +13,8 @@ class Redefinir_Senha extends StatefulWidget {
 
 class _Redefinir_SenhaState extends State<Redefinir_Senha> {
   TextEditingController _recuperar_senha = TextEditingController();
-   bool passToggle = true;
+  final _formKey = GlobalKey<FormState>();
+  bool passToggle = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,49 +28,67 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
   recuperarSenha() {
     return Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Image.asset(
-            "assets/logo_lista.png",
-            width: 100,
-            alignment: Alignment.center,
-          ),
-          TextField(
-            autofocus: true,
-            autofillHints: const [AutofillHints.email],
-            decoration: const InputDecoration(
-                labelText: 'Email',
-                suffix: Padding(
-                  padding: EdgeInsets.all(11),
-                  child: Icon(
-                    Icons.email,
-                    color: Colors.green,
-                  ),
-                )),
-            controller: _recuperar_senha,
-          ),
-          Container(
-              width: MediaQuery.of(context).size.width,
-              color: Colors.green,
-              margin: const EdgeInsets.all(16.0),
-              child: TextButton(
-                  onPressed: () async {
-                    try {
-                      await FirebaseAuth.instance
-                          .sendPasswordResetEmail(email: _recuperar_senha.text);
-                       const Center(
-                child: CircularProgressIndicator(
-              color: Colors.green,
-              backgroundColor: Colors.grey,
-            ));
-
-                    } catch (e) {
-                      log(e.toString());
-                    }
-                  },
-                  child: const Text(
-                    'Enviar email',
-                    style: TextStyle(color: Colors.white),
-                  )))
-        ]));
+        child: Form(
+            key: _formKey,
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Image.asset(
+                "assets/logo_lista.png",
+                width: 100,
+                alignment: Alignment.center,
+              ),
+              const Text('Recuperar Senha', style: TextStyle(fontSize: 25),),
+              TextFormField(
+                autofocus: true,
+                autofillHints: const [AutofillHints.email],
+                validator: (value) {
+                  if (value == null) {
+                    return 'coloque um email valido';
+                  } else if (!EmailValidator.validate(value)) {
+                    return 'coloque um email valido';
+                  } else {
+                    return null;
+                  }
+                },
+                decoration: const InputDecoration(
+                    labelText: 'Email',
+                    suffix: Padding(
+                      padding: EdgeInsets.all(11),
+                      child: Icon(
+                        Icons.email,
+                        color: Colors.green,
+                      ),
+                    )),
+                controller: _recuperar_senha,
+              ),
+              Container(
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.green,
+                  margin: const EdgeInsets.all(16.0),
+                  child: TextButton(
+                      onPressed: () async {
+                        if(_formKey.currentState!.validate()){
+                          try {
+                          await FirebaseAuth.instance.sendPasswordResetEmail(
+                              email: _recuperar_senha.text);
+                          const Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.green,
+                            backgroundColor: Colors.grey,
+                          )
+                          );
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                        } catch (e) {
+                           
+                          log(e.toString());
+                        }
+                        }
+                      },
+                      child: const Text(
+                        'Enviar email',
+                        style: TextStyle(color: Colors.white),
+                      )))
+            ])));
   }
 }

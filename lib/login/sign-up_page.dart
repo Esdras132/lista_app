@@ -17,6 +17,7 @@ class _SignUpPageState extends State<SignUpPage> {
   TextEditingController _confirmacaoSenha = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool passenable = true;
+  bool passenableCon = true;
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +59,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     validator: (value) {
                       if (value == null) {
                         return 'coloque um email valido';
-                      } else if (!EmailValidator.validate(value!)) {
+                      } else if (!EmailValidator.validate(value)) {
                         return 'coloque um email valido';
                       } else {
                         return null;
@@ -115,7 +116,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
                   ///confirmação de Senha
                   TextFormField(
-                    obscureText: passenable,
+                    obscureText: passenableCon,
                     cursorColor: Colors.green,
                     controller: _confirmacaoSenha,
                     autofillHints: const [AutofillHints.password],
@@ -131,15 +132,15 @@ class _SignUpPageState extends State<SignUpPage> {
                       suffix: IconButton(
                         onPressed: () {
                           setState(() {
-                            if (passenable) {
-                              passenable = false;
+                            if (passenableCon) {
+                              passenableCon = false;
                             } else {
-                              passenable = true;
+                              passenableCon = true;
                             }
                           });
                         },
                         icon: Icon(
-                          passenable == true
+                          passenableCon == true
                               ? Icons.remove_red_eye
                               : Icons.password,
                           color: Colors.green,
