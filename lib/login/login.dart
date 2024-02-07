@@ -1,4 +1,5 @@
 import "dart:developer";
+import "package:Lista_de_compras/login/Redefinir_senha.dart";
 import 'package:Lista_de_compras/login/sign-up_page.dart';
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
@@ -26,7 +27,7 @@ class _loginState extends State<loginpage> {
     ));
   }
 
-  widgetTextField(){
+  widgetTextField() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: AutofillGroup(
@@ -41,6 +42,7 @@ class _loginState extends State<loginpage> {
                 alignment: Alignment.center,
               ),
               TextFormField(
+                keyboardType: TextInputType.emailAddress,
                 autofocus: true,
                 autofillHints: const [AutofillHints.email],
                 cursorColor: Colors.green,
@@ -64,10 +66,11 @@ class _loginState extends State<loginpage> {
                 textInputAction: TextInputAction.next,
               ),
               TextFormField(
+                keyboardType: TextInputType.visiblePassword,
                 obscureText: passenable,
                 cursorColor: Colors.green,
                 controller: _senha,
-                autofillHints: const [AutofillHints.password],                
+                autofillHints: const [AutofillHints.password],
                 validator: (String? value) {
                   if (value!.length < 6) {
                     return 'Tem mais de 6 dígitos';
@@ -125,9 +128,8 @@ class _loginState extends State<loginpage> {
                   ),
                 ),
               ),
-              Container(
-                alignment: Alignment.centerLeft,
-                child: TextButton(
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+                TextButton(
                   onPressed: () {
                     _login.text = '';
                     _senha.text = '';
@@ -140,7 +142,16 @@ class _loginState extends State<loginpage> {
                   },
                   child: const Text('Não tem conta'),
                 ),
-              ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const Redefinir_Senha()));
+                  },
+                  child: const Text('Recuperar Senha'),
+                ),
+              ]),
             ],
           ),
         ),

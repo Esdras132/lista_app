@@ -1,4 +1,4 @@
-import 'package:Lista_de_compras/items_page.dart';
+import 'package:Lista_de_compras/dentro_app/items_page.dart';
 import 'package:Lista_de_compras/firebase/model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

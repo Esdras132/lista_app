@@ -1,6 +1,5 @@
 import 'dart:async';
-
-import 'package:Lista_de_compras/lista-compras.dart';
+import 'package:Lista_de_compras/dentro_app/lista-compras.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
@@ -31,9 +30,8 @@ class _verifyEmailState extends State<verifyEmail> {
 
   @override
   void dispose() {
-    timer?.cancel();
-
     super.dispose();
+    timer?.cancel();
   }
 
   Future checkEmailVerify() async {
@@ -58,7 +56,7 @@ class _verifyEmailState extends State<verifyEmail> {
 
   @override
   Widget build(BuildContext context) => isEmailverify
-      ? ListaComprasPage()
+      ? const ListaComprasPage()
       : Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.transparent,
@@ -70,20 +68,18 @@ class _verifyEmailState extends State<verifyEmail> {
           ));
 
   veryficacaocorpo() {
-return Padding(
-      padding: const EdgeInsets.all(16.0),
-      
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                "assets/logo_lista.png",
-                width: 100,
-                alignment: Alignment.center,
-              ),
-              
-              Text('Verifique seu email', style: TextStyle(fontSize: 30),)
-              ]));
-
+    return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Image.asset(
+            "assets/logo_lista.png",
+            width: 100,
+            alignment: Alignment.center,
+          ),
+          const Text(
+            'Verifique seu email',
+            style: TextStyle(fontSize: 30),
+          )
+        ]));
   }
 }

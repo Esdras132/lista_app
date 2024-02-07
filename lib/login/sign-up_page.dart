@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import "dart:developer";
-
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/services.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -47,7 +47,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     alignment: Alignment.center,
                   ),
                   //aqui é o final
-      
+
                   //Email
                   TextFormField(
                     autofocus: true,
@@ -56,11 +56,13 @@ class _SignUpPageState extends State<SignUpPage> {
                     onEditingComplete: () => TextInput.finishAutofillContext(),
                     controller: _email,
                     validator: (value) {
-                      if (!value!.contains('@gmail.com') &&
-                          !value.contains('@outlook.com')) {
-                        return 'Coloque o emal com @gmail.com ou @outlook.com';
+                      if (value == null) {
+                        return 'coloque um email valido';
+                      } else if (!EmailValidator.validate(value!)) {
+                        return 'coloque um email valido';
+                      } else {
+                        return null;
                       }
-                      return null;
                     },
                     decoration: const InputDecoration(
                         labelText: 'Email',
@@ -74,7 +76,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     textInputAction: TextInputAction.next,
                   ),
                   //aqui finaliza
-      
+
                   //Senha principal
                   TextFormField(
                     obscureText: passenable,
@@ -110,7 +112,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     textInputAction: TextInputAction.next,
                   ),
                   //Aqui termina
-      
+
                   ///confirmação de Senha
                   TextFormField(
                     obscureText: passenable,
@@ -148,14 +150,15 @@ class _SignUpPageState extends State<SignUpPage> {
                     textInputAction: TextInputAction.next,
                   ),
                   //aqui finaliza
-      
+
                   Container(
                       width: MediaQuery.of(context).size.width,
                       color: Colors.green,
                       margin: const EdgeInsets.all(16.0),
                       child: TextButton(
                         onPressed: () async {
-                          if (_formKey.currentState!.validate()) {
+                          final form = _formKey.currentState!;
+                          if (form.validate()) {
                             if (_senha.text != _confirmacaoSenha.text) {
                               _naoEstao();
                             } else {
