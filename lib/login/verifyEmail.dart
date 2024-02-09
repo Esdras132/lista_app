@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:Lista_de_compras/dentro_app/lista-compras.dart';
+import 'package:Lista_de_compras/login/sign-up_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
 import 'package:flutter/material.dart';
 
 class verifyEmail extends StatefulWidget {
@@ -24,7 +24,7 @@ class _verifyEmailState extends State<verifyEmail> {
     if (!isEmailverify) {
       sendVerifycationEmail();
 
-      Timer.periodic(const Duration(seconds: 3), (_) => checkEmailVerify());
+      Timer.periodic(Duration(seconds: 3), (_) => checkEmailVerify());
     }
   }
 
@@ -59,8 +59,26 @@ class _verifyEmailState extends State<verifyEmail> {
       ? const ListaComprasPage()
       : Scaffold(
           appBar: AppBar(
+            actions: <Widget>[
+              Align(
+                  alignment: Alignment.centerRight,
+                  child: IconButton(
+                      alignment: Alignment.centerLeft,
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const SignUpPage(),
+                            ));
+                      },
+                      icon: const Icon(Icons.arrow_back))),
+            ],
             backgroundColor: Colors.transparent,
-            title: const Text('Verificaçao Email'),
+            centerTitle: true,
+            title: const Text(
+              'Verificaçao Email',
+              textAlign: TextAlign.center,
+            ),
           ),
           body: Container(
             alignment: Alignment.topCenter,
@@ -81,8 +99,13 @@ class _verifyEmailState extends State<verifyEmail> {
             style: TextStyle(fontSize: 30),
           ),
           TextButton(
-              onPressed: () {
- FirebaseAuth.instance.currentUser!.emailVerified;
+              onPressed: () async {
+                try {
+                  final user = FirebaseAuth.instance.currentUser;
+                  await user?.sendEmailVerification();
+                } catch (e) {
+                  e.toString();
+                }
               },
               child: const Text('Enviar novamente'))
         ]));
