@@ -77,9 +77,14 @@ class _verifyEmailState extends State<verifyEmail> {
             alignment: Alignment.center,
           ),
           const Text(
-            'Verifique seu email',
+            'Verifique seu E-mail',
             style: TextStyle(fontSize: 30),
-          )
+          ),
+          TextButton(
+              onPressed: () {
+ FirebaseAuth.instance.currentUser!.emailVerified;
+              },
+              child: const Text('Enviar novamente'))
         ]));
   }
 }

@@ -50,9 +50,9 @@ class _loginState extends State<loginpage> {
                 controller: _login,
                 validator: (value) {
                   if (value == null) {
-                    return 'coloque um email valido';
+                    return 'coloque um E-mail valido';
                   } else if (!EmailValidator.validate(value)) {
-                    return 'coloque um email valido';
+                    return 'coloque um E-mail valido';
                   } else {
                     return null;
                   }

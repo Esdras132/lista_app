@@ -43,9 +43,9 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                 autofillHints: const [AutofillHints.email],
                 validator: (value) {
                   if (value == null) {
-                    return 'coloque um email valido';
+                    return 'coloque um E-mail valido';
                   } else if (!EmailValidator.validate(value)) {
-                    return 'coloque um email valido';
+                    return 'coloque um E-mail valido';
                   } else {
                     return null;
                   }
@@ -86,7 +86,7 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                         }
                       },
                       child: const Text(
-                        'Enviar email',
+                        'Enviar E-mail',
                         style: TextStyle(color: Colors.white),
                       )))
             ])));
