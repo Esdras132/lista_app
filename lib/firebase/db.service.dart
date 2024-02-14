@@ -13,7 +13,7 @@ class DBService {
         .catchError((error) => print("Failed to add user: $error"));
   }
 
-  static Stream<List<ListaModel>> fetchAll() {
+  static Stream<List<ListaModel>>  fetchAll() {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     if (uid.isNotEmpty){
       return _firestore

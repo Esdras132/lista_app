@@ -78,10 +78,11 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                           )
                           );
                         // ignore: use_build_context_synchronously
-                        Navigator.pop(context);
+                        // Navigator.pop(context);
                         } catch (e) {
-                           
                           log(e.toString());
+                          teste();
+
                         }
                         }
                       },
@@ -91,4 +92,26 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                       )))
             ])));
   }
+
+  Future<void> teste() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Teste'),
+          content:
+              const Text('Teste Teste Teste Teste Teste Teste Teste Teste Teste Teste '),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

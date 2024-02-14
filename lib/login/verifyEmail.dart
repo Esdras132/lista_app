@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:Lista_de_compras/dentro_app/lista-compras.dart';
-import 'package:Lista_de_compras/login/sign-up_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -59,20 +58,6 @@ class _verifyEmailState extends State<verifyEmail> {
       ? const ListaComprasPage()
       : Scaffold(
           appBar: AppBar(
-            actions: <Widget>[
-              Align(
-                  alignment: Alignment.centerRight,
-                  child: IconButton(
-                      alignment: Alignment.centerLeft,
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const SignUpPage(),
-                            ));
-                      },
-                      icon: const Icon(Icons.arrow_back))),
-            ],
             backgroundColor: Colors.transparent,
             centerTitle: true,
             title: const Text(
@@ -98,16 +83,16 @@ class _verifyEmailState extends State<verifyEmail> {
             'Verifique seu E-mail',
             style: TextStyle(fontSize: 30),
           ),
-          TextButton(
-              onPressed: () async {
-                try {
-                  final user = FirebaseAuth.instance.currentUser;
-                  await user?.sendEmailVerification();
-                } catch (e) {
-                  e.toString();
-                }
-              },
-              child: const Text('Enviar novamente'))
+          // TextButton(
+          //     onPressed: () async {
+          //       try {
+          //         final user = FirebaseAuth.instance.currentUser;
+          //         await user?.sendEmailVerification();
+          //       } catch (e) {
+          //         e.toString();
+          //       }
+          //     },
+          //     child: const Text('Enviar novamente'))
         ]));
   }
 }
