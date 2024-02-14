@@ -62,8 +62,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (context, i) {
-                TextEditingController controller =
-                    TextEditingController(text: snapshot.data![i].descricao);
+                TextEditingController controller = TextEditingController(text: snapshot.data![i].descricao);
                 return Dismissible(
                   key: UniqueKey(),
                   background: Container(
@@ -107,26 +106,30 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                                 )));
                       },
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextField(
-                          controller: controller,
-                          decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                            color: Colors.black,
-                            icon: const Icon(Icons.folder_open),
-                            onPressed: () {
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => ItemsPage(
-                                        model: snapshot.data![i],
-                                      )));
-                            },
-                          )),
-                          onSubmitted: (String value) {
-                            snapshot.data![i].reference!
-                                .update({"descricao": controller.text});
-                          },
-                        ),
-                      )),
+                          padding: const EdgeInsets.all(8.0),
+                          child:
+
+                              TextField(
+                                textAlign: TextAlign.center,
+                                controller: controller,
+                                decoration: InputDecoration(
+                                    suffixIcon: IconButton(
+                                  color: Colors.black,
+                                  icon: const Icon(Icons.folder_open),
+                                  onPressed: () {
+                                    Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) => ItemsPage(
+                                              model: snapshot.data![i],
+                                            )));
+                                  },
+                                )),
+                                onSubmitted: (String value) {
+                                  snapshot.data![i].reference!
+                                      .update({"descricao": controller.text});
+                                },
+                              )
+
+                              )),
                 );
               },
             );
@@ -144,6 +147,31 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
       ),
     );
   }
+
+  // Future<void> _editar() async {
+  //   TextEditingController controller = TextEditingController();
+  //   return showDialog(
+  //       context: context,
+  //       builder: (BuildContext context) {
+  //         return AlertDialog(title: const Text('Editar'), actions: <Widget>[
+  //           TextField(
+  //             controller: controller,
+  //             decoration: const InputDecoration(labelText: 'Nome'),
+  //           ),
+  //           TextButton(
+  //             child: const Text('Editar'),
+  //             onPressed: () {
+  //               if (controller.text == '') {
+  //                 _showEmptyFieldsDialog();
+  //               } else {
+
+  //               }
+  //               setState(() {});
+  //             },
+  //           ),
+  //         ]);
+  //       });
+  // }
 
   Future<void> _showEmptyFieldsDialog() async {
     return showDialog<void>(
@@ -227,8 +255,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       Navigator.pop(context);
                     });
                   }
-                  // Verifica se há mais de duas vírgulas ou dois pontos nos campos
-                  // Adiciona o item à lista se todos os campos estiverem preenchidos
                 }
               },
             ),

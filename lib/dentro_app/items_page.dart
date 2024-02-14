@@ -316,10 +316,8 @@ class _ItemsPageState extends State<ItemsPage> {
                       controllerqtd.text = '0';
                       controllervalor.text = '0';
                     } else {
-                      widget.model.items![index].valor =
-                          double.parse(controllervalor.text);
-                      widget.model.items![index].quantidade =
-                          double.parse(controllerqtd.text);
+                      widget.model.items![index].valor =double.parse(controllervalor.text);
+                      widget.model.items![index].quantidade =double.parse(controllerqtd.text);
                       widget.model.items![index].descricao = controller.text;
                       widget.model.update();
                       Navigator.of(context).pop();

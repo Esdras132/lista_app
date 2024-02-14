@@ -4,6 +4,7 @@ class ListaModel {
   DocumentReference? reference;
   String? descricao;
   List<ItemModel>? items;
+  bool isEditting = false;
 
 
   getTotal(){
