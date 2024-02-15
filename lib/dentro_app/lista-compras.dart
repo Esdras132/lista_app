@@ -1,4 +1,5 @@
 import 'package:Lista_de_compras/dentro_app/items_page.dart';
+import 'package:Lista_de_compras/exemplo/texte.dart';
 import 'package:Lista_de_compras/firebase/model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +28,18 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                 // await FirebaseAuth.instance.signOut();
                 _sair();
               },
-              icon: const Icon(Icons.exit_to_app))
+              icon: const Icon(Icons.exit_to_app)
+              ),
+              IconButton(
+               onPressed: (){
+                Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Teste(),
+                      ),
+                    );
+               },
+               icon: const Icon(Icons.camera))
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -107,9 +119,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       },
                       child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child:
-
-                              TextField(
+                          child:TextField(
                                 textAlign: TextAlign.center,
                                 controller: controller,
                                 decoration: InputDecoration(
@@ -120,16 +130,14 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                                     Navigator.of(context).push(MaterialPageRoute(
                                         builder: (context) => ItemsPage(
                                               model: snapshot.data![i],
-                                            )));
+                                            ),),);
                                   },
-                                )),
+                                ),),
                                 onSubmitted: (String value) {
                                   snapshot.data![i].reference!
                                       .update({"descricao": controller.text});
                                 },
-                              )
-
-                              )),
+                              ),),),
                 );
               },
             );
