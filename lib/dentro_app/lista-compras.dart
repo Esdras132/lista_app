@@ -1,5 +1,4 @@
 import 'package:Lista_de_compras/dentro_app/items_page.dart';
-import 'package:Lista_de_compras/exemplo/texte.dart';
 import 'package:Lista_de_compras/firebase/model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -24,22 +23,10 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
         actions: [
           IconButton(
               onPressed: () async {
-                //FirebaseAuth.instance.createUserWithEmailAndPassword(email: "teste@gmail.com", password: "1234567");
-                // await FirebaseAuth.instance.signOut();
                 _sair();
               },
               icon: const Icon(Icons.exit_to_app)
               ),
-              IconButton(
-               onPressed: (){
-                Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => Teste(),
-                      ),
-                    );
-               },
-               icon: const Icon(Icons.camera))
         ],
       ),
       floatingActionButton: FloatingActionButton(
