@@ -33,7 +33,9 @@ class _ItemsPageState extends State<ItemsPage> {
               style: const TextStyle(fontSize: 20),
             ),
             Text(
-                "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
+                  "Valor ${ UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
+                  //15 valor quantidade 6
+                // "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
                 style: const TextStyle(fontSize: 17)),
           ],
         ),
@@ -130,11 +132,11 @@ class _ItemsPageState extends State<ItemsPage> {
               controller: _items,
               decoration: const InputDecoration(labelText: 'Nome do item'),
               validator: (value) {
-                      if (!value!.contains('')) {
-                        return 'Este campo é obrigatorio';
-                      }
-                      return null;
-                    },
+                if (!value!.contains('')) {
+                  return 'Este campo é obrigatorio';
+                }
+                return null;
+              },
               textInputAction: TextInputAction.next,
             ),
             TextField(
@@ -152,7 +154,7 @@ class _ItemsPageState extends State<ItemsPage> {
               keyboardType: const TextInputType.numberWithOptions(
                   decimal: true, signed: false),
               textInputAction: TextInputAction.done,
-              onEditingComplete: (){
+              onEditingComplete: () {
                 if (_items.text.isEmpty) {
                   _showEmptyFieldsDialog();
                 } else {
@@ -316,8 +318,10 @@ class _ItemsPageState extends State<ItemsPage> {
                       controllerqtd.text = '0';
                       controllervalor.text = '0';
                     } else {
-                      widget.model.items![index].valor =double.parse(controllervalor.text);
-                      widget.model.items![index].quantidade =double.parse(controllerqtd.text);
+                      widget.model.items![index].valor =
+                          double.parse(controllervalor.text);
+                      widget.model.items![index].quantidade =
+                          double.parse(controllerqtd.text);
                       widget.model.items![index].descricao = controller.text;
                       widget.model.update();
                       Navigator.of(context).pop();

@@ -6,8 +6,7 @@ class ListaModel {
   List<ItemModel>? items;
   bool isEditting = false;
 
-
-  getTotal(){
+  getTotal() {
     if (items == null || items!.isEmpty) {
       return 0.0;
     }
@@ -18,20 +17,21 @@ class ListaModel {
     return total;
   }
 
-  ListaModel({ this.descricao = '', this.items = const []});
+  ListaModel({this.descricao = '', this.items = const []});
 
-  update(){
+  update() {
     reference!.update(toMap());
   }
 
   ListaModel.map(QueryDocumentSnapshot snapshot) {
     reference = snapshot.reference;
     descricao = snapshot.get('descricao');
-    items = (snapshot.get('items') as List).map((e) => ItemModel.map(e)).toList();
+    items =
+        (snapshot.get('items') as List).map((e) => ItemModel.map(e)).toList();
   }
 
   toMap() {
-    return {      
+    return {
       "descricao": descricao,
       "items": items!.map((e) => e.toMap()).toList()
     };
@@ -46,10 +46,17 @@ class ItemModel {
 
   ItemModel({this.descricao = '', this.quantidade = 0.0, this.valor = 0.0});
 
-  getTotal(){
-    return quantidade! * valor! ;
+  getTotal() {
+      return quantidade! * valor!;
   }
-  
+      getRegra() {
+    if (getTotal().toString().length > 15) {
+      return getTotal().toString().substring(0, 15);
+    } else {
+      return getTotal();
+    }
+  }
+
 
   ItemModel.map(dynamic map) {
     descricao = map["descricao"];
