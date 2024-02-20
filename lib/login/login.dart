@@ -18,13 +18,20 @@ class _loginState extends State<loginpage> {
   TextEditingController _senha = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool passenable = true;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
       alignment: Alignment.center,
-      child: widgetTextField(),
+      child: _isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Colors.green,
+              backgroundColor: Colors.grey,
+            ))
+          : widgetTextField(),
     ));
   }
 
@@ -94,8 +101,8 @@ class _loginState extends State<loginpage> {
                     },
                     icon: Icon(
                       passenable == true
-                          ? Icons.remove_red_eye
-                          : Icons.password,
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
                       color: Colors.green,
                     ),
                   ),
@@ -110,18 +117,19 @@ class _loginState extends State<loginpage> {
                 child: TextButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      setState(() {
+                        _isLoading = true;
+                      });
                       try {
-                        const Center(
-                            child: CircularProgressIndicator(
-                          color: Colors.green,
-                          backgroundColor: Colors.grey,
-                        ));
                         await FirebaseAuth.instance.signInWithEmailAndPassword(
                             email: _login.text, password: _senha.text);
                       } catch (e) {
-                        //mensagem de senha incorreta
                         _senhaOuEmailErro();
                         log(e.toString());
+                      } finally {
+                        setState(() {
+                          _isLoading = false;
+                        });
                       }
                     }
                   },

@@ -104,8 +104,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         },
                         icon: Icon(
                           passenable == true
-                              ? Icons.remove_red_eye
-                              : Icons.password,
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                           color: Colors.green,
                         ),
                       ),
@@ -141,8 +141,8 @@ class _SignUpPageState extends State<SignUpPage> {
                         },
                         icon: Icon(
                           passenableCon == true
-                              ? Icons.remove_red_eye
-                              : Icons.password,
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
                           color: Colors.green,
                           weight: 5,
                         ),

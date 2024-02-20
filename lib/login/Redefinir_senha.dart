@@ -37,7 +37,10 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                 width: 100,
                 alignment: Alignment.center,
               ),
-              const Text('Recuperar Senha', style: TextStyle(fontSize: 25),),
+              const Text(
+                'Recuperar Senha',
+                style: TextStyle(fontSize: 25),
+              ),
               TextFormField(
                 autofocus: true,
                 autofillHints: const [AutofillHints.email],
@@ -67,21 +70,22 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                   margin: const EdgeInsets.all(16.0),
                   child: TextButton(
                       onPressed: () async {
-                        if(_formKey.currentState!.validate()){
+                        if (_formKey.currentState!.validate()) {
                           try {
-                          await FirebaseAuth.instance.sendPasswordResetEmail(
-                              email: _recuperar_senha.text);
-                          const Center(
-                              child: CircularProgressIndicator(
-                            color: Colors.green,
-                            backgroundColor: Colors.grey,
-                          )
-                          );
-                        // ignore: use_build_context_synchronously
-                         Navigator.pop(context);
-                        } catch (e) {
-                          log(e.toString());
-                        }}
+                            await FirebaseAuth.instance.sendPasswordResetEmail(
+                                email: _recuperar_senha.text);
+                            const Center(
+                                child: CircularProgressIndicator(
+                              color: Colors.green,
+                              backgroundColor: Colors.grey,
+                            ));
+                            // ignore: use_build_context_synchronously
+                            Navigator.pop(context);
+                            _provavelmenteVa();
+                          } catch (e) {
+                            log(e.toString());
+                          }
+                        }
                       },
                       child: const Text(
                         'Enviar E-mail',
@@ -90,4 +94,22 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
             ])));
   }
 
+  Future<void> _provavelmenteVa() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text(
+              'Atenção'),
+               content: const Text('Caso seu email estiver cadastrado sera enviado um email para trocar a Senha'),
+              actions: <Widget>[
+                TextButton(onPressed: (){
+                  Navigator.pop(context);
+                },
+                child: const Text('OK'))
+              ],
+        );
+      },
+    );
+  }
 }
