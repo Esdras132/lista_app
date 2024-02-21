@@ -18,14 +18,14 @@ class _loginState extends State<loginpage> {
   TextEditingController _senha = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool passenable = true;
-  bool _isLoading = false;
+  bool _indicador = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         body: Container(
       alignment: Alignment.center,
-      child: _isLoading
+      child: _indicador
           ? const Center(
               child: CircularProgressIndicator(
               color: Colors.green,
@@ -117,8 +117,9 @@ class _loginState extends State<loginpage> {
                 child: TextButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
+                      TextInputAction.done;
                       setState(() {
-                        _isLoading = true;
+                        _indicador = true;
                       });
                       try {
                         await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -128,7 +129,7 @@ class _loginState extends State<loginpage> {
                         log(e.toString());
                       } finally {
                         setState(() {
-                          _isLoading = false;
+                          _indicador = false;
                         });
                       }
                     }

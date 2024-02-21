@@ -15,13 +15,22 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
   TextEditingController _recuperar_senha = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool passToggle = true;
+  bool _indicador = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
-      body: Container(alignment: Alignment.center, child: recuperarSenha()),
+      body: Container(alignment: Alignment.center, child: 
+      _indicador
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Colors.green,
+              backgroundColor: Colors.grey,
+            ))
+          : recuperarSenha()),
     );
   }
 
@@ -64,6 +73,7 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                     )),
                 controller: _recuperar_senha,
               ),
+              
               Container(
                   width: MediaQuery.of(context).size.width,
                   color: Colors.green,
@@ -71,6 +81,7 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                   child: TextButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
+                          _indicador = true;
                           try {
                             await FirebaseAuth.instance.sendPasswordResetEmail(
                                 email: _recuperar_senha.text);
@@ -84,6 +95,8 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                             _provavelmenteVa();
                           } catch (e) {
                             log(e.toString());
+                          } finally{
+                            _indicador =false;
                           }
                         }
                       },

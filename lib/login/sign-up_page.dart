@@ -18,6 +18,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   bool passenable = true;
   bool passenableCon = true;
+  bool _indicador = false;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +28,14 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
         body: Container(
           alignment: Alignment.topCenter,
-          child: naoTemCadastro(),
+          child: 
+          _indicador
+          ? const Center(
+              child: CircularProgressIndicator(
+              color: Colors.green,
+              backgroundColor: Colors.grey,
+            ))
+          : naoTemCadastro(),
         ));
   }
 
@@ -165,6 +173,7 @@ class _SignUpPageState extends State<SignUpPage> {
                             } else {
                               if (_senha.text == _confirmacaoSenha.text &&
                                   _email.text.isNotEmpty) {
+                                    _indicador = true;
                                 try {
                                   TextInput.finishAutofillContext();
                                   await FirebaseAuth.instance
@@ -176,6 +185,8 @@ class _SignUpPageState extends State<SignUpPage> {
                                 } catch (e) {
                                   _jaExiste();
                                   log(e.toString());
+                                } finally{
+                                  _indicador = false;
                                 }
                               }
                             }

@@ -13,6 +13,7 @@ class verifyEmail extends StatefulWidget {
 class _verifyEmailState extends State<verifyEmail> {
   bool isEmailverify = false;
   Timer? timer;
+  
 
   @override
   void initState() {
