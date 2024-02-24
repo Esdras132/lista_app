@@ -9,7 +9,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var app = await Firebase.initializeApp();
   auth = FirebaseAuth.instanceFor(app: app);
-  //await Firebase.initializeApp();
   runApp(const MyApp());
 }
 

@@ -40,7 +40,8 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
         child: Form(
             key: _formKey,
             child:
-                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center, children: [
               Image.asset(
                 "assets/logo_lista.png",
                 width: 100,
@@ -85,11 +86,6 @@ class _Redefinir_SenhaState extends State<Redefinir_Senha> {
                           try {
                             await FirebaseAuth.instance.sendPasswordResetEmail(
                                 email: _recuperar_senha.text);
-                            const Center(
-                                child: CircularProgressIndicator(
-                              color: Colors.green,
-                              backgroundColor: Colors.grey,
-                            ));
                             // ignore: use_build_context_synchronously
                             Navigator.pop(context);
                             _provavelmenteVa();
