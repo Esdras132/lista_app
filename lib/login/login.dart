@@ -126,7 +126,7 @@ class _loginState extends State<loginpage> {
                             email: _login.text, password: _senha.text);
                       } catch (e) {
                         _senhaOuEmailErro();
-                        log(e.toString());
+                        log(e.toString());  
                       } finally {
                         setState(() {
                           _indicador = false;
