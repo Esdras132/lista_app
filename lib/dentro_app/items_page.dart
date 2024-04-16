@@ -15,7 +15,6 @@ class _ItemsPageState extends State<ItemsPage> {
   TextEditingController _quantidade = TextEditingController();
   TextEditingController _valor = TextEditingController();
 
-
   @override
   void initState() {
     super.initState();
@@ -33,8 +32,7 @@ class _ItemsPageState extends State<ItemsPage> {
               style: const TextStyle(fontSize: 20),
             ),
             Text(
-                  "Valor ${ UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
-                  //15 valor quantidade 6
+                "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
                 // "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())} Quantidade ${widget.model.items!.length.toString()}",
                 style: const TextStyle(fontSize: 17)),
           ],
@@ -259,7 +257,7 @@ class _ItemsPageState extends State<ItemsPage> {
   }
 
   Future<void> _edicaolista(int index) async {
-    TextEditingController controller = TextEditingController();
+    TextEditingController controller = TextEditingController();   
     TextEditingController controllerqtd = TextEditingController();
     TextEditingController controllervalor = TextEditingController();
 

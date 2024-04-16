@@ -1,4 +1,5 @@
 import 'package:Lista_de_compras/dentro_app/items_page.dart';
+import 'package:Lista_de_compras/dentro_app/pessoais/conta.dart';
 import 'package:Lista_de_compras/firebase/model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,135 +13,220 @@ class ListaComprasPage extends StatefulWidget {
 }
 
 class _ListaComprasPageState extends State<ListaComprasPage> {
+  String? verNome;
   var lista = [];
   TextEditingController _nomeController = TextEditingController();
   var checkedList = [];
+   
+   @override
+  void initState() {
+    super.initState();
+    Name();
+  }
+
+ Future<void> Name() async {
+    String? name = FirebaseAuth.instance.currentUser?.displayName;
+    setState(() {
+      verNome = name;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Minhas Listas'),
-        actions: [
-          IconButton(
-              onPressed: () async {
-                _sair();
-              },
-              icon: const Icon(Icons.exit_to_app)
-              ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
-        onPressed: () {
-          _showAlertDialog();
-        },
-      ),
-      body: StreamBuilder(
-        stream: DBService.fetchAll(),
-        builder:
-            (BuildContext context, AsyncSnapshot<List<ListaModel>> snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data!.isEmpty) {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Image.asset(
-                      "assets/naotemnada.png",
+    Future<bool> showExitPopup() async {
+      return await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: Text('Exit App'),
+              content: Text('Você deseja sair do app?'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text('Não'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text('Sim'),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+    }
+    // ignore: deprecated_member_use
+    return WillPopScope(
+        onWillPop: showExitPopup,
+        child: Scaffold(
+          appBar: AppBar(
+            title:  Text('Bem vindo '+ verNome!),
+            actions: [
+              PopupMenuButton(itemBuilder: (context) {
+                return [
+                  const PopupMenuItem<int>(
+                    value: 0,
+                    child: Row(
+                      children: [
+                        Text('Conta'),
+                        SizedBox(width: 65),
+                        Icon(Icons.account_circle_outlined),
+                      ],
                     ),
                   ),
-                  const Text(
-                    "Não tem listas",
-                    style: TextStyle(fontSize: 27),
+
+                  const PopupMenuItem<int>(
+                    value: 1,
+                    child: Row(
+                      children: [
+                      Text("Configurações"),
+                      SizedBox(width: 10),
+                      Icon(Icons.settings),
+                      ],
+                    ),
                   ),
-                ],
-              );
-            }
-            return ListView.builder(
-              itemCount: snapshot.data!.length,
-              itemBuilder: (context, i) {
-                TextEditingController controller = TextEditingController(text: snapshot.data![i].descricao);
-                return Dismissible(
-                  key: UniqueKey(),
-                  background: Container(
-                    color: Colors.red,
-                    child: const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.white,
+
+                  const PopupMenuItem<int>(
+                    value: 2,
+                    child: Row(
+                      children:[
+                        Text("Desconectar",style: TextStyle(color: Colors.red),),
+                         SizedBox(width: 26),
+                        Icon(Icons.logout,color: Colors.red), 
+                      ],
+                    ),
+                  ),
+                ];
+              }, onSelected: (value) {
+                if (value == 0) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => Conta(),),);
+                  print("My account menu is selected.");
+                } else if (value == 1) {
+                  print("Settings menu is selected.");
+                } else if (value == 2) {
+                  print("Logout menu is selected.");
+                  _sair();
+                }
+              }),
+            ],
+          ),
+          floatingActionButton: FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () {
+              _showAlertDialog();
+            },
+          ),
+          body: StreamBuilder(
+            stream: DBService.fetchAll(),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<ListaModel>> snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.isEmpty) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Image.asset(
+                          "assets/naotemnada.png",
                         ),
                       ),
-                    ),
-                  ),
-                  secondaryBackground: Container(
-                    color: Colors.red,
-                    child: const Align(
-                      alignment: Alignment.centerRight,
-                      child: Padding(
-                        padding: EdgeInsets.all(10),
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.white,
+                      const Text(
+                        "Não tem listas",
+                        style: TextStyle(fontSize: 27),
+                      ),
+                    ],
+                  );
+                }
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, i) {
+                    TextEditingController controller = TextEditingController(
+                        text: snapshot.data![i].descricao);
+                    return Dismissible(
+                      key: UniqueKey(),
+                      background: Container(
+                        color: Colors.red,
+                        child: const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  onDismissed: (direction) {
-                    if (direction == DismissDirection.endToStart) {
-                      snapshot.data![i].reference!.delete();
-                    } else if (direction == DismissDirection.startToEnd) {
-                      snapshot.data![i].reference!.delete();
-                    }
-                  },
-                  child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ItemsPage(
-                                  model: snapshot.data![i],
-                                )));
+                      secondaryBackground: Container(
+                        color: Colors.red,
+                        child: const Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      onDismissed: (direction) {
+                        if (direction == DismissDirection.endToStart) {
+                          snapshot.data![i].reference!.delete();
+                        } else if (direction == DismissDirection.startToEnd) {
+                          snapshot.data![i].reference!.delete();
+                        }
                       },
-                      child: Padding(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ItemsPage(
+                                    model: snapshot.data![i],
+                                  )));
+                        },
+                        child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child:TextField(
-                                textAlign: TextAlign.center,
-                                controller: controller,
-                                decoration: InputDecoration(
-                                    suffixIcon: IconButton(
-                                  color: Colors.black,
-                                  icon: const Icon(Icons.folder_open),
-                                  onPressed: () {
-                                    Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) => ItemsPage(
-                                              model: snapshot.data![i],
-                                            ),),);
-                                  },
-                                ),),
-                                onSubmitted: (String value) {
-                                  snapshot.data![i].reference!
-                                      .update({"descricao": controller.text});
+                          child: TextField(
+                            textAlign: TextAlign.center,
+                            controller: controller,
+                            decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                color: Colors.black,
+                                icon: const Icon(Icons.folder_open),
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ItemsPage(
+                                        model: snapshot.data![i],
+                                      ),
+                                    ),
+                                  );
                                 },
-                              ),),),
+                              ),
+                            ),
+                            onSubmitted: (String value) {
+                              snapshot.data![i].reference!
+                                  .update({"descricao": controller.text});
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
                 );
-              },
-            );
-          } else if (snapshot.hasError) {
-            // Tratar erro, se necessário
-            return Text('Erro: ${snapshot.error}');
-          } else {
-            return const Center(
-                child: CircularProgressIndicator(
-              color: Colors.green,
-              backgroundColor: Colors.grey,
-            ));
-          }
-        },
-      ),
-    );
+              } else if (snapshot.hasError) {
+                // Tratar erro, se necessário
+                return Text('Erro: ${snapshot.error}');
+              } else {
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.green,
+                  backgroundColor: Colors.grey,
+                ));
+              }
+            },
+          ),
+        ));
   }
 
   // Future<void> _editar() async {
