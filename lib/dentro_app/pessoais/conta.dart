@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -8,8 +10,8 @@ class Conta extends StatefulWidget {
 
 class _ContaState extends State<Conta> {
   String? verNome;
-  final TextEditingController _displayNameController = TextEditingController();
   String? verEmail;
+  bool _indicador = false;
 
   @override
   void initState() {
@@ -72,42 +74,7 @@ class _ContaState extends State<Conta> {
             ),
             ElevatedButton(
               onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: Text('Atualizar Nome de Usuário'),
-                    content: TextFormField(
-                      controller: _displayNameController,
-                      decoration: InputDecoration(
-                        labelText: 'Novo Nome',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Cancelar'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          String newName = _displayNameController.text.trim();
-                          if (newName.isNotEmpty) {
-                            updateDisplayName(newName);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(
-                                      'Por favor, insira um nome válido.')),
-                            );
-                          }
-                        },
-                        child: Text('Salvar'),
-                      ),
-                    ],
-                  ),
-                );
+                EditName();
               },
               child: Text('Atualizar Nome'),
             ),
@@ -117,9 +84,118 @@ class _ContaState extends State<Conta> {
     );
   }
 
-  @override
-  void dispose() {
-    _displayNameController.dispose();
-    super.dispose();
+  Future<void> EditName() async {
+    TextEditingController controller = TextEditingController();
+    controller.text = verNome!;
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Atualizar Nome de Usuário'),
+          content: TextFormField(
+            controller: controller,
+            decoration: InputDecoration(
+              labelText: 'Novo Nome',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: <Widget>[
+            _indicador
+                ? const Center(
+                    child: CircularProgressIndicator(
+                    color: Colors.green,
+                    backgroundColor: Colors.grey,
+                  ))
+                : Text(''),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                if (controller.text.isNotEmpty) {
+                  _indicador = true;
+                  setState(() {});
+                  log(_indicador.toString());
+                  try {
+                    setState(() {});
+                    updateDisplayName(controller.text);
+                  } catch (e) {
+                    log(e.toString());
+                  } finally {
+                    _indicador = false;
+                    log(_indicador.toString());
+                  }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Por favor, insira um nome válido.')),
+                  );
+                }
+              },
+              child: Text('Salvar'),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
+  // Future<void> EditNome() async {
+  //   TextEditingController controller = TextEditingController();
+  //   controller.text = verNome!;
+  //   return showDialog<void>(
+  //     context: context,
+  //     builder: (BuildContext context) {
+  //       return AlertDialog(
+  //         title: const Text('Atualizar Nome de Usuário'),
+  //         content: Column(
+  //           children: [
+  //             TextFormField(
+  //               controller: controller,
+  //               decoration: InputDecoration(
+  //                 labelText: 'Novo Nome',
+  //                 border: OutlineInputBorder(),
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //         actions: <Widget>[
+  //           TextButton(
+  //             onPressed: () {
+  //               Navigator.pop(context);
+  //             },
+  //             child: Text('Cancelar'),
+  //           ),
+  //           _indicador
+  //               ? Text('Atualizando')
+  //               : TextButton(
+  //                   onPressed: () {
+  //                     if (controller.text.isNotEmpty) {
+  //                       _indicador = true;
+  //                       try {
+  //                         _indicador = false;
+  //                         updateDisplayName(controller.text);
+  //                       } catch (e) {
+  //                         _indicador = false;
+  //                         log(e.toString());
+  //                       } finally {
+  //                         _indicador = false;
+  //                       }
+  //                     } else {
+  //                       ScaffoldMessenger.of(context).showSnackBar(
+  //                         SnackBar(
+  //                             content:
+  //                                 Text('Por favor, insira um nome válido.')),
+  //                       );
+  //                     }
+  //                   },
+  //                   child: Text('Salvar'),
+  //                 ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }

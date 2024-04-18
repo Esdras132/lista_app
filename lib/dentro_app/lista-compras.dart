@@ -1,9 +1,11 @@
 import 'package:Lista_de_compras/dentro_app/items_page.dart';
+import 'package:Lista_de_compras/dentro_app/pessoais/configuracoes.dart';
 import 'package:Lista_de_compras/dentro_app/pessoais/conta.dart';
 import 'package:Lista_de_compras/firebase/model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:Lista_de_compras/firebase/db.service.dart';
+import 'package:flutter/widgets.dart';
 
 class ListaComprasPage extends StatefulWidget {
   const ListaComprasPage({super.key});
@@ -17,14 +19,14 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   var lista = [];
   TextEditingController _nomeController = TextEditingController();
   var checkedList = [];
-   
-   @override
+
+  @override
   void initState() {
     super.initState();
     Name();
   }
 
- Future<void> Name() async {
+  Future<void> Name() async {
     String? name = FirebaseAuth.instance.currentUser?.displayName;
     setState(() {
       verNome = name;
@@ -53,12 +55,13 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
           ) ??
           false;
     }
+
     // ignore: deprecated_member_use
     return WillPopScope(
         onWillPop: showExitPopup,
         child: Scaffold(
           appBar: AppBar(
-            title:  Text('Bem vindo '+ verNome!),
+            title: Text('Bem vindo ${verNome!}'),
             actions: [
               PopupMenuButton(itemBuilder: (context) {
                 return [
@@ -72,34 +75,46 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       ],
                     ),
                   ),
-
                   const PopupMenuItem<int>(
                     value: 1,
                     child: Row(
                       children: [
-                      Text("Configurações"),
-                      SizedBox(width: 10),
-                      Icon(Icons.settings),
+                        Text("Configurações"),
+                        SizedBox(width: 10),
+                        Icon(Icons.settings),
                       ],
                     ),
                   ),
-
                   const PopupMenuItem<int>(
                     value: 2,
                     child: Row(
-                      children:[
-                        Text("Desconectar",style: TextStyle(color: Colors.red),),
-                         SizedBox(width: 26),
-                        Icon(Icons.logout,color: Colors.red), 
+                      children: [
+                        Text(
+                          "Desconectar",
+                          style: TextStyle(color: Colors.red),
+                        ),
+                        SizedBox(width: 26),
+                        Icon(Icons.logout, color: Colors.red),
                       ],
                     ),
                   ),
                 ];
               }, onSelected: (value) {
                 if (value == 0) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => Conta(),),);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Conta(),
+                    ),
+                  );
                   print("My account menu is selected.");
                 } else if (value == 1) {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Config(),
+                    ),
+                  );
                   print("Settings menu is selected.");
                 } else if (value == 2) {
                   print("Logout menu is selected.");
@@ -112,6 +127,9 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             child: const Icon(Icons.add),
             onPressed: () {
               _showAlertDialog();
+              setState(() {
+                verNome!;
+              });
             },
           ),
           body: StreamBuilder(
