@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Lista_de_compras/firebase/model.dart';
+import 'package:Lista_de_compras/services/model.dart';
 import 'package:brasil_fields/brasil_fields.dart';
 
 class ItemsPage extends StatefulWidget {
@@ -257,7 +257,7 @@ class _ItemsPageState extends State<ItemsPage> {
   }
 
   Future<void> _edicaolista(int index) async {
-    TextEditingController controller = TextEditingController();   
+    TextEditingController controller = TextEditingController();
     TextEditingController controllerqtd = TextEditingController();
     TextEditingController controllervalor = TextEditingController();
 

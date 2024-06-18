@@ -1,10 +1,11 @@
 import 'package:Lista_de_compras/dentro_app/items_page.dart';
+import 'package:Lista_de_compras/dentro_app/itens_name.page.dart';
 import 'package:Lista_de_compras/dentro_app/pessoais/configuracoes.dart';
 import 'package:Lista_de_compras/dentro_app/pessoais/conta.dart';
-import 'package:Lista_de_compras/firebase/model.dart';
+import 'package:Lista_de_compras/services/model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:Lista_de_compras/firebase/db.service.dart';
+import 'package:Lista_de_compras/services/db.service.dart';
 import 'package:flutter/widgets.dart';
 
 class ListaComprasPage extends StatefulWidget {
@@ -57,11 +58,21 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
     }
 
     // ignore: deprecated_member_use
-    return WillPopScope(
+    return DefaultTabController(
+      initialIndex: 0, 
+      length:2,
+      // ignore: deprecated_member_use
+      child: WillPopScope(
         onWillPop: showExitPopup,
         child: Scaffold(
           appBar: AppBar(
             title: Text('Bem vindo ${verNome!}'),
+            bottom: TabBar(
+                      tabs: [
+                          Tab(text: "Com preço",),
+                          Tab(text: "Sem preço",),
+                      ]
+                    ),
             actions: [
               PopupMenuButton(itemBuilder: (context) {
                 return [
@@ -110,7 +121,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                   print("My account menu is selected.");
                 } else if (value == 1) {
                   Navigator.push(
-                    context,
+                    context,  
                     MaterialPageRoute(
                       builder: (context) => Config(),
                     ),
@@ -123,17 +134,43 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
               }),
             ],
           ),
-          floatingActionButton: FloatingActionButton(
+                floatingActionButton: Builder(
+        builder: (BuildContext context) {
+          return FloatingActionButton(
             child: const Icon(Icons.add),
             onPressed: () {
-              _showAlertDialog();
-              setState(() {
-                verNome!;
-              });
+              final RenderBox button = context.findRenderObject() as RenderBox;
+              final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
+              final Offset buttonPosition = button.localToGlobal(Offset.zero, ancestor: overlay);
+              final RelativeRect position = RelativeRect.fromLTRB(
+                buttonPosition.dx,
+                buttonPosition.dy - 115, // Ajuste o valor conforme necessário
+                buttonPosition.dx + button.size.width,
+                buttonPosition.dy + button.size.height - 100,
+              );
+
+              showMenu(
+                context: context,
+                position: position,
+                items: <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    onTap: () => _showAlertDialogCom(),
+                    child: Text('Lista sem preço'),
+                  ),
+                  PopupMenuItem<String>(
+                    onTap: () => _showAlertDialogSem(),
+                    child: Text('Lista sem preço'),
+                  ),
+                ],
+              );
             },
-          ),
-          body: StreamBuilder(
-            stream: DBService.fetchAll(),
+          );
+        },
+      ),
+          body: TabBarView(children: [
+            Container(
+              child: StreamBuilder(
+            stream: DBserviceCom.fetchAll(),
             builder: (BuildContext context,
                 AsyncSnapshot<List<ListaModel>> snapshot) {
               if (snapshot.hasData) {
@@ -244,7 +281,122 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
               }
             },
           ),
-        ));
+            ),
+            Container(
+            child: StreamBuilder(
+            stream: DBserviceSem.fetchAll(),
+            builder: (BuildContext context,
+                AsyncSnapshot<List<NameModel>> snapshot) {
+              if (snapshot.hasData) {
+                if (snapshot.data!.isEmpty) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Image.asset(
+                          "assets/naotemnada.png",
+                        ),
+                      ),
+                      const Text(
+                        "Não tem listas",
+                        style: TextStyle(fontSize: 27),
+                      ),
+                    ],
+                  );
+                }
+                return ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, i) {
+                    TextEditingController controller = TextEditingController(
+                        text: snapshot.data![i].descricao);
+                    return Dismissible(
+                      key: UniqueKey(),
+                      background: Container(
+                        color: Colors.red,
+                        child: const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      secondaryBackground: Container(
+                        color: Colors.red,
+                        child: const Align(
+                          alignment: Alignment.centerRight,
+                          child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Icon(
+                              Icons.delete,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                      onDismissed: (direction) {
+                        if (direction == DismissDirection.endToStart) {
+                          snapshot.data![i].reference!.delete();
+                        } else if (direction == DismissDirection.startToEnd) {
+                          snapshot.data![i].reference!.delete();
+                        }
+                      },
+                      child: ElevatedButton(
+                        onPressed: () {
+                           Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => ItemsNamePage(
+                                    model: snapshot.data![i],
+                                  ))); 
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            textAlign: TextAlign.center,
+                            controller: controller,
+                            decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                color: Colors.black,
+                                icon: const Icon(Icons.folder_open),
+                                onPressed: () {
+                                   Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) => ItemsNamePage(
+                                        model: snapshot.data![i],
+                                      ),
+                                    ),
+                                  ); 
+                                },
+                              ),
+                            ),
+                            onSubmitted: (String value) {
+                              snapshot.data![i].reference!
+                                  .update({"descricao": controller.text});
+                            },
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                );
+              } else if (snapshot.hasError) {
+                return Text('Erro: ${snapshot.error}');
+              } else {
+                return const Center(
+                    child: CircularProgressIndicator(
+                  color: Colors.green,
+                  backgroundColor: Colors.grey,
+                ));
+              }
+            },
+          ),
+            )
+          ])
+        )));
   }
 
   // Future<void> _editar() async {
@@ -313,7 +465,57 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
     );
   }
 
-  Future<void> _showAlertDialog() async {
+    Future<void> _showAlertDialogSem() async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Item para Comprar'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                autofocus: true,
+                controller: _nomeController,
+                decoration: const InputDecoration(labelText: 'Nome do Item'),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancelar'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _nomeController.text = '';
+              },
+            ),
+            TextButton(
+              child: const Text('Adicionar'),
+              onPressed: () {
+                if (_nomeController.text.isEmpty) {
+                  _showEmptyFieldsDialog();
+                } else {
+                  if (_nomeController.text.contains(RegExp(r'[.,].*[.,]'))) {
+                    _showInvalidInputAlert();
+                  } else {
+                    setState(() {
+                      NameModel model = NameModel(
+                          descricao: _nomeController.text, itensName: []);
+                      DBserviceSem.createMyList(model);
+                      _nomeController.text = '';
+                      Navigator.pop(context);
+                    });
+                  }
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> _showAlertDialogCom() async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
@@ -349,7 +551,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                     setState(() {
                       ListaModel model = ListaModel(
                           descricao: _nomeController.text, items: []);
-                      DBService.createMyList(model);
+                      DBserviceCom.createMyList(model);
                       _nomeController.text = '';
                       Navigator.pop(context);
                     });

@@ -47,16 +47,16 @@ class ItemModel {
   ItemModel({this.descricao = '', this.quantidade = 0.0, this.valor = 0.0});
 
   getTotal() {
-      return quantidade! * valor!;
+    return quantidade! * valor!;
   }
-      getRegra() {
+
+  getRegra() {
     if (getTotal().toString().length > 15) {
       return getTotal().toString().substring(0, 15);
     } else {
       return getTotal();
     }
   }
-
 
   ItemModel.map(dynamic map) {
     descricao = map["descricao"];
@@ -69,6 +69,50 @@ class ItemModel {
       "descricao": descricao,
       "valor": valor,
       "quantidade": quantidade,
+    };
+  }
+}
+
+
+
+//name
+class NameModel {
+  DocumentReference? reference;
+  String? descricao;
+  List<ItensNameModel>? itensName;
+
+  NameModel({this.descricao = '', this.itensName = const []});
+
+  NameModel.map(QueryDocumentSnapshot snapshot) {
+    reference = snapshot.reference;
+    descricao = snapshot.get('descricao');
+    itensName = (snapshot.get('items') as List)
+        .map((e) => ItensNameModel.map(e))
+        .toList();
+  }
+  toMap() {
+    return {
+      "descricao": descricao,
+      "items": itensName!.map((e) => e.toMap()).toList()
+    };
+  }
+    update() {
+    reference!.update(toMap());
+  }
+}
+
+class ItensNameModel {
+  String? descricao;
+  bool checked = false;
+
+  ItensNameModel({this.descricao = ''});
+
+    ItensNameModel.map(dynamic map) {
+    descricao = map["descricao"];
+  }
+  toMap() {
+    return {
+      "descricao": descricao,
     };
   }
 }

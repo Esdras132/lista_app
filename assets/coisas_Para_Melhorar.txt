@@ -14,3 +14,8 @@ Sinta-se à vontade para adicionar ou remover itens conforme necessário, com ba
 
 
 Dar uma melhorar na tela de login 
+
+
+
+dar uma olhada 
+https://www.fluttercampus.com/guide/281/create-shortcuts-quick-links-in-home-screen-flutter/

@@ -42,8 +42,8 @@ class _ConfigState extends State<Config> {
 
   void copiar() {
     Clipboard.setData(ClipboardData(text: _url.toString()));
-    final snackBar =
-       const SnackBar(content: Text('Link copiado para a área de transferência'));
+    const snackBar =
+       SnackBar(content: Text('Link copiado para a área de transferência'));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
