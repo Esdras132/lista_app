@@ -59,160 +59,168 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
 
     // ignore: deprecated_member_use
     return DefaultTabController(
-      initialIndex: 0, 
-      length:2,
-      // ignore: deprecated_member_use
-      child: WillPopScope(
-        onWillPop: showExitPopup,
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text('Bem vindo ${verNome!}'),
-            bottom: TabBar(
-                      tabs: [
-                          Tab(text: "Com preço",),
-                          Tab(text: "Sem preço",),
-                      ]
+        initialIndex: 0,
+        length: 2,
+        // ignore: deprecated_member_use
+        child: WillPopScope(
+            onWillPop: showExitPopup,
+            child: Scaffold(
+                appBar: AppBar(
+                  title: Text('Bem vindo ${verNome!}'),
+                  bottom: TabBar(tabs: [
+                    Tab(
+                      text: "Com preço",
                     ),
-            actions: [
-              PopupMenuButton(itemBuilder: (context) {
-                return [
-                  const PopupMenuItem<int>(
-                    value: 0,
-                    child: Row(
-                      children: [
-                        Text('Conta'),
-                        SizedBox(width: 65),
-                        Icon(Icons.account_circle_outlined),
-                      ],
+                    Tab(
+                      text: "Sem preço",
                     ),
-                  ),
-                  const PopupMenuItem<int>(
-                    value: 1,
-                    child: Row(
-                      children: [
-                        Text("Configurações"),
-                        SizedBox(width: 10),
-                        Icon(Icons.settings),
-                      ],
-                    ),
-                  ),
-                  const PopupMenuItem<int>(
-                    value: 2,
-                    child: Row(
-                      children: [
-                        Text(
-                          "Desconectar",
-                          style: TextStyle(color: Colors.red),
+                  ]),
+                  actions: [
+                    PopupMenuButton(itemBuilder: (context) {
+                      return [
+                        const PopupMenuItem<int>(
+                          value: 0,
+                          child: Row(
+                            children: [
+                              Text('Conta'),
+                              SizedBox(width: 65),
+                              Icon(Icons.account_circle_outlined),
+                            ],
+                          ),
                         ),
-                        SizedBox(width: 26),
-                        Icon(Icons.logout, color: Colors.red),
-                      ],
-                    ),
-                  ),
-                ];
-              }, onSelected: (value) {
-                if (value == 0) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => Conta(),
-                    ),
-                  );
-                  print("My account menu is selected.");
-                } else if (value == 1) {
-                  Navigator.push(
-                    context,  
-                    MaterialPageRoute(
-                      builder: (context) => Config(),
-                    ),
-                  );
-                  print("Settings menu is selected.");
-                } else if (value == 2) {
-                  print("Logout menu is selected.");
-                  _sair();
-                }
-              }),
-            ],
-          ),
+                        const PopupMenuItem<int>(
+                          value: 1,
+                          child: Row(
+                            children: [
+                              Text("Configurações"),
+                              SizedBox(width: 10),
+                              Icon(Icons.settings),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem<int>(
+                          value: 2,
+                          child: Row(
+                            children: [
+                              Text(
+                                "Desconectar",
+                                style: TextStyle(color: Colors.red),
+                              ),
+                              SizedBox(width: 26),
+                              Icon(Icons.logout, color: Colors.red),
+                            ],
+                          ),
+                        ),
+                      ];
+                    }, onSelected: (value) {
+                      if (value == 0) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Conta(),
+                          ),
+                        );
+                        print("My account menu is selected.");
+                      } else if (value == 1) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Config(),
+                          ),
+                        );
+                        print("Settings menu is selected.");
+                      } else if (value == 2) {
+                        print("Logout menu is selected.");
+                        _sair();
+                      }
+                    }),
+                  ],
+                ),
                 floatingActionButton: Builder(
-        builder: (BuildContext context) {
-          return FloatingActionButton(
-            child: const Icon(Icons.add),
-            onPressed: () {
-              final RenderBox button = context.findRenderObject() as RenderBox;
-              final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
-              final Offset buttonPosition = button.localToGlobal(Offset.zero, ancestor: overlay);
-              final RelativeRect position = RelativeRect.fromLTRB(
-                buttonPosition.dx,
-                buttonPosition.dy - 115, // Ajuste o valor conforme necessário
-                buttonPosition.dx + button.size.width,
-                buttonPosition.dy + button.size.height - 100,
-              );
+                  builder: (BuildContext context) {
+                    return FloatingActionButton(
+                      child: const Icon(Icons.add),
+                      onPressed: () {
+                        final RenderBox button =
+                            context.findRenderObject() as RenderBox;
+                        final RenderBox overlay = Overlay.of(context)
+                            .context
+                            .findRenderObject() as RenderBox;
+                        final Offset buttonPosition = button
+                            .localToGlobal(Offset.zero, ancestor: overlay);
+                        final RelativeRect position = RelativeRect.fromLTRB(
+                          buttonPosition.dx,
+                          buttonPosition.dy -
+                              115, // Ajuste o valor conforme necessário
+                          buttonPosition.dx + button.size.width,
+                          buttonPosition.dy + button.size.height - 100,
+                        );
 
-              showMenu(
-                context: context,
-                position: position,
-                items: <PopupMenuEntry<String>>[
-                  PopupMenuItem<String>(
-                    onTap: () => _showAlertDialogCom(),
-                    child: Text('Lista sem preço'),
-                  ),
-                  PopupMenuItem<String>(
-                    onTap: () => _showAlertDialogSem(),
-                    child: Text('Lista sem preço'),
-                  ),
-                ],
-              );
-            },
-          );
-        },
-      ),
-          body: TabBarView(children: [
-            Container(
-              child: StreamBuilder(
-            stream: DBserviceCom.fetchAll(),
-            builder: (BuildContext context,
-                AsyncSnapshot<List<ListaModel>> snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isEmpty) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Image.asset(
-                          "assets/naotemnada.png",
-                        ),
-                      ),
-                      const Text(
-                        "Não tem listas",
-                        style: TextStyle(fontSize: 27),
-                      ),
-                    ],
-                  );
-                }
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, i) {
-                    TextEditingController controller = TextEditingController(
-                        text: snapshot.data![i].descricao);
-                    return Dismissible(
-                      key: UniqueKey(),
-                      background: Container(
-                        color: Colors.red,
-                        child: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.white,
+                        showMenu(
+                          context: context,
+                          position: position,
+                          items: <PopupMenuEntry<String>>[
+                            PopupMenuItem<String>(
+                              onTap: () => _showAlertDialogCom(),
+                              child: Text('Lista com preço'),
                             ),
-                          ),
-                        ),
-                      ),
-                      secondaryBackground: Container(
+                            PopupMenuItem<String>(
+                              onTap: () => _showAlertDialogSem(),
+                              child: Text('Lista sem preço'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                ),
+                body: TabBarView(children: [
+                  Container(
+                    child: StreamBuilder(
+                      stream: DBserviceCom.fetchAll(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<ListaModel>> snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data!.isEmpty) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Image.asset(
+                                    "assets/naotemnada.png",
+                                  ),
+                                ),
+                                const Text(
+                                  "Não tem listas",
+                                  style: TextStyle(fontSize: 27),
+                                ),
+                              ],
+                            );
+                          }
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, i) {
+                              TextEditingController controller =
+                                  TextEditingController(
+                                      text: snapshot.data![i].descricao);
+                              return Dismissible(
+                                key: UniqueKey(),
+                                background: Container(
+                                  color: Colors.red,
+                                  child: const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+/*                       secondaryBackground: Container(
                         color: Colors.red,
                         child: const Align(
                           alignment: Alignment.centerRight,
@@ -224,179 +232,193 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                             ),
                           ),
                         ),
-                      ),
-                      onDismissed: (direction) {
-                        if (direction == DismissDirection.endToStart) {
+                      ), */
+                                onDismissed: (direction) {
+                                  if (direction ==
+                                      DismissDirection.endToStart) {
+                                    snapshot.data![i].reference!.delete();
+                                  } /* else if (direction == DismissDirection.startToEnd) {
                           snapshot.data![i].reference!.delete();
-                        } else if (direction == DismissDirection.startToEnd) {
-                          snapshot.data![i].reference!.delete();
+                        } */
+                                },
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => ItemsPage(
+                                                  model: snapshot.data![i],
+                                                )));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: TextField(
+                                      textAlign: TextAlign.center,
+                                      controller: controller,
+                                      decoration: InputDecoration(
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(12.0),
+                                          borderSide: const BorderSide(
+                                            color: Colors.blue,
+                                            width: 1.0,
+                                          ),
+                                        ),
+                                        suffixIcon: IconButton(
+                                          color: Colors.black,
+                                          icon: const Icon(Icons.folder_open),
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) => ItemsPage(
+                                                  model: snapshot.data![i],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      onSubmitted: (String value) {
+                                        snapshot.data![i].reference!.update(
+                                            {"descricao": controller.text});
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          // Tratar erro, se necessário
+                          return Text('Erro: ${snapshot.error}');
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.green,
+                            backgroundColor: Colors.grey,
+                          ));
                         }
                       },
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ItemsPage(
-                                    model: snapshot.data![i],
-                                  )));
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            controller: controller,
-                            decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                color: Colors.black,
-                                icon: const Icon(Icons.folder_open),
-                                onPressed: () {
-                                  Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => ItemsPage(
-                                        model: snapshot.data![i],
+                    ),
+                  ),
+                  Container(
+                    child: StreamBuilder(
+                      stream: DBserviceSem.fetchAll(),
+                      builder: (BuildContext context,
+                          AsyncSnapshot<List<NameModel>> snapshot) {
+                        if (snapshot.hasData) {
+                          if (snapshot.data!.isEmpty) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Image.asset(
+                                    "assets/naotemnada.png",
+                                  ),
+                                ),
+                                const Text(
+                                  "Não tem listas",
+                                  style: TextStyle(fontSize: 27),
+                                ),
+                              ],
+                            );
+                          }
+                          return ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (context, i) {
+                              TextEditingController controller =
+                                  TextEditingController(
+                                      text: snapshot.data![i].descricao);
+                              return Dismissible(
+                                key: UniqueKey(),
+                                background: Container(
+                                  color: Colors.red,
+                                  child: const Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
                                       ),
                                     ),
-                                  );
+                                  ),
+                                ),
+                                secondaryBackground: Container(
+                                  color: Colors.red,
+                                  child: const Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Padding(
+                                      padding: EdgeInsets.all(10),
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                onDismissed: (direction) {
+                                  if (direction ==
+                                      DismissDirection.endToStart) {
+                                    snapshot.data![i].reference!.delete();
+                                  } else if (direction ==
+                                      DismissDirection.startToEnd) {
+                                    snapshot.data![i].reference!.delete();
+                                  }
                                 },
-                              ),
-                            ),
-                            onSubmitted: (String value) {
-                              snapshot.data![i].reference!
-                                  .update({"descricao": controller.text});
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.of(context)
+                                        .push(MaterialPageRoute(
+                                            builder: (context) => ItemsNamePage(
+                                                  model: snapshot.data![i],
+                                                )));
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: TextField(
+                                      textAlign: TextAlign.center,
+                                      controller: controller,
+                                      decoration: InputDecoration(
+                                        suffixIcon: IconButton(
+                                          color: Colors.black,
+                                          icon: const Icon(Icons.folder_open),
+                                          onPressed: () {
+                                            Navigator.of(context).push(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    ItemsNamePage(
+                                                  model: snapshot.data![i],
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      onSubmitted: (String value) {
+                                        snapshot.data![i].reference!.update(
+                                            {"descricao": controller.text});
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              );
                             },
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                // Tratar erro, se necessário
-                return Text('Erro: ${snapshot.error}');
-              } else {
-                return const Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.green,
-                  backgroundColor: Colors.grey,
-                ));
-              }
-            },
-          ),
-            ),
-            Container(
-            child: StreamBuilder(
-            stream: DBserviceSem.fetchAll(),
-            builder: (BuildContext context,
-                AsyncSnapshot<List<NameModel>> snapshot) {
-              if (snapshot.hasData) {
-                if (snapshot.data!.isEmpty) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Image.asset(
-                          "assets/naotemnada.png",
-                        ),
-                      ),
-                      const Text(
-                        "Não tem listas",
-                        style: TextStyle(fontSize: 27),
-                      ),
-                    ],
-                  );
-                }
-                return ListView.builder(
-                  itemCount: snapshot.data!.length,
-                  itemBuilder: (context, i) {
-                    TextEditingController controller = TextEditingController(
-                        text: snapshot.data![i].descricao);
-                    return Dismissible(
-                      key: UniqueKey(),
-                      background: Container(
-                        color: Colors.red,
-                        child: const Align(
-                          alignment: Alignment.centerLeft,
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      secondaryBackground: Container(
-                        color: Colors.red,
-                        child: const Align(
-                          alignment: Alignment.centerRight,
-                          child: Padding(
-                            padding: EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                      onDismissed: (direction) {
-                        if (direction == DismissDirection.endToStart) {
-                          snapshot.data![i].reference!.delete();
-                        } else if (direction == DismissDirection.startToEnd) {
-                          snapshot.data![i].reference!.delete();
+                          );
+                        } else if (snapshot.hasError) {
+                          return Text('Erro: ${snapshot.error}');
+                        } else {
+                          return const Center(
+                              child: CircularProgressIndicator(
+                            color: Colors.green,
+                            backgroundColor: Colors.grey,
+                          ));
                         }
                       },
-                      child: ElevatedButton(
-                        onPressed: () {
-                           Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => ItemsNamePage(
-                                    model: snapshot.data![i],
-                                  ))); 
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: TextField(
-                            textAlign: TextAlign.center,
-                            controller: controller,
-                            decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                color: Colors.black,
-                                icon: const Icon(Icons.folder_open),
-                                onPressed: () {
-                                   Navigator.of(context).push(
-                                    MaterialPageRoute(
-                                      builder: (context) => ItemsNamePage(
-                                        model: snapshot.data![i],
-                                      ),
-                                    ),
-                                  ); 
-                                },
-                              ),
-                            ),
-                            onSubmitted: (String value) {
-                              snapshot.data![i].reference!
-                                  .update({"descricao": controller.text});
-                            },
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                );
-              } else if (snapshot.hasError) {
-                return Text('Erro: ${snapshot.error}');
-              } else {
-                return const Center(
-                    child: CircularProgressIndicator(
-                  color: Colors.green,
-                  backgroundColor: Colors.grey,
-                ));
-              }
-            },
-          ),
-            )
-          ])
-        )));
+                    ),
+                  )
+                ]))));
   }
 
   // Future<void> _editar() async {
@@ -465,7 +487,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
     );
   }
 
-    Future<void> _showAlertDialogSem() async {
+  Future<void> _showAlertDialogSem() async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {

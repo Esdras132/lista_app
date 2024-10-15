@@ -28,7 +28,7 @@ class _ItemsPageState extends State<ItemsPage> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
-              '    ${widget.model.descricao!.length > 30 ? '${widget.model.descricao!.substring(0, 30)}...' : widget.model.descricao!} ',
+              '${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} ',
               style: const TextStyle(fontSize: 20),
             ),
             Text(

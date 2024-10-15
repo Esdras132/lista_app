@@ -12,7 +12,12 @@
           "package_name": "minhalista.esdras.com"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "691238128310-rmtmukhfsqc71kf64ogl57udiqmd33p8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCh4jeLfIh_vPYky12hj-YChkquEMJhAYs"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691238128310-rmtmukhfsqc71kf64ogl57udiqmd33p8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

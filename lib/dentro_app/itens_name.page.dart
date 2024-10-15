@@ -21,7 +21,16 @@ class _ItemsPageState extends State<ItemsNamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.model.descricao!),
+        flexibleSpace: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Text('${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} ',
+              style: const TextStyle(fontSize: 20),),
+            Text(
+                " Quantidade: ${widget.model.itensName!.length.toString()}",
+                style: const TextStyle(fontSize: 17)),
+          ],
+        ),
         actions: <Widget>[
           (widget.model.itensName!.where((a) => a.checked == true).isNotEmpty)
               ? IconButton(
