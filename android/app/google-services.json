@@ -7,6 +7,35 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:691238128310:android:38601d3356792fe25d7417",
+        "android_client_info": {
+          "package_name": "com.example.lista_de_compras"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "691238128310-rmtmukhfsqc71kf64ogl57udiqmd33p8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCh4jeLfIh_vPYky12hj-YChkquEMJhAYs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "691238128310-rmtmukhfsqc71kf64ogl57udiqmd33p8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:691238128310:android:f5d742d676d54b765d7417",
         "android_client_info": {
           "package_name": "minhalista.esdras.com"

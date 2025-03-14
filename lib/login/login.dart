@@ -1,6 +1,6 @@
 import "dart:developer";
-import "package:Lista_de_compras/login/Redefinir_senha.dart";
-import 'package:Lista_de_compras/login/sign-up_page.dart';
+import "package:lista_de_compras/login/Redefinir_senha.dart";
+import 'package:lista_de_compras/login/sign-up_page.dart';
 import "package:email_validator/email_validator.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:Lista_de_compras/services/model.dart';
+import 'package:lista_de_compras/services/item.model.dart';
 
 class ItemsNamePage extends StatefulWidget {
   final NameModel model;

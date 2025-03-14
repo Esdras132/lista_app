@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:Lista_de_compras/dentro_app/lista-compras.dart';
+import 'package:lista_de_compras/dentro_app/lista-compras.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 

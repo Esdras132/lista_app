@@ -1,4 +1,4 @@
-import 'package:Lista_de_compras/login/login.dart';
+import 'package:lista_de_compras/login/login.dart';
 import 'package:flutter/material.dart';
 
 // ignore: camel_case_types

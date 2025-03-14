@@ -17,7 +17,7 @@ class _ConfigState extends State<Config> {
   List<String> listliguagens = ["PT-BR", "EN"];
   String selectvall = "PT-BR";
   final Uri _url =
-      Uri.parse('https://www.instagram.com/esdras_cubo/');
+      Uri.parse('https://www.instagram.com/esdrasleviti/');
   late PackageInfo _packageInfo;
 
   @override
