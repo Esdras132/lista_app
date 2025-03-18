@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import "dart:developer";
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -12,232 +12,239 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  TextEditingController _email = TextEditingController();
-  TextEditingController _senha = TextEditingController();
-  TextEditingController _confirmacaoSenha = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _senha = TextEditingController();
+  final TextEditingController _confirmacaoSenha = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool passenable = true;
   bool passenableCon = true;
   bool _indicador = false;
+  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+
+    Future<void> _salvarCredenciais(String email, String senha) async {
+    await _secureStorage.write(key: 'saved_email', value: email);
+    await _secureStorage.write(key: 'saved_password', value: senha);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'Cadastro',
+          style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
         ),
-        body: Container(
-          alignment: Alignment.topCenter,
-          child: 
-          _indicador
-          ? const Center(
-              child: CircularProgressIndicator(
-              color: Colors.green,
-              backgroundColor: Colors.grey,
-            ))
-          : naoTemCadastro(),
-        ));
-  }
-
-  naoTemCadastro() {
-    return SingleChildScrollView(
-      child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: AutofillGroup(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  //Imagem principal
-                  Image.asset(
-                    "assets/logo_lista.png",
-                    width: 100,
-                    alignment: Alignment.center,
-                  ),
-                  //aqui é o final
-
-                  //Email
-                  TextFormField(
-                    autofocus: true,
-                    cursorColor: Colors.green,
-                    autofillHints: const [AutofillHints.email],
-                    onEditingComplete: () => TextInput.finishAutofillContext(),
-                    controller: _email,
-                    validator: (value) {
-                      if (value == null) {
-                        return 'coloque um E-mail valido';
-                      } else if (!EmailValidator.validate(value)) {
-                        return 'coloque um E-mail valido';
-                      } else {
-                        return null;
-                      }
-                    },
-                    decoration: const InputDecoration(
-                        labelText: 'Email',
-                        suffix: Padding(
-                          padding: EdgeInsets.all(5),
-                          child: Icon(
-                            Icons.email,
-                            color: Colors.green,
-                          ),
-                        )),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  //aqui finaliza
-
-                  //Senha principal
-                  TextFormField(
-                    obscureText: passenable,
-                    cursorColor: Colors.green,
-                    controller: _senha,
-                    autofillHints: const [AutofillHints.password],
-                    validator: (value) {
-                      if (value!.length < 6) {
-                        return 'Precisa que sua senha tenha mais de 6 digitos';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      labelText: "Senha",
-                      suffix: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (passenable) {
-                              passenable = false;
-                            } else {
-                              passenable = true;
-                            }
-                          });
-                        },
-                        icon: Icon(
-                          passenable == true
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: Colors.green,
-                        ),
-                      ),
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  //Aqui termina
-
-                  ///confirmação de Senha
-                  TextFormField(
-                    obscureText: passenableCon,
-                    cursorColor: Colors.green,
-                    controller: _confirmacaoSenha,
-                    autofillHints: const [AutofillHints.password],
-                    onEditingComplete: () => TextInput.finishAutofillContext(),
-                    validator: (value) {
-                      if (value!.length < 6) {
-                        return 'Precisa que sua senha tenha mais de 6 digitos';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                      labelText: 'Confirmação Senha',
-                      suffix: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            if (passenableCon) {
-                              passenableCon = false;
-                            } else {
-                              passenableCon = true;
-                            }
-                          });
-                        },
-                        icon: Icon(
-                          passenableCon == true
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: Colors.green,
-                          weight: 5,
-                        ),
-                      ),
-                    ),
-                    textInputAction: TextInputAction.next,
-                  ),
-                  //aqui finaliza
-
-                  Container(
-                      width: MediaQuery.of(context).size.width,
-                      color: Colors.green,
-                      margin: const EdgeInsets.all(16.0),
-                      child: TextButton(
-                        onPressed: () async {
-                          final form = _formKey.currentState!;
-                          if (form.validate()) {
-                            if (_senha.text != _confirmacaoSenha.text) {
-                              _naoEstao();
-                            } else {
-                              if (_senha.text == _confirmacaoSenha.text &&
-                                  _email.text.isNotEmpty) {
-                                    _indicador = true;
-                                try {
-                                  TextInput.finishAutofillContext();
-                                  await FirebaseAuth.instance
-                                      .createUserWithEmailAndPassword(
-                                          email: _email.text.trim(),
-                                          password: _senha.text.trim());
-                                  // ignore: use_build_context_synchronously
-                                  Navigator.pop(context);
-                                } catch (e) {
-                                  _jaExiste();
-                                  log(e.toString());
-                                } finally{
-                                  _indicador = false;
-                                }
-                              }
-                            }
-                          }
-                        },
-                        child: const Text(
-                          'Cadastrar',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ))
-                ],
-              ),
-            ),
-          )),
+      ),
+      body: Center(
+        child: _indicador
+            ? const CircularProgressIndicator(
+                color: Colors.green,
+                backgroundColor: Colors.grey,
+              )
+            : _buildForm(),
+      ),
     );
   }
 
-  Future _naoEstao() async {
-    return showDialog<void>(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Atenção'),
-            content: const Text(
-                'Para continuar os campos senha e confirmação de senha precisão esta iquais'),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
+  Widget _buildForm() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20.0),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              "assets/logo_lista.png",
+              width: 100,
+              alignment: Alignment.center,
+            ),
+            const SizedBox(height: 20),
+
+            _buildTextField(
+              controller: _email,
+              label: 'Email',
+              obscureText: false,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Digite um E-mail válido';
+                } else if (!EmailValidator.validate(value)) {
+                  return 'E-mail inválido';
+                }
+                return null;
+              },
+              keyboardType: TextInputType.emailAddress,
+              icon: Icons.email,
+            ),
+
+            _buildTextField(
+              controller: _senha,
+              label: 'Senha',
+              obscureText: passenable,
+              validator: (value) {
+                if (value == null || value.length < 6) {
+                  return 'Senha precisa ter pelo menos 6 caracteres';
+                }
+                return null;
+              },
+              keyboardType: TextInputType.visiblePassword,
+              icon: passenable ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+              onIconPress: () {
+                setState(() {
+                  passenable = !passenable;
+                });
+              },
+            ),
+
+            _buildTextField(
+              controller: _confirmacaoSenha,
+              label: 'Confirme a Senha',
+              obscureText: passenableCon,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'A confirmação da senha precisa ser preenchida';
+                } else if (value != _senha.text) {
+                  return 'As senhas não coincidem';
+                }
+                return null;
+              },
+              keyboardType: TextInputType.visiblePassword,
+              icon: passenableCon ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+              onIconPress: () {
+                setState(() {
+                  passenableCon = !passenableCon;
+                });
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(30),
+                gradient: LinearGradient(
+                  colors: [Colors.green.shade400, Colors.green.shade700],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              margin: const EdgeInsets.all(16.0),
+              child: TextButton(
+                onPressed: _signUp,
+                child: const Text(
+                  'Cadastrar',
+                  style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Já tem uma conta? ', style: TextStyle(fontSize: 16)),
+                GestureDetector(
+                  onTap: () {
                     Navigator.pop(context);
                   },
-                  child: const Text('OK'))
-            ],
-          );
-        });
+                  child: const Text(
+                    'Entrar',
+                    style: TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
-  Future<void> _jaExiste() async {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Alerta'),
-            content: const Text('Esse email ja esta logado em outra conta'),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text('OK'))
-            ],
-          );
+  Future<void> _signUp() async {
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _indicador = true;
+      });
+      try {
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _email.text,
+          password: _senha.text,
+        );
+        
+        
+        await _salvarCredenciais(_email.text, _senha.text);
+        Navigator.pop(context);
+      } catch (e) {
+        log(e.toString());
+        _showErrorDialog('Esse e-mail já está registrado em outra conta');
+      } finally {
+        setState(() {
+          _indicador = false;
         });
+      }
+    }
+  }
+
+  Future<void> _showErrorDialog(String message) async {
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Erro'),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String label,
+    required bool obscureText,
+    required String? Function(String?) validator,
+    required TextInputType keyboardType,
+    required IconData icon,
+    void Function()? onIconPress,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        cursorColor: Colors.green,
+        keyboardType: keyboardType,
+        validator: validator,
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: Colors.green),
+          contentPadding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 15.0),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: const BorderSide(color: Colors.green, width: 2),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(30),
+            borderSide: const BorderSide(color: Colors.green, width: 2),
+          ),
+          suffixIcon: IconButton(
+            onPressed: onIconPress,
+            icon: Icon(icon, color: Colors.green),
+          ),
+        ),
+      ),
+    );
   }
 }

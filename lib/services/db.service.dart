@@ -1,7 +1,8 @@
-import 'package:lista_de_compras/services/Lista.model.dart';
-import 'package:lista_de_compras/services/item.model.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lista_de_compras/model/lista.model.dart';
+import 'package:lista_de_compras/model/name.model.dart';
 
 class DBserviceCom {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;

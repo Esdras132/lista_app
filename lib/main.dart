@@ -1,6 +1,6 @@
 
-import 'package:lista_de_compras/login/login.dart';
-import 'package:lista_de_compras/login/verifyEmail.dart';
+import 'package:lista_de_compras/dentro_app/home/home.dart';
+import 'package:lista_de_compras/intro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -28,10 +28,11 @@ class MyApp extends StatelessWidget {
           stream: auth.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              print(snapshot.data!.uid);
-              return const verifyEmail();
+              /* print(snapshot.data!.uid); */
+              return const ListaComprasPage();
             }
-            return const loginpage();
+            return const Intro();
+            /* return const loginpage(); */
           },
         ));
   }

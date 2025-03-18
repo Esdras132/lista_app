@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:lista_de_compras/services/item.model.dart';
+import 'package:lista_de_compras/model/item.model.dart';
+
 
 class ListaModel {
   DocumentReference? reference;
@@ -12,7 +13,7 @@ class ListaModel {
       return 0.0;
     }
     double total = items!
-        .map((item) => item.valor! * item.quantidade!)
+        .map((item) => item.valor!.toDouble() * item.quantidade!)
         .reduce((valorAtual, elemento) => valorAtual + elemento);
 
     return total;

@@ -1,16 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:lista_de_compras/services/item.model.dart';
+import 'package:lista_de_compras/model/name.item.model.dart';
+import 'package:lista_de_compras/model/name.model.dart';
 
 class ItemsNamePage extends StatefulWidget {
   final NameModel model;
-  const ItemsNamePage({Key? key, required this.model}) : super(key: key);
+  const ItemsNamePage({super.key, required this.model});
 
   @override
   State<ItemsNamePage> createState() => _ItemsPageState();
 }
 
 class _ItemsPageState extends State<ItemsNamePage> {
-  TextEditingController _items = TextEditingController();
+  final TextEditingController _items = TextEditingController();
+  List<ItensNameModel> itens = [];
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -24,77 +27,91 @@ class _ItemsPageState extends State<ItemsNamePage> {
         flexibleSpace: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            Text('${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} ',
-              style: const TextStyle(fontSize: 20),),
             Text(
-                " Quantidade: ${widget.model.itensName!.length.toString()}",
-                style: const TextStyle(fontSize: 17)),
+              '${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} ',
+              style: const TextStyle(fontSize: 20),
+            ),
+            Text(
+              " Qtd: ${widget.model.itensName!.length.toString()}",
+              style: const TextStyle(fontSize: 17),
+            ),
           ],
         ),
         actions: <Widget>[
           (widget.model.itensName!.where((a) => a.checked == true).isNotEmpty)
               ? IconButton(
-                  onPressed: () {
-                    _showdeleteDialog();
-                  },
-                  icon: const Icon(Icons.delete))
+                onPressed: () {
+                  _showdeleteDialog();
+                },
+                icon: const Icon(Icons.delete),
+              )
               : Container(),
         ],
       ),
-      body: widget.model.itensName!.isEmpty
-          ? Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Image.asset(
-                    "assets/naotemnada.png",
+      body:
+          widget.model.itensName!.isEmpty
+              ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Image.asset("assets/naotemnada.png"),
                   ),
-                ),
-                const Text(
-                  "Não tem Produtos",
-                  style: TextStyle(fontSize: 27),
-                ),
-              ],
-            )
-          : ListView.builder(
-              itemCount: widget.model.itensName!.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  onTap: () {
-                    setState(() {
-                      widget.model.itensName![index].checked =
-                          !widget.model.itensName![index].checked;
-                    });
-                  },
-                  onLongPress: () {
-                    _edicaolista(index);
-                  },
-                  leading: Checkbox(
-                    value: widget.model.itensName![index].checked,
-                    onChanged: (bool? value) {
+                  const Text(
+                    "Não tem Produtos",
+                    style: TextStyle(fontSize: 27),
+                  ),
+                ],
+              )
+              : ListView.builder(
+                itemCount: widget.model.itensName!.length,
+                itemBuilder: (context, index) {
+                  itens = widget.model.itensName!;
+                  final item = widget.model.itensName![index];
+                  return ListTile(
+                    onTap: () {
                       setState(() {
-                        widget.model.itensName![index].checked = value!;
+                        item.checked = !item.checked;
                       });
                     },
-                  ),
-                  title: Text(
-                    widget.model.itensName![index].descricao!,
-                    style: const TextStyle(fontSize: 25),
-                  ),
-                );
-              },
-            ),
-      floatingActionButton:
-          Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-        FloatingActionButton(
-          child: const Icon(Icons.add),
-          onPressed: () {
-            _items.text = '';
-            _showAlertDialog();
-          },
-        ),
-      ]),
+                    onLongPress: () {
+                      _edicaolista(item);
+                    },
+                    leading: Checkbox(
+                      value: item.checked,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          item.checked = value!;
+                        });
+                      },
+                    ),
+                    title: Text(
+                      item.descricao!,
+                      style: const TextStyle(fontSize: 25),
+                    ),
+                  );
+                },
+              ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(onPressed: () {
+            setState(() {
+              for (var item in itens){
+                item.checked = !item.checked;
+              }
+            });
+          },child: Icon(Icons.select_all),),
+          const SizedBox(height: 20),
+          FloatingActionButton(
+            child: const Icon(Icons.add),
+            onPressed: () {
+              _items.text = '';
+              _showAlertDialog();
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -104,21 +121,42 @@ class _ItemsPageState extends State<ItemsNamePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('itens para adicionar'),
-          content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            TextFormField(
-              cursorColor: Colors.green,
-              autofocus: true,
-              controller: _items,
-              decoration: const InputDecoration(labelText: 'Nome do item'),
-              validator: (value) {
-                if (!value!.contains('')) {
-                  return 'Este campo é obrigatorio';
+          content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                TextFormField(
+                  cursorColor: Colors.green,
+                  autofocus: true,
+                  controller: _items,
+                  decoration: const InputDecoration(labelText: 'Nome do item'),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Este campo é obrigatorio';
+                    }
+                    return null;
+                  },
+                  textInputAction: TextInputAction.next,
+                  onEditingComplete: () {
+                                    if (!_formKey.currentState!.validate()) {
+                } else {
+                  setState(() {
+                    ItensNameModel item = ItensNameModel(
+                      descricao: _items.text,
+                    );
+                    widget.model.itensName!.add(item);
+                    widget.model.update();
+
+                    _items.text = '';
+                    Navigator.of(context).pop();
+                  });
                 }
-                return null;
-              },
-              textInputAction: TextInputAction.next,
+                  },
+                ),
+              ],
             ),
-          ]),
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('cancelar', selectionColor: Colors.green),
@@ -130,18 +168,18 @@ class _ItemsPageState extends State<ItemsNamePage> {
             TextButton(
               child: const Text('adicionar', selectionColor: Colors.green),
               onPressed: () {
-                if(_items.toString().isEmpty){
+                if (!_formKey.currentState!.validate()) {
+                } else {
                   setState(() {
-                  ItensNameModel item = ItensNameModel(descricao: _items.text);
-                  widget.model.itensName!.add(item);
-                  widget.model.update();
+                    ItensNameModel item = ItensNameModel(
+                      descricao: _items.text,
+                    );
+                    widget.model.itensName!.add(item);
+                    widget.model.update();
 
-                  _items.text = '';
-                  Navigator.of(context).pop();
-                });
-                }
-                else{
-                  _showEmptyFieldsDialog();
+                    _items.text = '';
+                    Navigator.of(context).pop();
+                  });
                 }
               },
             ),
@@ -151,22 +189,25 @@ class _ItemsPageState extends State<ItemsNamePage> {
     );
   }
 
-  Future<void> _edicaolista(int index) async {
+  Future<void> _edicaolista(ItensNameModel model) async {
     TextEditingController controller = TextEditingController();
 
-    controller.text = widget.model.itensName![index].descricao!;
+    controller.text = model.descricao!;
 
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Editar'),
-          content: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
-            TextField(
-              controller: controller,
-              decoration: const InputDecoration(labelText: 'Nome'),
-            ),
-          ]),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                controller: controller,
+                decoration: const InputDecoration(labelText: 'Nome'),
+              ),
+            ],
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('cancelar'),
@@ -176,14 +217,15 @@ class _ItemsPageState extends State<ItemsNamePage> {
               },
             ),
             TextButton(
-                child: const Text('Atualizar'),
-                onPressed: () {
-                  widget.model.itensName![index].descricao = controller.text;
-                  widget.model.update();
-                  Navigator.of(context).pop();
+              child: const Text('Atualizar'),
+              onPressed: () {
+                model.descricao = controller.text;
+                widget.model.update();
+                Navigator.of(context).pop();
 
-                  setState(() {});
-                }),
+                setState(() {});
+              },
+            ),
           ],
         );
       },
@@ -199,43 +241,24 @@ class _ItemsPageState extends State<ItemsNamePage> {
           content: const Text('Deseja Deletar todos os itens selecionados?'),
           actions: <Widget>[
             TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: const Text('Cancelar')),
-            TextButton(
-                onPressed: () async {
-                  for (var i = widget.model.itensName!.length - 1;
-                      i >= 0;
-                      i--) {
-                    if (widget.model.itensName![i].checked) {
-                      widget.model.itensName!.removeAt(i);
-                    }
-                  }
-                  await widget.model.update();
-                  setState(() {
-                    Navigator.pop(context);
-                  });
-                },
-                child: const Text('deletar'))
-          ],
-        );
-      },
-    );
-  }
-    Future<void> _showEmptyFieldsDialog() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Atenção'),
-          content: const Text('Para continuar é necessário o nome do item'),
-          actions: <Widget>[
-            TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: const Text('OK'),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                for (var i = widget.model.itensName!.length - 1; i >= 0; i--) {
+                  if (widget.model.itensName![i].checked) {
+                    widget.model.itensName!.removeAt(i);
+                  }
+                }
+                await widget.model.update();
+                setState(() {
+                  Navigator.pop(context);
+                });
+              },
+              child: const Text('deletar'),
             ),
           ],
         );
