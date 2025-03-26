@@ -1,6 +1,7 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_compras/login/login.dart';
+import 'package:animated_text_kit/animated_text_kit.dart'; // Importar a dependência
 
 class Intro extends StatefulWidget {
   const Intro({super.key});
@@ -8,6 +9,7 @@ class Intro extends StatefulWidget {
   @override
   State<Intro> createState() => _IntroState();
 }
+
 
 class _IntroState extends State<Intro> {
   int _currentIndex = 0;
@@ -31,13 +33,21 @@ class _IntroState extends State<Intro> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Conheça a sua nova lista',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+            // Animação no texto de introdução
+            AnimatedTextKit(
+              animatedTexts: [
+                TypewriterAnimatedText(
+                  'Conheça a sua nova lista',
+                  textStyle: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                   cursor: '|',
+                  speed: const Duration(milliseconds: 100),
+                ),
+              ],
+              isRepeatingAnimation: false,
             ),
             const SizedBox(height: 24),
             CarouselSlider(

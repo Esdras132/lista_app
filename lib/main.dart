@@ -1,5 +1,5 @@
 
-import 'package:lista_de_compras/dentro_app/home/home.dart';
+import 'package:lista_de_compras/login/verifyEmail.dart';
 import 'package:lista_de_compras/intro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -20,16 +20,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        title: 'Minha lista',
+        title: 'Lista de Compras',
         theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-            appBarTheme: const AppBarTheme(backgroundColor: Colors.green)),
+            appBarTheme: const AppBarTheme(backgroundColor: Colors.green),
+             scaffoldBackgroundColor: Colors.white,
+             fontFamily: 'Poppins',
+             textTheme: const TextTheme(
+               bodyMedium: TextStyle(
+                 color: Colors.black,
+                 fontSize: 16,
+               ),
+             ),
+             useMaterial3: true, 
+             ),
         home: StreamBuilder<User?>(
           stream: auth.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               /* print(snapshot.data!.uid); */
-              return const ListaComprasPage();
+              return const VerifyEmail();
             }
             return const Intro();
             /* return const loginpage(); */

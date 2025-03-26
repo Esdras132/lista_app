@@ -1,6 +1,8 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/intro.dart';
 
 class Conta extends StatefulWidget {
   const Conta({super.key});
@@ -14,6 +16,7 @@ class _ContaState extends State<Conta> {
   String? verNome = '';
   String? verEmail;
   bool _indicador = false;
+  AlertController alertController = AlertController();
 
   @override
   void initState() {
@@ -92,7 +95,39 @@ class _ContaState extends State<Conta> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Perfil do Usuário'),
+        centerTitle: true,
+        title: Text('Perfil do Usuário',style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete_outline),
+            color: Colors.red,
+            onPressed: () async {
+              await alertController.bodyMessage(
+                context,
+                Text('Tem certeza que deseja deletar sua conta?'),    
+                () async {
+                  try {
+                    await FirebaseAuth.instance.currentUser?.delete();
+                    await FirebaseAuth.instance.signOut();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const Intro(),
+                      ),
+                    );
+                  }  catch (e) {
+                    alertController.showSnackBarError(context, 'Erro ao deletar a conta');
+                  }
+                },() {
+                  
+                },
+                btnTitle: 'Deletar',
+              ).show();
+              
+            },
+          ),
+        ],
       ),
       body: Center(
         child: Column(
@@ -101,6 +136,7 @@ class _ContaState extends State<Conta> {
           children: [
             CircleAvatar(
               radius: 60,
+
               backgroundColor: Colors.green.shade700,
               child: Icon(Icons.person, size: 60, color: Colors.white),
             ),

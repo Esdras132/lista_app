@@ -1,5 +1,6 @@
+
 import 'dart:async';
-import 'package:lista_de_compras/dentro_app/home/home.dart';
+import 'package:lista_de_compras/view/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_compras/main.dart';
@@ -129,7 +130,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
                 final user = FirebaseAuth.instance.currentUser;
                 await user?.sendEmailVerification();
               } catch (e) {
-                _showAlert('Erro ao reenviar e-mail de verificação');
+                /* _showAlert('Erro ao reenviar e-mail de verificação'); */
               }
             },
             child: const Text(
@@ -180,4 +181,3 @@ class _VerifyEmailState extends State<VerifyEmail> {
     );
   }
 }
-

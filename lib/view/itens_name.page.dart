@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 
@@ -14,6 +15,7 @@ class _ItemsPageState extends State<ItemsNamePage> {
   final TextEditingController _items = TextEditingController();
   List<ItensNameModel> itens = [];
   final _formKey = GlobalKey<FormState>();
+  AlertController alert = AlertController();
 
   @override
   void initState() {
@@ -24,16 +26,21 @@ class _ItemsPageState extends State<ItemsNamePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
         flexibleSpace: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Text(
               '${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} ',
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             Text(
               " Qtd: ${widget.model.itensName!.length.toString()}",
-              style: const TextStyle(fontSize: 17),
+              style: const TextStyle(fontSize: 17, color: Colors.white),
             ),
           ],
         ),
@@ -95,19 +102,132 @@ class _ItemsPageState extends State<ItemsNamePage> {
       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          FloatingActionButton(onPressed: () {
-            setState(() {
-              for (var item in itens){
-                item.checked = !item.checked;
-              }
-            });
-          },child: Icon(Icons.select_all),),
+          FloatingActionButton(
+            onPressed: () {
+              setState(() {
+                for (var item in itens) {
+                  item.checked = !item.checked;
+                }
+              });
+            },
+            backgroundColor: Colors.green,
+            child: Icon(Icons.select_all, color: Colors.white),
+          ),
           const SizedBox(height: 20),
           FloatingActionButton(
-            child: const Icon(Icons.add),
+            backgroundColor: Colors.green,
+            child: const Icon(Icons.add, color: Colors.white),
             onPressed: () {
               _items.text = '';
-              _showAlertDialog();
+              alert
+                  .bodyMessage(
+                    context,
+                    Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Form(
+                        key: _formKey,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            TextFormField(
+                              cursorColor: Colors.green,
+                              autofocus: true,
+                              controller: _items,
+                              decoration: const InputDecoration(
+                                labelText: 'Nome do item',
+                              ),
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Este campo é obrigatorio';
+                                }
+                                return null;
+                              },
+                              textInputAction: TextInputAction.next,
+                              onEditingComplete: () {
+                                if (!_formKey.currentState!.validate()) {
+                                } else {
+                                  setState(() {
+                                    ItensNameModel item = ItensNameModel(
+                                      descricao: _items.text,
+                                    );
+                                    widget.model.itensName!.add(item);
+                                    widget.model.update();
+                      
+                                    _items.text = '';
+                                    Navigator.of(context).pop();
+                                  });
+                                }
+                              },
+                            ),
+                            SizedBox(height: 10),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Colors.red,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
+                                      ),
+                                      child: const Text(
+                                        'Cancelar',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      },
+                                    ),
+                                  ),
+                                ),
+                      
+                                SizedBox(width: 5),
+                                Expanded(
+                                  child: SizedBox(
+                                    width: double.infinity,
+                                    child: TextButton(
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: Colors.green,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(2),
+                                        ),
+                                      ),
+                                      onPressed: () {
+                                        if (_formKey.currentState!.validate()) {
+                                          setState(() {
+                                            ItensNameModel item = ItensNameModel(
+                                              descricao: _items.text,
+                                            );
+                                            widget.model.itensName!.add(item);
+                                            widget.model.update();
+                      
+                                            _items.text = '';
+                                            Navigator.of(context).pop();
+                                          });
+                                        } else {
+                                          return;
+                                        }
+                                      },
+                                      child: Text(
+                                        'Salvar',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    null,
+                    null,
+                  )
+                  .show();
+              /* _showAlertDialog(); */
             },
           ),
         ],
@@ -115,48 +235,13 @@ class _ItemsPageState extends State<ItemsNamePage> {
     );
   }
 
-  Future<void> _showAlertDialog() async {
+  /*   Future<void> _showAlertDialog() async {
     return showDialog<void>(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('itens para adicionar'),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                TextFormField(
-                  cursorColor: Colors.green,
-                  autofocus: true,
-                  controller: _items,
-                  decoration: const InputDecoration(labelText: 'Nome do item'),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Este campo é obrigatorio';
-                    }
-                    return null;
-                  },
-                  textInputAction: TextInputAction.next,
-                  onEditingComplete: () {
-                                    if (!_formKey.currentState!.validate()) {
-                } else {
-                  setState(() {
-                    ItensNameModel item = ItensNameModel(
-                      descricao: _items.text,
-                    );
-                    widget.model.itensName!.add(item);
-                    widget.model.update();
-
-                    _items.text = '';
-                    Navigator.of(context).pop();
-                  });
-                }
-                  },
-                ),
-              ],
-            ),
-          ),
+          content:
           actions: <Widget>[
             TextButton(
               child: const Text('cancelar', selectionColor: Colors.green),
@@ -171,14 +256,7 @@ class _ItemsPageState extends State<ItemsNamePage> {
                 if (!_formKey.currentState!.validate()) {
                 } else {
                   setState(() {
-                    ItensNameModel item = ItensNameModel(
-                      descricao: _items.text,
-                    );
-                    widget.model.itensName!.add(item);
-                    widget.model.update();
 
-                    _items.text = '';
-                    Navigator.of(context).pop();
                   });
                 }
               },
@@ -187,7 +265,7 @@ class _ItemsPageState extends State<ItemsNamePage> {
         );
       },
     );
-  }
+  } */
 
   Future<void> _edicaolista(ItensNameModel model) async {
     TextEditingController controller = TextEditingController();

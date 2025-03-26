@@ -1,11 +1,12 @@
 import 'dart:developer';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:lista_de_compras/dentro_app/home/home.dart';
+import 'package:lista_de_compras/login/verifyEmail.dart';
 import 'package:lista_de_compras/login/Redefinir_senha.dart';
 import 'package:lista_de_compras/login/sign-up_page.dart';
 
@@ -78,49 +79,69 @@ class _LoginState extends State<Loginpage> {
     );
   }
 
-  Widget _buildLoginForm() {
-    return AutofillGroup(
-      child: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset("assets/logo_lista.png", width: 100),
-            const SizedBox(height: 24),
-            _buildTextField(
-              controller: _login,
-              label: "E-mail",
-              icon: Icons.email,
-              isPassword: false,
-              validator: (value) {
-                if (value == null || !EmailValidator.validate(value)) {
-                  return 'Coloque um E-mail válido';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            _buildTextField(
-              controller: _senha,
-              label: "Senha",
-              icon: Icons.lock,
-              isPassword: true,
-              validator: (value) {
-                if (value == null || value.length < 6) {
-                  return 'A senha precisa ter pelo menos 6 caracteres';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 24),
-            _buildLoginButton(),
-            const SizedBox(height: 16),
-            _buildOptions(),
-          ],
-        ),
+Widget _buildLoginForm() {
+  return AutofillGroup(
+    child: Form(
+      key: _formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(
+            radius: 80,
+            backgroundImage: AssetImage("assets/logo2.png"),
+            backgroundColor: Colors.green.shade700,
+          ),
+          const SizedBox(height: 24),
+          AnimatedTextKit(
+            animatedTexts: [
+              TypewriterAnimatedText(
+                'Bem-vindo de volta!',
+                textStyle: const TextStyle(
+                  fontSize: 32.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+                speed: const Duration(milliseconds: 150),
+              ),
+            ],
+            isRepeatingAnimation: false,
+          ),
+          const SizedBox(height: 24),
+          _buildTextField(
+            controller: _login,
+            label: "E-mail",
+            icon: Icons.email,
+            isPassword: false,
+            validator: (value) {
+              if (value == null || !EmailValidator.validate(value)) {
+                return 'Coloque um E-mail válido';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 16),
+          _buildTextField(
+            controller: _senha,
+            label: "Senha",
+            icon: Icons.lock,
+            isPassword: true,
+            validator: (value) {
+              if (value == null || value.length < 6) {
+                return 'A senha precisa ter pelo menos 6 caracteres';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 24),
+          _buildLoginButton(),
+          const SizedBox(height: 16),
+          _buildOptions(),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   Widget _buildTextField({
     required TextEditingController controller,
@@ -144,6 +165,7 @@ class _LoginState extends State<Loginpage> {
         labelText: label,
         filled: true,
         fillColor: Colors.white,
+        labelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, ),
         prefixIcon: Icon(icon, color: Colors.green),
         suffixIcon:
             isPassword
@@ -187,7 +209,7 @@ class _LoginState extends State<Loginpage> {
               await googleSignIn.signInSilently();
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (context) => ListaComprasPage()),
+                MaterialPageRoute(builder: (context) => VerifyEmail()),
               );
               _login.clear();
               _senha.clear();
