@@ -71,17 +71,6 @@ class _ConfigState extends State<Config> {
                 });
               },
             ),
-/*            const SizedBox(height: 30),
-             _buildDropdown(
-              title: 'Idioma',
-              value: selectvall,
-              items: listliguagens,
-              onChanged: (value) {
-                setState(() {
-                  selectvall = value.toString();
-                });
-              },
-            ), */
             const SizedBox(height: 30),
             _buildSettingItem(
               title: 'Versão',

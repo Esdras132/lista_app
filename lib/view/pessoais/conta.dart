@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
@@ -44,6 +45,33 @@ class _ContaState extends State<Conta> {
     }
   }
 
+Future<void> deleteDocumentWithId(String collectionName, String id) async {
+  try {
+    // Verifica se o ID realmente existe na coleção
+    var collectionRef = FirebaseFirestore.instance.collection(collectionName);
+    
+    var documents = await collectionRef.get(); // Obtém todos os documentos da coleção
+    for (var doc in documents.docs) {
+      debugPrint("Documento encontrado: ${doc.id}"); // Exibe os documentos existentes
+    }
+
+    // Referência ao documento no Firestore
+    var docRef = collectionRef.doc(id);
+
+    // Verifica se o documento existe antes de deletar
+    var docSnapshot = await docRef.get();
+    if (docSnapshot.exists) {
+      await docRef.delete();
+      debugPrint("Documento com ID '$id' foi deletado.");
+    } else {
+      debugPrint("Nenhum documento encontrado com ID '$id'.");
+    }
+  } catch (e) {
+    debugPrint("Erro ao deletar documento: $e");
+  }
+}
+
+
   Future<void> _editarNome() async {
     TextEditingController controller = TextEditingController(text: verNome);
 
@@ -77,13 +105,16 @@ class _ContaState extends State<Conta> {
                   setState(() => _indicador = false);
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Por favor, insira um nome válido.')),
+                    SnackBar(
+                      content: Text('Por favor, insira um nome válido.'),
+                    ),
                   );
                 }
               },
-              child: _indicador
-                  ? CircularProgressIndicator(color: Colors.white)
-                  : Text('Salvar'),
+              child:
+                  _indicador
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text('Salvar'),
             ),
           ],
         );
@@ -96,38 +127,55 @@ class _ContaState extends State<Conta> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Perfil do Usuário',style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        title: Text(
+          'Perfil do Usuário',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
+/*         actions: [
           IconButton(
             icon: Icon(Icons.delete_outline),
             color: Colors.red,
-            onPressed: () async {
-              await alertController.bodyMessage(
+onPressed: () async {
+  await alertController
+      .bodyMessage(
+        context,
+        Text('Tem certeza que deseja deletar sua conta?'),
+        () async {
+          try {
+            // Obtém o ID do usuário autenticado
+            String? userId = FirebaseAuth.instance.currentUser?.uid;
+
+            if (userId != null) {
+              // Deleta o documento no Firestore que tem o mesmo nome do ID do usuário
+              await deleteDocumentWithId("users", userId);
+
+              // Deleta o usuário do Firebase Authentication
+              await FirebaseAuth.instance.currentUser?.delete();
+
+              // Navega para a tela de introdução
+              Navigator.pushReplacement(
                 context,
-                Text('Tem certeza que deseja deletar sua conta?'),    
-                () async {
-                  try {
-                    await FirebaseAuth.instance.currentUser?.delete();
-                    await FirebaseAuth.instance.signOut();
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const Intro(),
-                      ),
-                    );
-                  }  catch (e) {
-                    alertController.showSnackBarError(context, 'Erro ao deletar a conta');
-                  }
-                },() {
-                  
-                },
-                btnTitle: 'Deletar',
-              ).show();
-              
-            },
+                MaterialPageRoute(
+                  builder: (context) => const Intro(),
+                ),
+              );
+            }
+          } catch (e) {
+            alertController.showSnackBarError(
+              context,
+              'Erro ao deletar a conta',
+            );
+          }
+        },
+        () {},
+        btnTitle: 'Deletar',
+      )
+      .show();
+},
+
           ),
-        ],
+        ], */
       ),
       body: Center(
         child: Column(
@@ -158,7 +206,10 @@ class _ContaState extends State<Conta> {
             ElevatedButton.icon(
               onPressed: _editarNome,
               icon: Icon(Icons.edit, color: Colors.white),
-              label: Text('Atualizar Nome', style: TextStyle(color: Colors.white)),
+              label: Text(
+                'Atualizar Nome',
+                style: TextStyle(color: Colors.white),
+              ),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green.shade700,
                 padding: EdgeInsets.symmetric(horizontal: 24, vertical: 12),

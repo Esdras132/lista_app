@@ -1,9 +1,10 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
-import 'package:lista_de_compras/login/login.dart';
-import 'package:lista_de_compras/view/calculadora.dart';
+import 'package:lista_de_compras/main.dart';
+import 'package:lista_de_compras/view/pessoais/calculadora.dart';
 import 'package:lista_de_compras/view/home/widget/lista.dart';
 import 'package:lista_de_compras/view/home/widget/lista.preco.dart';
 import 'package:lista_de_compras/view/pessoais/configuracoes.dart';
@@ -23,12 +24,13 @@ class ListaComprasPage extends StatefulWidget {
 }
 
 class _ListaComprasPageState extends State<ListaComprasPage> {
-  String? verNome;
+  String? verNome= '';
   var lista = [];
   final TextEditingController _nomeController = TextEditingController();
   final AlertController alert = AlertController();
   final _formKey = GlobalKey<FormState>();
   var checkedList = [];
+  final dbService = DBserviceCom();
 
   @override
   void initState() {
@@ -40,6 +42,9 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   Future<void> Name() async {
     String? name = FirebaseAuth.instance.currentUser?.displayName;
     setState(() {
+     if(name.toString().isEmpty){
+       verNome = 'Usuário';
+     }
       verNome = name;
     });
   }
@@ -82,7 +87,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             title: AnimatedTextKit(
               animatedTexts: [
                 TypewriterAnimatedText(
-                  'Bem vindo ${verNome ?? ""}',
+                  'Bem Vindo${'(a) ${verNome!}'}',
                   textStyle: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -95,6 +100,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
               isRepeatingAnimation: false,
             ),
             bottom: TabBar(
+              indicatorColor: Colors.white,
+              dividerColor: Colors.green,
               tabs: [
                 Tab(
                   child: Text(
@@ -120,17 +127,23 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       value: 0,
                       child: Row(
                         children: [
-                          Text("Conta",style: TextStyle(color: Colors.white),),
+                          Text("Conta", style: TextStyle(color: Colors.white)),
                           Spacer(),
-                          Icon(Icons.account_circle_outlined, color: Colors.white),
+                          Icon(
+                            Icons.account_circle_outlined,
+                            color: Colors.white,
+                          ),
                         ],
                       ),
                     ),
-                     const PopupMenuItem<int>(
+                    const PopupMenuItem<int>(
                       value: 1,
                       child: Row(
                         children: [
-                          Text("Calculadora",style: TextStyle(color: Colors.white),),
+                          Text(
+                            "Calculadora",
+                            style: TextStyle(color: Colors.white),
+                          ),
                           Spacer(),
                           Icon(Icons.calculate_outlined, color: Colors.white),
                         ],
@@ -140,7 +153,10 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       value: 2,
                       child: Row(
                         children: [
-                          Text("Configurações",style: TextStyle(color: Colors.white),),
+                          Text(
+                            "Configurações",
+                            style: TextStyle(color: Colors.white),
+                          ),
                           Spacer(),
                           Icon(Icons.settings_outlined, color: Colors.white),
                         ],
@@ -184,24 +200,24 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       () async {
                         try {
                           await FirebaseAuth.instance.signOut();
-                          
-                          // ignore: use_build_context_synchronously
-                          Navigator.pop(context);
-                          
+
                           Navigator.pushReplacement(
                             // ignore: use_build_context_synchronously
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const Loginpage(),
+                              builder: (context) => const MyApp(),
                             ),
                           );
                         } catch (e) {
                           log(e.toString());
                           // ignore: use_build_context_synchronously
-                          alert.showSnackBarError(context, 'Erro ao sair da conta');
+                          alert.showSnackBarError(
+                            context,
+                            'Erro ao sair da conta',
+                          );
                         }
                       },
-                      (){}
+                      () {},
                     ).show();
                   }
                 },
@@ -233,193 +249,249 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
 
                   showMenu(
                     context: context,
+                    color: Colors.green,
                     position: position,
                     items: <PopupMenuEntry<String>>[
                       PopupMenuItem<String>(
                         onTap:
                             () =>
-                                alert.bodyMessage(
-                                  context,
-                                  Form(
-                                    key: _formKey,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Column(
-                                        children: [
-                                          TextFormField(
-                                          autofocus: true,
-                                          cursorColor: Colors.green,
-                                          validator:
-                                              (value) =>
-                                                  value!.isEmpty
-                                                      ? 'Este campo é obrigatorio'
-                                                      : null,
-                                          controller: _nomeController,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Nome do Item',
-                                          ),
-                                        ),
-                                                                                SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: Colors.red,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            2,
-                                          ),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Cancelar',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ),
-                                ),
+                                alert
+                                    .bodyMessage(
+                                      context,
+                                      Form(
+                                        key: _formKey,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Column(
+                                            children: [
+                                              TextFormField(
+                                                autofocus: true,
+                                                cursorColor: Colors.green,
+                                                validator:
+                                                    (value) =>
+                                                        value!.isEmpty
+                                                            ? 'Este campo é obrigatorio'
+                                                            : null,
+                                                controller: _nomeController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                      labelText: 'Nome do Item',
+                                                    ),
+                                              ),
+                                              SizedBox(height: 10),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: SizedBox(
+                                                      width: double.infinity,
+                                                      child: TextButton(
+                                                        style: TextButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.red,
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  2,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'Cancelar',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
 
-                                SizedBox(width: 5),
-                                Expanded(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            2,
+                                                  SizedBox(width: 5),
+                                                  Expanded(
+                                                    child: SizedBox(
+                                                      width: double.infinity,
+                                                      child: TextButton(
+                                                        style: TextButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.green,
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  2,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          if (_formKey
+                                                              .currentState!
+                                                              .validate()) {
+                                                            setState(() {
+                                                              ListaModel
+                                                              model = ListaModel(
+                                                                descricao:
+                                                                    _nomeController
+                                                                        .text,
+                                                                items: [],
+                                                              );
+                                                              DBserviceCom.createMyList(
+                                                                model,
+                                                              );
+                                                              _nomeController
+                                                                  .text = '';
+                                                              Navigator.of(
+                                                                context,
+                                                              ).pop();
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Text(
+                                                          'Salvar',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                      onPressed: () {
-                                                                           if (_formKey.currentState!.validate()) {
-                                      setState(() {
-                                        ListaModel model = ListaModel(
-                                          descricao: _nomeController.text,
-                                          items: [],
-                                        );
-                                        DBserviceCom.createMyList(model);
-                                        _nomeController.text = '';
-                                        Navigator.of(context).pop();
-                                      });
-                                    }
-                                      },
-                                      child: Text(
-                                        'Salvar',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                                        ]
-                                      ),
-                                    ),
-                                  ),
-                                  null,null
-                                ).show(),
+                                      null,
+                                      null,
+                                    )
+                                    .show(),
 
-                        child: Text('Lista com preço'),
+                        child: Text(
+                          'Lista com preço',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                       PopupMenuItem<String>(
                         onTap:
                             () =>
-                                alert.bodyMessage(
-                                  context,
-                                  Form(
-                                    key: _formKey,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(15.0),
-                                      child: Column(
-                                        children: [
-                                          TextFormField(
-                                          autofocus: true,
-                                          cursorColor: Colors.green,
-                                          validator:
-                                              (value) =>
-                                                  value!.isEmpty
-                                                      ? 'Este campo é obrigatorio'
-                                                      : null,
-                                          controller: _nomeController,
-                                          decoration: const InputDecoration(
-                                            labelText: 'Nome do Item',
-                                          ),
-                                        ),                                        SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: Colors.red,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            2,
-                                          ),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Cancelar',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ),
-                                ),
+                                alert
+                                    .bodyMessage(
+                                      context,
+                                      Form(
+                                        key: _formKey,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(15.0),
+                                          child: Column(
+                                            children: [
+                                              TextFormField(
+                                                autofocus: true,
+                                                cursorColor: Colors.green,
+                                                validator:
+                                                    (value) =>
+                                                        value!.isEmpty
+                                                            ? 'Este campo é obrigatorio'
+                                                            : null,
+                                                controller: _nomeController,
+                                                decoration:
+                                                    const InputDecoration(
+                                                      labelText: 'Nome do Item',
+                                                    ),
+                                              ),
+                                              SizedBox(height: 10),
+                                              Row(
+                                                children: [
+                                                  Expanded(
+                                                    child: SizedBox(
+                                                      width: double.infinity,
+                                                      child: TextButton(
+                                                        style: TextButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.red,
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  2,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        child: const Text(
+                                                          'Cancelar',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop();
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ),
 
-                                SizedBox(width: 5),
-                                Expanded(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                            2,
+                                                  SizedBox(width: 5),
+                                                  Expanded(
+                                                    child: SizedBox(
+                                                      width: double.infinity,
+                                                      child: TextButton(
+                                                        style: TextButton.styleFrom(
+                                                          backgroundColor:
+                                                              Colors.green,
+                                                          shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius.circular(
+                                                                  2,
+                                                                ),
+                                                          ),
+                                                        ),
+                                                        onPressed: () {
+                                                          if (_formKey
+                                                              .currentState!
+                                                              .validate()) {
+                                                            setState(() {
+                                                              NameModel
+                                                              model = NameModel(
+                                                                descricao:
+                                                                    _nomeController
+                                                                        .text,
+                                                                itensName: [],
+                                                              );
+                                                              DBserviceSem.createMyList(
+                                                                model,
+                                                              );
+                                                              _nomeController
+                                                                  .text = '';
+                                                              Navigator.of(
+                                                                context,
+                                                              ).pop();
+                                                            });
+                                                          }
+                                                        },
+                                                        child: Text(
+                                                          'Salvar',
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),
-                                      onPressed: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      setState(() {
-                                        NameModel model = NameModel(
-                                          descricao: _nomeController.text,
-                                          itensName: [],
-                                        );
-                                        DBserviceSem.createMyList(model);
-                                        _nomeController.text = '';
-                                        Navigator.of(context).pop();
-                                      });
-                                    } 
-                                      },
-                                      child: Text(
-                                        'Salvar',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                                        ]
-                                      ),
-                                    ),
-                                  ),
-                                  null,null,
-                                ).show(),
-                        child: Text('Lista sem preço'),
+                                      null,
+                                      null,
+                                    )
+                                    .show(),
+                        child: Text(
+                          'Lista sem preço',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ],
                   );
@@ -431,10 +503,11 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             children: [
               RefreshIndicator(
                 child: ListaPreco(),
-                onRefresh:
-                    () async {setState(() {
-                      Name();
-                    });}, 
+                onRefresh: () async {
+                  setState(() {
+                    Name();
+                  });
+                },
               ),
 
               RefreshIndicator(

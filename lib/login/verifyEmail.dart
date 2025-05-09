@@ -1,5 +1,5 @@
-
 import 'dart:async';
+import 'dart:developer';
 import 'package:lista_de_compras/view/home/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,7 +15,8 @@ class VerifyEmail extends StatefulWidget {
 class _VerifyEmailState extends State<VerifyEmail> {
   bool isEmailverify = false;
   Timer? timer;
-  final GlobalKey<ScaffoldMessengerState> _scaffoldKey = GlobalKey<ScaffoldMessengerState>();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldKey =
+      GlobalKey<ScaffoldMessengerState>();
   @override
   void initState() {
     super.initState();
@@ -28,7 +29,7 @@ class _VerifyEmailState extends State<VerifyEmail> {
       if (!isEmailverify) {
         sendVerifycationEmail();
         timer = Timer.periodic(
-          const Duration(seconds: 3),
+          const Duration(seconds: 2),
           (_) => checkEmailVerify(),
         );
       }
@@ -60,26 +61,24 @@ class _VerifyEmailState extends State<VerifyEmail> {
       final user = FirebaseAuth.instance.currentUser;
       await user?.sendEmailVerification();
     } catch (e) {
-      _showAlert('Erro ao enviar e-mail de verificação');
+      log(e.toString());
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final user = FirebaseAuth.instance.currentUser;
-
     // Se o usuário for nulo, exibir tela de login
     if (user == null) {
       return const Scaffold(
         body: Center(child: Text('Erro: Usuário não autenticado')),
       );
     }
-
+    user.reload();
     if (user.emailVerified) {
-      return const ListaComprasPage(); // Certifique-se de que esse widget está correto
+      return const ListaComprasPage();
     }
-    
-    
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -172,12 +171,5 @@ class _VerifyEmailState extends State<VerifyEmail> {
     );
   }
 
-  void _showAlert(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
+
 }

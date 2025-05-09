@@ -14,8 +14,7 @@ class Intro extends StatefulWidget {
 class _IntroState extends State<Intro> {
   int _currentIndex = 0;
   final List<String> _imageList = [
-    'assets/logo_lista.png',
-    'assets/naotemnada.png',
+    'assets/intro1.png', /* 'assets/intro2.png', */
     'assets/logo_lista.png',
   ];
 
@@ -37,7 +36,7 @@ class _IntroState extends State<Intro> {
             AnimatedTextKit(
               animatedTexts: [
                 TypewriterAnimatedText(
-                  'Conheça a sua nova lista',
+                  'Conheça a sua Lista de Compras',
                   textStyle: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,

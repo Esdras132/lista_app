@@ -1,14 +1,21 @@
 
+import 'dart:developer';
+
+import 'package:lista_de_compras/firebase_options.dart';
 import 'package:lista_de_compras/login/verifyEmail.dart';
 import 'package:lista_de_compras/intro.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:lista_de_compras/view/home/home.dart';
 
 late final FirebaseAuth auth;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   var app = await Firebase.initializeApp();
+  app = await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   auth = FirebaseAuth.instanceFor(app: app);
   runApp(const MyApp());
 }
@@ -38,6 +45,9 @@ class MyApp extends StatelessWidget {
           stream: auth.authStateChanges(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
+              if (snapshot.data!.emailVerified) {
+                return const ListaComprasPage();
+              }
               /* print(snapshot.data!.uid); */
               return const VerifyEmail();
             }

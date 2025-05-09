@@ -9,6 +9,8 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lista_de_compras/login/verifyEmail.dart';
 import 'package:lista_de_compras/login/Redefinir_senha.dart';
 import 'package:lista_de_compras/login/sign-up_page.dart';
+import 'package:lista_de_compras/main.dart';
+import 'package:lista_de_compras/view/home/home.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -79,69 +81,68 @@ class _LoginState extends State<Loginpage> {
     );
   }
 
-Widget _buildLoginForm() {
-  return AutofillGroup(
-    child: Form(
-      key: _formKey,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          CircleAvatar(
-            radius: 80,
-            backgroundImage: AssetImage("assets/logo2.png"),
-            backgroundColor: Colors.green.shade700,
-          ),
-          const SizedBox(height: 24),
-          AnimatedTextKit(
-            animatedTexts: [
-              TypewriterAnimatedText(
-                'Bem-vindo de volta!',
-                textStyle: const TextStyle(
-                  fontSize: 32.0,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+  Widget _buildLoginForm() {
+    return AutofillGroup(
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 80,
+              backgroundImage: AssetImage("assets/logo2.png"),
+              backgroundColor: Colors.green.shade700,
+            ),
+            const SizedBox(height: 24),
+            AnimatedTextKit(
+              animatedTexts: [
+                TypewriterAnimatedText(
+                  'Bem-Vindo!',
+                  textStyle: const TextStyle(
+                    fontSize: 32.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  speed: const Duration(milliseconds: 150),
                 ),
-                speed: const Duration(milliseconds: 150),
-              ),
-            ],
-            isRepeatingAnimation: false,
-          ),
-          const SizedBox(height: 24),
-          _buildTextField(
-            controller: _login,
-            label: "E-mail",
-            icon: Icons.email,
-            isPassword: false,
-            validator: (value) {
-              if (value == null || !EmailValidator.validate(value)) {
-                return 'Coloque um E-mail válido';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          _buildTextField(
-            controller: _senha,
-            label: "Senha",
-            icon: Icons.lock,
-            isPassword: true,
-            validator: (value) {
-              if (value == null || value.length < 6) {
-                return 'A senha precisa ter pelo menos 6 caracteres';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 24),
-          _buildLoginButton(),
-          const SizedBox(height: 16),
-          _buildOptions(),
-        ],
+              ],
+              isRepeatingAnimation: false,
+            ),
+            const SizedBox(height: 24),
+            _buildTextField(
+              controller: _login,
+              label: "E-mail",
+              icon: Icons.email,
+              isPassword: false,
+              validator: (value) {
+                if (value == null || !EmailValidator.validate(value)) {
+                  return 'Coloque um E-mail válido';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildTextField(
+              controller: _senha,
+              label: "Senha",
+              icon: Icons.lock,
+              isPassword: true,
+              validator: (value) {
+                if (value == null || value.length < 6) {
+                  return 'A senha precisa ter pelo menos 6 caracteres';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 24),
+            _buildLoginButton(),
+            const SizedBox(height: 16),
+            _buildOptions(),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
   Widget _buildTextField({
     required TextEditingController controller,
@@ -165,7 +166,10 @@ Widget _buildLoginForm() {
         labelText: label,
         filled: true,
         fillColor: Colors.white,
-        labelStyle: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold, ),
+        labelStyle: const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
         prefixIcon: Icon(icon, color: Colors.green),
         suffixIcon:
             isPassword
@@ -195,7 +199,7 @@ Widget _buildLoginForm() {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             setState(() => _indicador = true);
-            try {
+ try {
               await FirebaseAuth.instance.signInWithEmailAndPassword(
                 email: _login.text,
                 password: _senha.text,
@@ -294,3 +298,5 @@ Widget _buildLoginForm() {
     );
   }
 }
+
+

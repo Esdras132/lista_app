@@ -63,19 +63,6 @@ class _ListaState extends State<Lista> {
                                 ),
                               ),
                             ),
-                            secondaryBackground: Container(
-                              color: Colors.red,
-                              child: const Align(
-                                alignment: Alignment.centerRight,
-                                child: Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ),
                             onDismissed: (direction) {
                               if (direction == DismissDirection.endToStart) {
                                 snapshot.data![i].reference!.delete();
