@@ -1,6 +1,6 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:lista_de_compras/login/login.dart';
+import 'package:lista_de_compras/view/login/login.dart';
 import 'package:animated_text_kit/animated_text_kit.dart'; // Importar a dependência
 
 class Intro extends StatefulWidget {

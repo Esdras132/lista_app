@@ -6,9 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:lista_de_compras/login/verifyEmail.dart';
-import 'package:lista_de_compras/login/Redefinir_senha.dart';
-import 'package:lista_de_compras/login/sign-up_page.dart';
+import 'package:lista_de_compras/view/login/Redefinir_senha.dart';
+import 'package:lista_de_compras/view/login/sign-up_page.dart';
+import 'package:lista_de_compras/view/login/verifyEmail.dart';
+
 import 'package:lista_de_compras/main.dart';
 import 'package:lista_de_compras/view/home/home.dart';
 

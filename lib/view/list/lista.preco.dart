@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lista_de_compras/model/lista.model.dart';
 
 
-import '../../../services/db.service.dart';
-import '../../items_page.dart';
+import '../../services/db.service.dart';
+import 'widget/lista.preco.dart';
 
 class ListaPreco extends StatefulWidget {
   const ListaPreco({super.key});

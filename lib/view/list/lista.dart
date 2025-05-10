@@ -3,7 +3,7 @@ import 'package:lista_de_compras/services/db.service.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 
 
-import '../../itens_name.page.dart';
+import 'widget/itens.name.dart';
 
 class Lista extends StatefulWidget {
   const Lista({super.key});

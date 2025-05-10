@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/controller/lista.name.controller.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 
@@ -16,6 +17,7 @@ class _ItemsPageState extends State<ItemsNamePage> {
   List<ItensNameModel> itens = [];
   final _formKey = GlobalKey<FormState>();
   AlertController alert = AlertController();
+  ListaNameController controller = ListaNameController();
 
   @override
   void initState() {
@@ -48,7 +50,7 @@ class _ItemsPageState extends State<ItemsNamePage> {
           (widget.model.itensName!.where((a) => a.checked == true).isNotEmpty)
               ? IconButton(
                 onPressed: () {
-                  _showdeleteDialog();
+                  controller.deleteItem(context, widget.model, () => setState(() {}));
                 },
                 icon: const Icon(Icons.delete),
               )
@@ -118,116 +120,7 @@ class _ItemsPageState extends State<ItemsNamePage> {
             backgroundColor: Colors.green,
             child: const Icon(Icons.add, color: Colors.white),
             onPressed: () {
-              _items.text = '';
-              alert
-                  .bodyMessage(
-                    context,
-                    Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: Form(
-                        key: _formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            TextFormField(
-                              cursorColor: Colors.green,
-                              autofocus: true,
-                              controller: _items,
-                              decoration: const InputDecoration(
-                                labelText: 'Nome do item',
-                              ),
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Este campo é obrigatorio';
-                                }
-                                return null;
-                              },
-                              textInputAction: TextInputAction.next,
-                              onEditingComplete: () {
-                                if (!_formKey.currentState!.validate()) {
-                                } else {
-                                  setState(() {
-                                    ItensNameModel item = ItensNameModel(
-                                      descricao: _items.text,
-                                    );
-                                    widget.model.itensName!.add(item);
-                                    widget.model.update();
-                      
-                                    _items.text = '';
-                                    Navigator.of(context).pop();
-                                  });
-                                }
-                              },
-                            ),
-                            SizedBox(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: Colors.red,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(2),
-                                        ),
-                                      ),
-                                      child: const Text(
-                                        'Cancelar',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                    ),
-                                  ),
-                                ),
-                      
-                                SizedBox(width: 5),
-                                Expanded(
-                                  child: SizedBox(
-                                    width: double.infinity,
-                                    child: TextButton(
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: Colors.green,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(2),
-                                        ),
-                                      ),
-                                      onPressed: () {
-                                        if (_formKey.currentState!.validate()) {
-                                          setState(() {
-                                            ItensNameModel item = ItensNameModel(
-                                              descricao: _items.text,
-                                            );
-                                            widget.model.itensName!.add(item);
-                                            widget.model.update();
-                      
-                                            _items.text = '';
-                                            Navigator.of(context).pop();
-                                          });
-                                        } else {
-                                          return;
-                                        }
-                                      },
-                                      child: Text(
-                                        'Salvar',
-                                        style: TextStyle(color: Colors.white),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    null,
-                    null,
-                  )
-                  .show();
-              /* _showAlertDialog(); */
+              controller.addItem(context, widget.model,(){setState(() {});});
             },
           ),
         ],

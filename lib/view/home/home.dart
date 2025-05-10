@@ -4,17 +4,18 @@ import 'dart:io';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/main.dart';
-import 'package:lista_de_compras/view/pessoais/calculadora.dart';
-import 'package:lista_de_compras/view/home/widget/lista.dart';
-import 'package:lista_de_compras/view/home/widget/lista.preco.dart';
-import 'package:lista_de_compras/view/pessoais/configuracoes.dart';
-import 'package:lista_de_compras/view/pessoais/conta.dart';
+import 'package:lista_de_compras/view/list/lista.dart';
+import 'package:lista_de_compras/view/list/lista.preco.dart';
+
 
 import 'package:lista_de_compras/model/lista.model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_compras/services/db.service.dart';
 import 'package:lista_de_compras/model/name.model.dart';
+import 'package:lista_de_compras/view/config/calculadora.dart';
+import 'package:lista_de_compras/view/config/configuracoes.dart';
+import 'package:lista_de_compras/view/config/conta.dart';
 
 class ListaComprasPage extends StatefulWidget {
   const ListaComprasPage({super.key});
