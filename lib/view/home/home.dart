@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';

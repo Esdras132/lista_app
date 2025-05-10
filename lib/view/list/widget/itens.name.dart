@@ -13,9 +13,7 @@ class ItemsNamePage extends StatefulWidget {
 }
 
 class _ItemsPageState extends State<ItemsNamePage> {
-  final TextEditingController _items = TextEditingController();
   List<ItensNameModel> itens = [];
-  final _formKey = GlobalKey<FormState>();
   AlertController alert = AlertController();
   ListaNameController controller = ListaNameController();
 
@@ -50,7 +48,11 @@ class _ItemsPageState extends State<ItemsNamePage> {
           (widget.model.itensName!.where((a) => a.checked == true).isNotEmpty)
               ? IconButton(
                 onPressed: () {
-                  controller.deleteItem(context, widget.model, () => setState(() {}));
+                  controller.deleteItem(
+                    context,
+                    widget.model,
+                    () => setState(() {}),
+                  );
                 },
                 icon: const Icon(Icons.delete),
               )
@@ -84,7 +86,12 @@ class _ItemsPageState extends State<ItemsNamePage> {
                       });
                     },
                     onLongPress: () {
-                      _edicaolista(item);
+                      controller.editItem(
+                        context,
+                        widget.model,
+                        item,
+                        () => setState(() {}),
+                      );
                     },
                     leading: Checkbox(
                       value: item.checked,
@@ -120,120 +127,13 @@ class _ItemsPageState extends State<ItemsNamePage> {
             backgroundColor: Colors.green,
             child: const Icon(Icons.add, color: Colors.white),
             onPressed: () {
-              controller.addItem(context, widget.model,(){setState(() {});});
+              controller.addItem(context, widget.model, () {
+                setState(() {});
+              });
             },
           ),
         ],
       ),
-    );
-  }
-
-  /*   Future<void> _showAlertDialog() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('itens para adicionar'),
-          content:
-          actions: <Widget>[
-            TextButton(
-              child: const Text('cancelar', selectionColor: Colors.green),
-              onPressed: () {
-                Navigator.of(context).pop();
-                _items.text = '';
-              },
-            ),
-            TextButton(
-              child: const Text('adicionar', selectionColor: Colors.green),
-              onPressed: () {
-                if (!_formKey.currentState!.validate()) {
-                } else {
-                  setState(() {
-
-                  });
-                }
-              },
-            ),
-          ],
-        );
-      },
-    );
-  } */
-
-  Future<void> _edicaolista(ItensNameModel model) async {
-    TextEditingController controller = TextEditingController();
-
-    controller.text = model.descricao!;
-
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Editar'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              TextField(
-                controller: controller,
-                decoration: const InputDecoration(labelText: 'Nome'),
-              ),
-            ],
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('cancelar'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                controller.text = '';
-              },
-            ),
-            TextButton(
-              child: const Text('Atualizar'),
-              onPressed: () {
-                model.descricao = controller.text;
-                widget.model.update();
-                Navigator.of(context).pop();
-
-                setState(() {});
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  Future<void> _showdeleteDialog() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Deletar'),
-          content: const Text('Deseja Deletar todos os itens selecionados?'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              child: const Text('Cancelar'),
-            ),
-            TextButton(
-              onPressed: () async {
-                for (var i = widget.model.itensName!.length - 1; i >= 0; i--) {
-                  if (widget.model.itensName![i].checked) {
-                    widget.model.itensName!.removeAt(i);
-                  }
-                }
-                await widget.model.update();
-                setState(() {
-                  Navigator.pop(context);
-                });
-              },
-              child: const Text('deletar'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

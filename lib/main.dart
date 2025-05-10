@@ -1,6 +1,3 @@
-
-import 'dart:developer';
-
 import 'package:lista_de_compras/firebase_options.dart';
 import 'package:lista_de_compras/view/login/verifyEmail.dart';
 import 'package:lista_de_compras/intro.dart';

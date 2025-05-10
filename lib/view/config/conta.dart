@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
-import 'package:lista_de_compras/intro.dart';
 
 class Conta extends StatefulWidget {
   const Conta({super.key});

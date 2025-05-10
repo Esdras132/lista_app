@@ -10,8 +10,6 @@ import 'package:lista_de_compras/view/login/Redefinir_senha.dart';
 import 'package:lista_de_compras/view/login/sign-up_page.dart';
 import 'package:lista_de_compras/view/login/verifyEmail.dart';
 
-import 'package:lista_de_compras/main.dart';
-import 'package:lista_de_compras/view/home/home.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
