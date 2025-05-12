@@ -18,7 +18,6 @@ class ItemsPage extends StatefulWidget {
 class _ItemsPageState extends State<ItemsPage> {
   List<ItemModel> items = [];
   AlertController alert = AlertController();
-  final _formKey = GlobalKey<FormState>();
   ListaPrecoController controller = ListaPrecoController();
 
   @override
@@ -92,153 +91,12 @@ class _ItemsPageState extends State<ItemsPage> {
                       });
                     },
                     onLongPress: () {
-                      TextEditingController controller =
-                          TextEditingController();
-                      TextEditingController controllerqtd =
-                          TextEditingController();
-                      TextEditingController controllervalor =
-                          TextEditingController();
-
-                      controller.text = item.descricao!;
-                      controllerqtd.text = item.quantidade.toString();
-                      controllervalor.text = item.valor.toString();
-                      alert
-                          .bodyMessage(
-                            context,
-                            Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Form(
-                                key: _formKey,
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: <Widget>[
-                                    TextFormField(
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Por favor insira um nome';
-                                        }
-                                        return null;
-                                      },
-                                      autofocus: true,
-                                      controller: controller,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Nome',
-                                      ),
-                                    ),
-                                    TextField(
-                                      controller: controllerqtd,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Quantidade',
-                                      ),
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                            decimal: true,
-                                          ),
-                                    ),
-                                    TextField(
-                                      controller: controllervalor,
-                                      decoration: const InputDecoration(
-                                        labelText: 'Valor',
-                                      ),
-                                      keyboardType:
-                                          const TextInputType.numberWithOptions(
-                                            decimal: true,
-                                            signed: false,
-                                          ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    Row(
-                                      children: [
-                                        Expanded(
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: TextButton(
-                                              style: TextButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                ),
-                                              ),
-                                              child: const Text(
-                                                'Cancelar',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                            ),
-                                          ),
-                                        ),
-
-                                        SizedBox(width: 5),
-                                        Expanded(
-                                          child: SizedBox(
-                                            width: double.infinity,
-                                            child: TextButton(
-                                              style: TextButton.styleFrom(
-                                                backgroundColor: Colors.green,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(2),
-                                                ),
-                                              ),
-                                              onPressed: () {
-                                                if (_formKey.currentState!
-                                                    .validate()) {
-                                                  setState(() {
-                                                    ItemModel item = ItemModel(
-                                                      descricao:
-                                                          controller.text,
-                                                      quantidade: double.parse(
-                                                        controllerqtd.text
-                                                            .replaceAll(
-                                                              ',',
-                                                              '.',
-                                                            ),
-                                                      ),
-                                                      valor: double.parse(
-                                                        controllervalor.text
-                                                            .replaceAll(
-                                                              ',',
-                                                              '.',
-                                                            ),
-                                                      ),
-                                                    );
-                                                    widget.model.items!.add(
-                                                      item,
-                                                    );
-                                                    widget.model.update();
-
-                                                    Navigator.of(context).pop();
-                                                  });
-                                                } else {
-                                                  return;
-                                                }
-                                              },
-                                              child: Text(
-                                                'Salvar',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            null,
-                            null,
-                          )
-                          .show();
-
-                      /*  _edicaolista(item); */
+                      controller.editItem(
+                        context,
+                        widget.model,
+                        item,
+                        () => setState(() {}),
+                      );
                     },
                     leading: Checkbox(
                       value: item.checked,
@@ -296,4 +154,3 @@ class _ItemsPageState extends State<ItemsPage> {
     );
   }
 }
-
