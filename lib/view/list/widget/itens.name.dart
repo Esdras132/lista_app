@@ -105,6 +105,14 @@ class _ItemsPageState extends State<ItemsNamePage> {
                       item.descricao!,
                       style: const TextStyle(fontSize: 25),
                     ),
+                                        subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Quantidade ${item.quantidade} ${item.quantidade?.truncateToDouble() == item.quantidade ? 'UN' : 'KG'}',
+                        ),
+                      ],
+                    ),
                   );
                 },
               ),

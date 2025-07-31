@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/controller/_theme.controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -11,13 +13,16 @@ class Config extends StatefulWidget {
 }
 
 class _ConfigState extends State<Config> {
+  PackageInfo? _packageInfo;
   List<String> listitema = ["Claro", "Escuro"];
   String selectval = "Claro";
   String ver = '2.0.0';
   List<String> listliguagens = ["PT-BR", "EN"];
   String selectvall = "PT-BR";
   final Uri _url = Uri.parse('https://www.instagram.com/esdrasleviti/');
-  late PackageInfo _packageInfo;
+
+  AlertController alertController = AlertController();
+  ThemeController themeController = ThemeController();
 
   @override
   void initState() {
@@ -34,15 +39,21 @@ class _ConfigState extends State<Config> {
 
   void copiar() {
     Clipboard.setData(ClipboardData(text: _url.toString()));
-    const snackBar = SnackBar(content: Text('Link copiado para a área de transferência'));
+    const snackBar = SnackBar(
+      content: Text('Link copiado para a área de transferência'),
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return Scaffold(/* 
+      backgroundColor: Colors.black, */
       appBar: AppBar(
-        title: const Text('Configurações',style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+        title: const Text(
+          'Configurações',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -51,7 +62,7 @@ class _ConfigState extends State<Config> {
         child: ListView(
           children: [
             _buildSettingItem(
-              title: 'Instagram',
+              title: 'Redes Sociais, Desenvolvedor',
               onLongPress: copiar,
               onPressed: () async {
                 // ignore: deprecated_member_use
@@ -60,21 +71,30 @@ class _ConfigState extends State<Config> {
                 }
               },
             ),
-            const SizedBox(height: 30),
-            _buildDropdown(
+     /*       const SizedBox(height: 30),
+             _buildDropdown(
               title: 'Modo de Tema',
               value: selectval,
               items: listitema,
               onChanged: (value) {
                 setState(() {
                   selectval = value.toString();
+
+                  if (selectval == "Claro") {
+                    themeController.toggleTheme(context, false);
+                  } else {
+                    themeController.toggleTheme(context, true);
+                  }
+                  themeController.get(context).then((isModoEscuro) {
+                    log(isModoEscuro.toString());
+                  });
                 });
               },
-            ),
-            const SizedBox(height: 30),
+            ), */
+            const SizedBox(height: 20),
             _buildSettingItem(
               title: 'Versão',
-              subtitle: _packageInfo.version,
+              subtitle: _packageInfo?.version ?? 'error',
             ),
           ],
         ),
@@ -82,7 +102,12 @@ class _ConfigState extends State<Config> {
     );
   }
 
-  Widget _buildSettingItem({required String title, String subtitle = '', VoidCallback? onLongPress, VoidCallback? onPressed}) {
+  Widget _buildSettingItem({
+    required String title,
+    String subtitle = '',
+    VoidCallback? onLongPress,
+    VoidCallback? onPressed,
+  }) {
     return Container(
       height: 60,
       decoration: BoxDecoration(
@@ -99,15 +124,29 @@ class _ConfigState extends State<Config> {
         ],
       ),
       child: ListTile(
-        title: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        subtitle: subtitle.isNotEmpty ? Text(subtitle, style: TextStyle(fontSize: 16, color: Colors.grey.shade600)) : null,
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+        subtitle:
+            subtitle.isNotEmpty
+                ? Text(
+                  subtitle,
+                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                )
+                : null,
         onLongPress: onLongPress,
         onTap: onPressed,
       ),
     );
   }
 
-  Widget _buildDropdown({required String title, required String value, required List<String> items, required ValueChanged<String?> onChanged}) {
+  /* Widget _buildDropdown({
+    required String title,
+    required String value,
+    required List<String> items,
+    required ValueChanged<String?> onChanged,
+  }) {
     return Container(
       height: 60,
       decoration: BoxDecoration(
@@ -124,18 +163,22 @@ class _ConfigState extends State<Config> {
         ],
       ),
       child: ListTile(
-        title: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        title: Text(
+          title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
         trailing: DropdownButton<String>(
           value: value,
           onChanged: onChanged,
-          items: items.map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
+          items:
+              items.map<DropdownMenuItem<String>>((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(value),
+                );
+              }).toList(),
         ),
       ),
     );
-  }
+  } */
 }

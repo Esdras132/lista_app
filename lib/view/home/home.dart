@@ -2,10 +2,10 @@ import 'dart:developer';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/controller/excel.controller.dart';
 import 'package:lista_de_compras/main.dart';
 import 'package:lista_de_compras/view/list/lista.dart';
 import 'package:lista_de_compras/view/list/lista.preco.dart';
-
 
 import 'package:lista_de_compras/model/lista.model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,7 +14,6 @@ import 'package:lista_de_compras/services/db.service.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 import 'package:lista_de_compras/view/config/calculadora.dart';
 import 'package:lista_de_compras/view/config/configuracoes.dart';
-import 'package:lista_de_compras/view/config/conta.dart';
 
 class ListaComprasPage extends StatefulWidget {
   const ListaComprasPage({super.key});
@@ -24,8 +23,10 @@ class ListaComprasPage extends StatefulWidget {
 }
 
 class _ListaComprasPageState extends State<ListaComprasPage> {
-  String? verNome= '';
+  String? verNome = '';
   var lista = [];
+  final excelController = ExcelController();
+
   final TextEditingController _nomeController = TextEditingController();
   final AlertController alert = AlertController();
   final _formKey = GlobalKey<FormState>();
@@ -42,9 +43,9 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   Future<void> Name() async {
     String? name = FirebaseAuth.instance.currentUser?.displayName;
     setState(() {
-     if(name.toString().isEmpty){
-       verNome = 'Usuário';
-     }
+      if (name.toString().isEmpty) {
+        verNome = 'Usuário';
+      }
       verNome = name;
     });
   }
@@ -87,7 +88,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             title: AnimatedTextKit(
               animatedTexts: [
                 TypewriterAnimatedText(
-                  'Bem Vindo${'(a) ${verNome!}'}',
+                  /* 'Bem Vindo${'(a) ${verNome ?? ''}'}', */
+                  'Bem Vindo(a)',
                   textStyle: const TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.bold,
@@ -127,12 +129,12 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       value: 0,
                       child: Row(
                         children: [
-                          Text("Conta", style: TextStyle(color: Colors.white)),
-                          Spacer(),
-                          Icon(
-                            Icons.account_circle_outlined,
-                            color: Colors.white,
+                          Text(
+                            "Exportar Excel",
+                            style: TextStyle(color: Colors.white),
                           ),
+                          Spacer(),
+                          Icon(Icons.file_download, color: Colors.white),
                         ],
                       ),
                     ),
@@ -177,12 +179,11 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                     ),
                   ];
                 },
-                onSelected: (value) {
+                onSelected: (value) async {
                   if (value == 0) {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => Conta()),
-                    );
+                    await excelController.exportarExcel(context);
+                    if (!context.mounted) return;
+ 
                   } else if (value == 1) {
                     Navigator.push(
                       context,

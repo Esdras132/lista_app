@@ -11,13 +11,6 @@ class ItemModel {
     return quantidade! * valor!;
   }
 
-  getRegra() {
-    if (getTotal().toString().length > 15) {
-      return getTotal().toString().substring(0, 15);
-    } else {
-      return getTotal();
-    }
-  }
 
   ItemModel.map(dynamic map) {
     descricao = map["descricao"];
