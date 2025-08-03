@@ -30,6 +30,8 @@ class _ItemsPageState extends State<ItemsPage> {
     return Scaffold(
       backgroundColor: Colors.green[700],
       appBar: AppBar(
+        elevation: 8,
+        shadowColor: Colors.black87,
         iconTheme: const IconThemeData(color: Colors.white),
         flexibleSpace: Column(
           mainAxisAlignment: MainAxisAlignment.end,

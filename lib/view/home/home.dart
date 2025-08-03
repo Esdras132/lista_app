@@ -83,6 +83,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
         onWillPop: showExitPopup,
         child: Scaffold(
           appBar: AppBar(
+                    elevation: 8,
+        shadowColor: Colors.black87,
             leading: null, // Removes the back button
             automaticallyImplyLeading: false,
             title: AnimatedTextKit(
