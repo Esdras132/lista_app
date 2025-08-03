@@ -28,6 +28,7 @@ class _ItemsPageState extends State<ItemsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.green[700],
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         flexibleSpace: Column(
@@ -74,7 +75,7 @@ class _ItemsPageState extends State<ItemsPage> {
                   ),
                   const Text(
                     "Não tem Produtos",
-                    style: TextStyle(fontSize: 27),
+                    style: TextStyle(fontSize: 27, color: Colors.white),
                   ),
                 ],
               )
@@ -98,29 +99,44 @@ class _ItemsPageState extends State<ItemsPage> {
                         () => setState(() {}),
                       );
                     },
-                    leading: Checkbox(
-                      value: item.checked,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          item.checked = value!;
-                        });
-                      },
+                    leading: Theme(
+                      data: Theme.of(context).copyWith(
+                        checkboxTheme: CheckboxThemeData(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          side: const BorderSide(color: Colors.white, width: 2),
+                        ),
+                      ),
+                      child: Checkbox(
+                        value: item.checked,
+                        checkColor: Colors.white,
+                        activeColor: Colors.green,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            item.checked = value!;
+                          });
+                        },
+                      ),
                     ),
                     title: Text(
                       item.descricao!,
-                      style: const TextStyle(fontSize: 25),
+                      style: const TextStyle(fontSize: 25, color: Colors.white),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Quantidade ${item.quantidade} ${item.quantidade?.truncateToDouble() == item.quantidade ? 'UN' : 'KG'}',
+                          style: const TextStyle(color: Colors.white),
                         ),
                         Text(
                           'Valor ${UtilBrasilFields.obterReal(item.valor!.toDouble())}',
+                          style: const TextStyle(color: Colors.white),
                         ),
                         Text(
                           'Valor Total ${UtilBrasilFields.obterReal(item.getTotal())}',
+                          style: const TextStyle(color: Colors.white),
                         ),
                       ],
                     ),

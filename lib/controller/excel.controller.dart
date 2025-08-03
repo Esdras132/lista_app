@@ -1,5 +1,6 @@
 import 'dart:developer';
 import 'dart:io';
+import 'package:brasil_fields/brasil_fields.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
@@ -12,60 +13,126 @@ class ExcelController {
   final AlertController alert = AlertController();
 
   Future<void> exportarExcel(BuildContext context) async {
+    var rowIndex = 0;
+    var total = double.parse('0');
     try {
-      // Solicita permissão de armazenamento no Android
       if (Platform.isAndroid) {
         final status = await Permission.manageExternalStorage.request();
         if (!status.isGranted) {
-           alert.erroMessage(
-            // ignore: use_build_context_synchronously
-            context,
-            'Permissão de armazenamento negada.',
-          );
-          
+          alert.erroMessage(context, 'Permissão de armazenamento negada.');
+          return;
         }
       }
 
-      // Cria o arquivo Excel e a aba
       final excel = Excel.createExcel();
+      final listaGeral = excel['Listas'];
       final preco = excel['Com Preço'];
       final semPreco = excel['Sem Preço'];
 
+      CellStyle boldStyle = CellStyle(
+        bold: true,
+        fontFamily: getFontFamily(FontFamily.Calibri),
+        horizontalAlign: HorizontalAlign.Center,
+        backgroundColorHex: ExcelColor.green,
+      );
+
       // Cabeçalhos
+      listaGeral.appendRow([
+        TextCellValue('Tipo'),
+        TextCellValue('Listas'),
+        TextCellValue('Quantidade'),
+        TextCellValue('Total'),
+      ]);
+      listaGeral.row(0).forEach((cell) => cell?.cellStyle = boldStyle);
+
       preco.appendRow([
         TextCellValue('Lista'),
         TextCellValue('Item'),
-        TextCellValue('quantidade'),
-        TextCellValue('preço'),
+        TextCellValue('Quantidade'),
+        TextCellValue('Preço'),
       ]);
-      semPreco.appendRow([TextCellValue('Item'), TextCellValue('quantidade')]);
+      preco.row(0).forEach((cell) => cell?.cellStyle = boldStyle);
 
-      // Lista com preço
+      semPreco.appendRow([
+        TextCellValue('Lista'),
+        TextCellValue('Item'),
+        TextCellValue('Quantidade'),
+      ]);
+      semPreco.row(0).forEach((cell) => cell?.cellStyle = boldStyle);
+
+      final listaGeralCom = DBserviceCom.fetchAll();
+      final listaGeralSem = DBserviceSem.fetchAll();
+      final listaGeralComSnapshot = await listaGeralCom.first;
+      final listaGeralSemSnapshot = await listaGeralSem.first;
+
+      for (var item in listaGeralComSnapshot) {
+        rowIndex ++;
+        total = total + item.getTotal();
+        listaGeral.appendRow([
+          TextCellValue('Com Preço'),
+          TextCellValue(item.descricao ?? ''),
+          TextCellValue(item.items?.length.toString() ?? '0'),
+          TextCellValue(UtilBrasilFields.obterReal(item.getTotal() ?? '0')),
+        ]);
+      }
+
+      for (var item in listaGeralSemSnapshot) {
+        rowIndex ++;
+        listaGeral.appendRow([
+          TextCellValue('Sem Preço'),
+          TextCellValue(item.descricao ?? ''),
+          TextCellValue(item.itensName?.length.toString() ?? '0'),
+          TextCellValue(''),
+        ]);
+      }
+
+      listaGeral.merge(
+        CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: rowIndex  + 1),
+        CellIndex.indexByColumnRow(columnIndex: 2, rowIndex: rowIndex  + 1),
+      );
+
+      listaGeral
+          .cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: rowIndex  + 1))
+          .value = TextCellValue('Quantidade e Total');
+
+      listaGeral
+          .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: rowIndex  + 1))
+          .value = TextCellValue(UtilBrasilFields.obterReal(total).toString());
+
       final listaCom = await DBserviceCom.fetchAll();
       final listaComSnapshot = await listaCom.first;
       for (var item in listaComSnapshot) {
-        preco.appendRow([
-          TextCellValue(item.descricao ?? ''),
-          for (var i = 0; i < item.items!.length; i++)
-            TextCellValue(item.items![i].descricao ?? ''),
-          for (var i = 0; i < item.items!.length; i++)
-            TextCellValue(item.items![i].quantidade.toString()),
-          for (var i = 0; i < item.items!.length; i++)
-            TextCellValue(item.items![i].valor.toString()),
-        ]);
+        final items = item.items!;
+        for (var i = 0; i < items.length; i++) {
+          preco.appendRow([
+            TextCellValue(item.descricao ?? ''),
+            TextCellValue(items[i].descricao ?? ''),
+            TextCellValue(items[i].quantidade.toString()),
+            TextCellValue(
+              UtilBrasilFields.obterReal(
+                double.parse(items[i].valor.toString()),
+              ),
+            ),
+          ]);
+        }
       }
 
-      // Lista sem preço
+      // Aba sem preço
       final listaSem = await DBserviceSem.fetchAll();
       final listaSemSnapshot = await listaSem.first;
       for (var item in listaSemSnapshot) {
-        semPreco.appendRow([
-          TextCellValue(item.descricao ?? ''),
-          TextCellValue('1'),
-        ]);
+        final itensName = item.itensName!;
+        for (var i = 0; i < itensName.length; i++) {
+          semPreco.appendRow([
+            TextCellValue(item.descricao ?? ''),
+            TextCellValue(itensName[i].descricao ?? ''),
+            TextCellValue(itensName[i].quantidade.toString()),
+          ]);
+        }
       }
 
-      // Define o diretório para salvar
+      excel.delete('Sheet1');
+
       Directory? dir;
       if (Platform.isAndroid) {
         dir = Directory('/storage/emulated/0/Download');
@@ -73,20 +140,19 @@ class ExcelController {
         dir = await getApplicationDocumentsDirectory();
       }
 
-      // Caminho do arquivo
-      final path = '${dir.path}/lista_compras.xlsx';
+      final path = '${dir.path}/Lista de Compras.xlsx';
       final fileBytes = excel.save();
 
       if (fileBytes == null) {
         alert.erroMessage(context, 'Erro ao salvar o Excel.');
+        return;
       }
 
       final file =
           File(path)
             ..createSync(recursive: true)
-            ..writeAsBytesSync(fileBytes!);
+            ..writeAsBytesSync(fileBytes);
 
-      // Mostra a tela para enviar
       // ignore: deprecated_member_use
       await Share.shareXFiles([XFile(path)], text: 'Lista de Compras');
     } catch (e) {
@@ -95,4 +161,3 @@ class ExcelController {
     }
   }
 }
-

@@ -47,8 +47,8 @@ class _ConfigState extends State<Config> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(/* 
-      backgroundColor: Colors.black, */
+    return Scaffold(
+      backgroundColor: Colors.green[700], 
       appBar: AppBar(
         title: const Text(
           'Configurações',
@@ -71,8 +71,19 @@ class _ConfigState extends State<Config> {
                 }
               },
             ),
-     /*       const SizedBox(height: 30),
-             _buildDropdown(
+/*             const SizedBox(height: 20),
+            _buildSettingItem(
+              title: 'Mandar Feedback',
+              onLongPress: copiar,
+              onPressed: () async {
+                // ignore: deprecated_member_use
+                if (!await launch(_url.toString())) {
+                  throw Exception('Não foi possível abrir o link');
+                }
+              },
+            ), 
+            const SizedBox(height: 30),
+            _buildDropdown(
               title: 'Modo de Tema',
               value: selectval,
               items: listitema,
@@ -112,11 +123,11 @@ class _ConfigState extends State<Config> {
       height: 60,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
+        color: Colors.green,
         boxShadow: [
           BoxShadow(
             // ignore: deprecated_member_use
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.green,
             spreadRadius: 4,
             blurRadius: 10,
             offset: const Offset(0, 2),
@@ -126,13 +137,13 @@ class _ConfigState extends State<Config> {
       child: ListTile(
         title: Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
         ),
         subtitle:
             subtitle.isNotEmpty
                 ? Text(
                   subtitle,
-                  style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
+                  style: TextStyle(fontSize: 16, color: Colors.white70),
                 )
                 : null,
         onLongPress: onLongPress,

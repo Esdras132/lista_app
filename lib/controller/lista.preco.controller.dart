@@ -8,8 +8,8 @@ class ListaPrecoController {
 
   addItem(BuildContext context, ListaModel model, Function refresh) {
     final TextEditingController items = TextEditingController();
-    final TextEditingController quantidade = TextEditingController(text: '0');
-    final TextEditingController valor = TextEditingController(text: '0');
+    final TextEditingController quantidade = TextEditingController();
+    final TextEditingController valor = TextEditingController();
     final formKey = GlobalKey<FormState>();
     alert
         .bodyMessage(

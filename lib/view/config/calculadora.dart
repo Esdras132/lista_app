@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lista_de_compras/controller/shared.preferences.controller.dart';
 import 'package:math_expressions/math_expressions.dart';
 
 class CalculatorView extends StatefulWidget {
@@ -11,15 +12,43 @@ class CalculatorView extends StatefulWidget {
 class _CalculatorViewState extends State<CalculatorView> {
   String _output = "0";
   String _input = "";
+  SharedPreferencesController sharedPreferencesController =
+      SharedPreferencesController();
+
+  @override
+  void initState() {
+    super.initState();
+    sharedPreferencesController.get(context, 'calculadora_input').then((value) {
+      setState(() {
+        _input = value ?? "";
+      });
+    });
+
+    sharedPreferencesController.get(context, 'calculadora_output').then((
+      value,
+    ) {
+      setState(() {
+        _output = value ?? "";
+      });
+    });
+  }
 
   void _onPressed(String value) {
     setState(() {
       if (value == "C") {
         _input = "";
         _output = "0";
+        sharedPreferencesController.set(context, 'calculadora_input', _input);
+        sharedPreferencesController.set(context, 'calculadora_output', _output);
       } else if (value == "=") {
         try {
+          sharedPreferencesController.set(context, 'calculadora_input', _input);
           _output = _calculate(_input);
+          sharedPreferencesController.set(
+            context,
+            'calculadora_output',
+            _output,
+          );
         } catch (e) {
           _output = "Erro";
         }
@@ -71,9 +100,9 @@ class _CalculatorViewState extends State<CalculatorView> {
               child: Text(
                 _output,
                 style: const TextStyle(
-                  fontSize: 48, 
-                  fontWeight: FontWeight.bold, 
-                  color: Colors.white
+                  fontSize: 48,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -86,10 +115,22 @@ class _CalculatorViewState extends State<CalculatorView> {
 
   Widget _buildButtons() {
     const buttons = [
-      "7", "8", "9", "/",
-      "4", "5", "6", "*",
-      "1", "2", "3", "-",
-      "C", "0", ".", "+",
+      "7",
+      "8",
+      "9",
+      "/",
+      "4",
+      "5",
+      "6",
+      "*",
+      "1",
+      "2",
+      "3",
+      "-",
+      "C",
+      "0",
+      ".",
+      "+",
     ];
 
     return Column(
