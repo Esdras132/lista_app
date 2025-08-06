@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:email_validator/email_validator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:lista_de_compras/controller/alert.controller.dart';
 
 class RedefinirSenha extends StatefulWidget {
   const RedefinirSenha({super.key});
@@ -12,6 +13,7 @@ class RedefinirSenha extends StatefulWidget {
 
 class _RedefinirSenhaState extends State<RedefinirSenha> {
   final TextEditingController _recuperarSenha = TextEditingController();
+  final AlertController alertController = AlertController();
   final _formKey = GlobalKey<FormState>();
   bool _indicador = false;
 
@@ -114,32 +116,12 @@ class _RedefinirSenhaState extends State<RedefinirSenha> {
       try {
         await FirebaseAuth.instance.sendPasswordResetEmail(email: _recuperarSenha.text);
         if (!mounted) return;
-        _mostrarDialogo();
+        alertController.showSnackBarError(context, 'Caso seu e-mail esteja cadastrado, será enviado um link para redefinir a senha.');
       } catch (e) {
         log(e.toString());
       } finally {
         setState(() => _indicador = false);
       }
     }
-  }
-
-  Future<void> _mostrarDialogo() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Atenção'),
-          content: const Text(
-            'Caso seu e-mail esteja cadastrado, será enviado um link para redefinir a senha.',
-          ),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 }

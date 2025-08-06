@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/view/login/Redefinir_senha.dart';
 import 'package:lista_de_compras/view/login/sign-up_page.dart';
 import 'package:lista_de_compras/view/login/verifyEmail.dart';
@@ -21,6 +22,7 @@ class Loginpage extends StatefulWidget {
 class _LoginState extends State<Loginpage> {
   final TextEditingController _login = TextEditingController();
   final TextEditingController _senha = TextEditingController();
+  final AlertController alertController = AlertController();
   final _formKey = GlobalKey<FormState>();
   bool passenable = true;
   bool _indicador = false;
@@ -217,7 +219,8 @@ class _LoginState extends State<Loginpage> {
               _login.clear();
               _senha.clear();
             } catch (e) {
-              _senhaOuEmailErro();
+              // ignore: use_build_context_synchronously
+              alertController.showSnackBarError(context, 'Login ou Senha incorretos');
               log(e.toString());
             } finally {
               setState(() => _indicador = false);
@@ -276,26 +279,6 @@ class _LoginState extends State<Loginpage> {
     );
   }
 
-  Future<void> _senhaOuEmailErro() async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Atenção'),
-          content: const Text('Login ou Senha incorretos'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _senha.clear();
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
 }
 
 

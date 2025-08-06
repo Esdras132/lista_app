@@ -1,21 +1,5 @@
-Lista-app
-melhorias para app 
-colocar uma pagina inicia mais bonita com introdução
-
-com essas frases
-
-Esta lista foi preparada para facilitar as compras semanais de mantimentos
-
-Aqui está a lista de compras para a semana com a família
-
-Sinta-se à vontade para adicionar ou remover itens conforme necessário, com base em suas preferências e requisitos pessoais
+-Colocar perfis para lista de compras, por exemplo pessoas que não comem em casa todos os dias so um arroz
+Fazer ate uns 5 perfis de lista de compras
 
 
-
-
-Dar uma melhorar na tela de login 
-
-
-
-dar uma olhada 
-https://www.fluttercampus.com/guide/281/create-shortcuts-quick-links-in-home-screen-flutter/
+-tela de carrinho: quando passar para o lado o item vai sair do estado pendente para no carrinho 

@@ -1,0 +1,332 @@
+{
+    "Diversos": [
+        {
+            "descricao": "Arroz",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Feijão",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Açúcar",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Café",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Achocolatado",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Leite",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Pão",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Farinha de trigo",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Farinha de rosca",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Amido de milho",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Fermento",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Macarrão",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Molho de tomate",
+            "quantidade": 1
+        },        {
+            "descricao": "Leite condensado",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Creme de leite",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Gelatina",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Ketchup",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Maionese",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Óleo",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Azeite",
+            "quantidade": 1
+        },
+                {
+            "descricao": "Vinagre",
+            "quantidade": 1
+        },
+                        {
+            "descricao": "Tempero pronto",
+            "quantidade": 1
+        },                {
+            "descricao": "Sal",
+            "quantidade": 1
+        }
+
+        
+    ],
+        "Frutas e Verduras": [
+        {
+            "descricao": "Alface",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Repolho",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Vagem",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Tomate",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Pepino",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Cebola",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Batata",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Cenoura",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Pimentão",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Chuchu",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Limão",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Banana",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Mamão",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Melão",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Laranja",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Abacaxi",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Morango",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Maçã",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Maracujá",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Melancia",
+            "quantidade": 1
+        }
+    ],
+        "Bebidas": [
+        {
+            "descricao": "Água mineral",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Refrigerante",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Suco",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Cerveja",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Vinho",
+            "quantidade": 1
+        }
+    ],
+        "Utilidades e Limpeza": [
+        {
+            "descricao": "Detergente",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Desinfetante",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Agua sanitária",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Sabão em pó",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Sabão em pedra",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Amaciante",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Álcool",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Lustra móveis",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Inseticida",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Saco de lixo",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Papel toalha",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Guardanapo",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Papel aluminio",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Filme plástico",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Esponja de aço",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Rodo/vassoura",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Fósforo",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Vela",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Lâmpada",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Palito de dente",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Filtro para café",
+            "quantidade": 1
+        }
+    ],
+    "Higiene": [
+        {
+            "descricao": "Shampoo",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Condicionador",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Sabonete",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Desodorante",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Papel higiênico",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Creme dental",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Fio dental",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Escova de dentes",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Cotonete",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Algodão",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Absorvente",
+            "quantidade": 1
+        }
+    ]
+}

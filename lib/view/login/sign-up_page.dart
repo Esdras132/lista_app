@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import "dart:developer";
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:lista_de_compras/controller/alert.controller.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -15,6 +16,7 @@ class _SignUpPageState extends State<SignUpPage> {
   final TextEditingController _email = TextEditingController();
   final TextEditingController _senha = TextEditingController();
   final TextEditingController _confirmacaoSenha = TextEditingController();
+  final AlertController alertController = AlertController();
   final _formKey = GlobalKey<FormState>();
   bool passenable = true;
   bool passenableCon = true;
@@ -181,33 +183,13 @@ class _SignUpPageState extends State<SignUpPage> {
         Navigator.pop(context);
       } catch (e) {
         log(e.toString());
-        _showErrorDialog('Esse e-mail já está registrado em outra conta');
+        alertController.showSnackBarError(context,'Esse e-mail já está registrado em outra conta');
       } finally {
         setState(() {
           _indicador = false;
         });
       }
     }
-  }
-
-  Future<void> _showErrorDialog(String message) async {
-    return showDialog<void>(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Erro'),
-          content: Text(message),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: const Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Widget _buildTextField({

@@ -1,9 +1,13 @@
+import 'dart:convert';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:flutter/services.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/controller/excel.controller.dart';
 import 'package:lista_de_compras/main.dart';
+import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/view/list/lista.dart';
 import 'package:lista_de_compras/view/list/lista.preco.dart';
 
@@ -14,6 +18,7 @@ import 'package:lista_de_compras/services/db.service.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 import 'package:lista_de_compras/view/config/calculadora.dart';
 import 'package:lista_de_compras/view/config/configuracoes.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ListaComprasPage extends StatefulWidget {
   const ListaComprasPage({super.key});
@@ -24,12 +29,13 @@ class ListaComprasPage extends StatefulWidget {
 
 class _ListaComprasPageState extends State<ListaComprasPage> {
   String? verNome = '';
-  var lista = [];
-  final excelController = ExcelController();
 
+  final excelController = ExcelController();
+  List lista = [];
   final TextEditingController _nomeController = TextEditingController();
   final AlertController alert = AlertController();
   final _formKey = GlobalKey<FormState>();
+
   var checkedList = [];
   final dbService = DBserviceCom();
 
@@ -83,8 +89,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
         onWillPop: showExitPopup,
         child: Scaffold(
           appBar: AppBar(
-                    elevation: 8,
-        shadowColor: Colors.black87,
+            elevation: 8,
+            shadowColor: Colors.black87,
             leading: null, // Removes the back button
             automaticallyImplyLeading: false,
             title: AnimatedTextKit(
@@ -158,6 +164,20 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       child: Row(
                         children: [
                           Text(
+                            "Importar Valores \nSem Preço",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Spacer(),
+                          Icon(Icons.upload_file, color: Colors.white),
+                        ],
+                      ),
+                    ),
+
+                    const PopupMenuItem<int>(
+                      value: 3,
+                      child: Row(
+                        children: [
+                          Text(
                             "Configurações",
                             style: TextStyle(color: Colors.white),
                           ),
@@ -167,7 +187,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       ),
                     ),
                     const PopupMenuItem<int>(
-                      value: 3,
+                      value: 4,
                       child: Row(
                         children: [
                           Text(
@@ -185,18 +205,45 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                   if (value == 0) {
                     await excelController.exportarExcel(context);
                     if (!context.mounted) return;
- 
                   } else if (value == 1) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => CalculatorView()),
                     );
                   } else if (value == 2) {
+                    try {
+                      final String resposta = await rootBundle.loadString(
+                        'assets/definicoes/definicoes.json',
+                      );
+                      final dados = json.decode(resposta);
+                      List<String> nomes = (dados.keys.toList()).toList();
+                      for (var nome in nomes) {
+                        log(nome);
+                        List<ItensNameModel> listaItens = [];
+                        for (var item in (dados[nome] as List)) {
+                          ItensNameModel itemModel = ItensNameModel(
+                            descricao: (item['descricao'] as String?) ?? '',
+                            quantidade:
+                                (item['quantidade'] as num?)?.toDouble(),
+                          );
+                          listaItens.add(itemModel);
+                        }
+                        NameModel model = NameModel(
+                          descricao: nome,
+                          itensName: listaItens,
+                        );
+
+                        DBserviceSem.createMyList(model);
+                      }
+                    } catch (e) {
+                      throw Exception('Erro ao carregar o arquivo JSON: $e');
+                    }
+                  } else if (value == 3) {
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => Config()),
                     );
-                  } else if (value == 3) {
+                  } else if (value == 4) {
                     alert.bodyMessage(
                       context,
                       Text('Você deseja sair da sua conta?'),
