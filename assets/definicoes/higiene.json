@@ -1,0 +1,46 @@
+[
+     {
+            "descricao": "Shampoo",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Condicionador",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Sabonete",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Desodorante",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Papel higiênico",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Creme dental",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Fio dental",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Escova de dentes",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Cotonete",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Algodão",
+            "quantidade": 1
+        },
+        {
+            "descricao": "Absorvente",
+            "quantidade": 1
+        }
+    ]

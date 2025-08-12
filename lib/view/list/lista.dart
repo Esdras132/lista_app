@@ -50,6 +50,7 @@ class _ListaState extends State<Lista> {
                               );
                           return Dismissible(
                             key: UniqueKey(),
+                            
                             background: Container(
                               color: Colors.red,
                               child: const Align(

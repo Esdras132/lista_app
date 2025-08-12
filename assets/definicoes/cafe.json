@@ -1,0 +1,8 @@
+[
+  { "descricao": "Café", "quantidade": 3 },
+  { "descricao": "Pão", "quantidade": 3 },
+  { "descricao": "Leite", "quantidade": 3 },
+  { "descricao": "Açúcar", "quantidade": 2 },
+  { "descricao": "Achocolatado", "quantidade": 2 },
+  { "descricao": "Filtro para café", "quantidade": 1 }
+]

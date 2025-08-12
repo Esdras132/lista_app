@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
-import 'package:lista_de_compras/controller/_theme.controller.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -22,7 +21,6 @@ class _ConfigState extends State<Config> {
   final Uri _url = Uri.parse('https://www.instagram.com/esdrasleviti/');
 
   AlertController alertController = AlertController();
-  ThemeController themeController = ThemeController();
 
   @override
   void initState() {

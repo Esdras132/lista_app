@@ -8,6 +8,7 @@ import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/controller/excel.controller.dart';
 import 'package:lista_de_compras/main.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
+import 'package:lista_de_compras/view/config/lista.personalizada.dart';
 import 'package:lista_de_compras/view/list/lista.dart';
 import 'package:lista_de_compras/view/list/lista.preco.dart';
 
@@ -172,9 +173,21 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                         ],
                       ),
                     ),
-
                     const PopupMenuItem<int>(
                       value: 3,
+                      child: Row(
+                        children: [
+                          Text(
+                            "Lista Personalizada",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          Spacer(),
+                          Icon(Icons.list, color: Colors.white),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 4,
                       child: Row(
                         children: [
                           Text(
@@ -187,12 +200,15 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       ),
                     ),
                     const PopupMenuItem<int>(
-                      value: 4,
+                      value: 5,
                       child: Row(
                         children: [
                           Text(
                             "Desconectar",
-                            style: TextStyle(color: Colors.red),
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Spacer(),
                           Icon(Icons.logout_outlined, color: Colors.red),
@@ -212,28 +228,39 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                     );
                   } else if (value == 2) {
                     try {
-                      final String resposta = await rootBundle.loadString(
-                        'assets/definicoes/definicoes.json',
-                      );
-                      final dados = json.decode(resposta);
-                      List<String> nomes = (dados.keys.toList()).toList();
-                      for (var nome in nomes) {
-                        log(nome);
-                        List<ItensNameModel> listaItens = [];
-                        for (var item in (dados[nome] as List)) {
-                          ItensNameModel itemModel = ItensNameModel(
-                            descricao: (item['descricao'] as String?) ?? '',
-                            quantidade:
-                                (item['quantidade'] as num?)?.toDouble(),
-                          );
-                          listaItens.add(itemModel);
+                      final lista =
+                          await DBserviceListaPersonalizada.fetchAll().first;
+                      log('Lista personalizada: ${lista.length}');
+                      if (lista.length > 0) {
+                        DBserviceSem.deleteMyList();
+                        await Future.delayed(Duration(seconds: 3));
+                        for (var item in lista) {
+                          DBserviceSem.createMyList(item);
                         }
-                        NameModel model = NameModel(
-                          descricao: nome,
-                          itensName: listaItens,
+                      } else {
+                        final String resposta = await rootBundle.loadString(
+                          'assets/definicoes/definicoes.json',
                         );
+                        
+                        final dados = json.decode(resposta);
+                        List<String> nomes = (dados.keys.toList()).toList();
+                        for (var nome in nomes) {
+                          List<ItensNameModel> listaItens = [];
+                          for (var item in (dados[nome] as List)) {
+                            ItensNameModel itemModel = ItensNameModel(
+                              descricao: (item['descricao'] as String?) ?? '',
+                              quantidade:
+                                  (item['quantidade'] as num?)?.toDouble(),
+                            );
+                            listaItens.add(itemModel);
+                          }
+                          NameModel model = NameModel(
+                            descricao: nome,
+                            itensName: listaItens,
+                          );
 
-                        DBserviceSem.createMyList(model);
+                          DBserviceSem.createMyList(model);
+                        }
                       }
                     } catch (e) {
                       throw Exception('Erro ao carregar o arquivo JSON: $e');
@@ -241,9 +268,16 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                   } else if (value == 3) {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => Config()),
+                      MaterialPageRoute(
+                        builder: (context) => const ListaPersonalizada(),
+                      ),
                     );
                   } else if (value == 4) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Config()),
+                    );
+                  } else if (value == 5) {
                     alert.bodyMessage(
                       context,
                       Text('Você deseja sair da sua conta?'),
@@ -506,6 +540,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                                                                 descricao:
                                                                     _nomeController
                                                                         .text,
+                                                                personalizada:
+                                                                    false,
                                                                 itensName: [],
                                                               );
                                                               DBserviceSem.createMyList(
