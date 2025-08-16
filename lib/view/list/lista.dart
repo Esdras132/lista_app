@@ -19,10 +19,10 @@ class _ListaState extends State<Lista> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
-                  stream: DBserviceSem.fetchAll(),
+                  stream: DBServiceLista.fetchAll(),
                   builder: (
                     BuildContext context,
-                    AsyncSnapshot<List<NameModel>> snapshot,
+                    AsyncSnapshot<List<ListaModel>> snapshot,
                   ) {
                     if (snapshot.hasData) {
                       if (snapshot.data!.isEmpty) {

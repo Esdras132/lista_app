@@ -6,7 +6,7 @@ import 'package:lista_de_compras/model/name.model.dart';
 class ListaNameController {
   AlertController alert = AlertController();
 
-  addItem(BuildContext context, NameModel nameModel, VoidCallback? refresh) {
+  addItem(BuildContext context, ListaModel ListaModel, VoidCallback? refresh) {
     final formKey = GlobalKey<FormState>();
     final TextEditingController items = TextEditingController();
     final TextEditingController qtd = TextEditingController();
@@ -45,7 +45,7 @@ class ListaNameController {
                     onEditingComplete: () {
                       if (!formKey.currentState!.validate()) {
                       } else {
-                        ItensNameModel item = ItensNameModel(
+                        ItensListaModel item = ItensListaModel(
                           descricao: items.text,
                           quantidade: qtd.text.isEmpty
                                       ? double.parse("0")
@@ -53,8 +53,8 @@ class ListaNameController {
                                           qtd.text.replaceAll(',', '.'),
                                         ),
                         );
-                        nameModel.itensName!.add(item);
-                        nameModel.update();
+                        ListaModel.itensName!.add(item);
+                        ListaModel.update();
                         refresh!();
                         items.text = '';
                         qtd.text = '';
@@ -100,7 +100,7 @@ class ListaNameController {
                             ),
                             onPressed: () {
                               if (formKey.currentState!.validate()) {
-                                ItensNameModel item = ItensNameModel(
+                                ItensListaModel item = ItensListaModel(
                                   descricao: items.text,
                                   quantidade: qtd.text.isEmpty
                                       ? double.parse("0")
@@ -108,8 +108,8 @@ class ListaNameController {
                                           qtd.text.replaceAll(',', '.'),
                                         ),
                                 );
-                                nameModel.itensName!.add(item);
-                                nameModel.update();
+                                ListaModel.itensName!.add(item);
+                                ListaModel.update();
                                 refresh!();
                                 items.text = '';
                                 qtd.text = '';
@@ -139,8 +139,8 @@ class ListaNameController {
 
   editItem(
     BuildContext context,
-    NameModel nameModel,
-    ItensNameModel model,
+    ListaModel ListaModel,
+    ItensListaModel model,
     VoidCallback? refresh,
   ) {
     final formKey = GlobalKey<FormState>();
@@ -197,7 +197,7 @@ class ListaNameController {
                                       : double.parse(
                                           qtd.text.replaceAll(',', '.'),
                                         );
-                        nameModel.update();
+                        ListaModel.update();
                         refresh!();
                         items.text = '';
                         qtd.text = '';
@@ -248,7 +248,7 @@ class ListaNameController {
                                       : double.parse(
                                           qtd.text.replaceAll(',', '.'),
                                         );
-                                nameModel.update();
+                                ListaModel.update();
                                 refresh!();
                                 items.text = '';
                                 qtd.text = '';
@@ -276,18 +276,18 @@ class ListaNameController {
         .show();
   }
 
-  deleteItem(BuildContext context, NameModel nameModel, VoidCallback? refresh) {
+  deleteItem(BuildContext context, ListaModel ListaModel, VoidCallback? refresh) {
     alert.bodyMessage(
       context,
 
       Text('Tem certeza que deseja deletar itens selecionados?'),
       () async {
-        for (var i = nameModel.itensName!.length - 1; i >= 0; i--) {
-          if (nameModel.itensName![i].checked) {
-            nameModel.itensName!.removeAt(i);
+        for (var i = ListaModel.itensName!.length - 1; i >= 0; i--) {
+          if (ListaModel.itensName![i].checked) {
+            ListaModel.itensName!.removeAt(i);
           }
         }
-        nameModel.update();
+        ListaModel.update();
         refresh!();
       },
       () => Navigator.of(context).pop(),

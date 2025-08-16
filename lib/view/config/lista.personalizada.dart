@@ -128,6 +128,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
       child: ElevatedButton(
         onPressed: () async {
           _loading = true;
+          DBServiceLista.deleteMyList();
 
           setState(() {});
 
@@ -156,16 +157,16 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
             }
 
             for (var item in dados.entries) {
-              List<ItensNameModel> modelItems = [];
+              List<ItensListaModel> modelItems = [];
               for (var item in item.value) {
                 modelItems.add(
-                  ItensNameModel(
+                  ItensListaModel(
                     descricao: item['descricao']?.toString() ?? '',
                     quantidade: (item['quantidade'] as num?)?.toDouble(),
                   ),
                 );
               }
-              NameModel model = NameModel(
+              ListaModel model = ListaModel(
                 descricao: item.key.toString(),
                 personalizada: true,
                 itensName: modelItems,

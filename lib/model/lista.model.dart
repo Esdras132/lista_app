@@ -2,9 +2,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lista_de_compras/model/item.model.dart';
 
 
-class ListaModel {
+class HistoricoModel {
   DocumentReference? reference;
   String? descricao;
+  DateTime? data = DateTime.now();
   List<ItemModel>? items;
   bool isEditting = false;
 
@@ -19,15 +20,16 @@ class ListaModel {
     return total;
   }
 
-  ListaModel({this.descricao = '', this.items = const []});
+  HistoricoModel({this.descricao = '', this.data, this.items = const []});
 
   update() {
     reference!.update(toMap());
   }
 
-  ListaModel.map(QueryDocumentSnapshot snapshot) {
+  HistoricoModel.map(QueryDocumentSnapshot snapshot) {
     reference = snapshot.reference;
     descricao = snapshot.get('descricao');
+    data = (snapshot.get('data') as Timestamp).toDate();
     items =
         (snapshot.get('items') as List).map((e) => ItemModel.map(e)).toList();
   }
@@ -35,6 +37,7 @@ class ListaModel {
   toMap() {
     return {
       "descricao": descricao,
+      "data": data,
       "items": items!.map((e) => e.toMap()).toList()
     };
   }

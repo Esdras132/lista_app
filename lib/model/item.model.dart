@@ -4,6 +4,7 @@ class ItemModel {
   bool checked = false;
   double? quantidade = 0;
   double? valor = 0;
+    bool? selected = false;
 
   ItemModel({this.descricao = '', this.quantidade = 0.0, this.valor = 0.0});
 

@@ -6,19 +6,19 @@ import 'package:lista_de_compras/controller/lista.preco.controller.dart';
 import 'package:lista_de_compras/model/item.model.dart';
 import 'package:lista_de_compras/model/lista.model.dart';
 
-class ItemsPage extends StatefulWidget {
-  const ItemsPage({super.key, required this.model});
+class HistoricoPage extends StatefulWidget {
+  const HistoricoPage({super.key, required this.model});
 
-  final ListaModel model;
+  final HistoricoModel model;
 
   @override
-  State<ItemsPage> createState() => _ItemsPageState();
+  State<HistoricoPage> createState() => _HistoricoPageState();
 }
 
-class _ItemsPageState extends State<ItemsPage> {
+class _HistoricoPageState extends State<HistoricoPage> {
   List<ItemModel> items = [];
   AlertController alert = AlertController();
-  ListaPrecoController controller = ListaPrecoController();
+  ListaHistoricoController controller = ListaHistoricoController();
 
   @override
   void initState() {
@@ -145,7 +145,7 @@ class _ItemsPageState extends State<ItemsPage> {
                   );
                 },
               ),
-      floatingActionButton: Column(
+/*       floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
@@ -168,7 +168,7 @@ class _ItemsPageState extends State<ItemsPage> {
             },
           ),
         ],
-      ),
+      ), */
     );
   }
 }

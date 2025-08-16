@@ -2,20 +2,20 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 
 
-class NameModel {
+class ListaModel {
   DocumentReference? reference;
   String? descricao;
   bool? personalizada;
-  List<ItensNameModel>? itensName;
+  List<ItensListaModel>? itensName;
 
-  NameModel({this.descricao = '', this.personalizada = false, this.itensName = const []});
+  ListaModel({this.descricao = '', this.personalizada = false, this.itensName = const []});
 
-  NameModel.map(QueryDocumentSnapshot snapshot) {
+  ListaModel.map(QueryDocumentSnapshot snapshot) {
     reference = snapshot.reference;
     descricao = snapshot.get('descricao');
     personalizada = snapshot.get('personalizada');
     itensName = (snapshot.get('items') as List)
-        .map((e) => ItensNameModel.map(e))
+        .map((e) => ItensListaModel.map(e))
         .toList();
   }
   toMap() {
@@ -25,6 +25,8 @@ class NameModel {
       "items": itensName!.map((e) => e.toMap()).toList()
     };
   }
+
+
     update() {
     reference!.update(toMap());
   }

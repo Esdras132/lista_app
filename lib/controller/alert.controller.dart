@@ -2,26 +2,26 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 
 class AlertController {
-  Future<AwesomeDialog> confirmDialog(
-    BuildContext context, {
-    String? bodyMessage,
-    VoidCallback? btnOk,
-  }) async {
-    return AwesomeDialog(
-      context: context,
-      dialogType: DialogType.infoReverse,
-      buttonsBorderRadius: const BorderRadius.all(Radius.circular(2)),
-      headerAnimationLoop: false,
-      btnOkColor: Colors.green,
-      btnCancelColor: Colors.red,
-      title: 'INFO',
-      desc: bodyMessage,
-      showCloseIcon: true,
-      btnCancelText: 'Cancelar',
-      btnCancelOnPress: () {},
-      btnOkOnPress: btnOk,
-    );
-  }
+AwesomeDialog confirmDialog(
+  BuildContext context, {
+  String? bodyMessage,
+  VoidCallback? btnOk,
+}) {
+  return AwesomeDialog(
+    context: context,
+    dialogType: DialogType.infoReverse,
+    buttonsBorderRadius: const BorderRadius.all(Radius.circular(2)),
+    headerAnimationLoop: false,
+    btnOkColor: Colors.green,
+    btnCancelColor: Colors.red,
+    title: 'INFO',
+    desc: bodyMessage,
+    showCloseIcon: true,
+    btnCancelText: 'Cancelar',
+    btnCancelOnPress: () {},
+    btnOkOnPress: btnOk,
+  );
+}
 
   Future<AwesomeDialog> questionDialog(
     BuildContext context, {

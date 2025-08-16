@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:lista_de_compras/model/lista.model.dart';
 
 import '../../services/db.service.dart';
-import 'widget/lista.preco.dart';
+import 'widget/lista.historico.dart';
 
-class ListaPreco extends StatefulWidget {
-  const ListaPreco({super.key});
+class ListaHistorico extends StatefulWidget {
+  const ListaHistorico({super.key});
 
   @override
-  State<ListaPreco> createState() => _ListaPrecoState();
+  State<ListaHistorico> createState() => _ListaHistoricoState();
 }
 
-class _ListaPrecoState extends State<ListaPreco> {
+class _ListaHistoricoState extends State<ListaHistorico> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: StreamBuilder(
 
-        stream: DBserviceCom.fetchAll(),
+        stream: DBServiceHistorico.fetchAll(),
         builder: (
           BuildContext context,
-          AsyncSnapshot<List<ListaModel>> snapshot,
+          AsyncSnapshot<List<HistoricoModel>> snapshot,
         ) {
           if (snapshot.hasData) {
             if (snapshot.data!.isEmpty) {
@@ -68,7 +68,7 @@ class _ListaPrecoState extends State<ListaPreco> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder:
-                              (context) => ItemsPage(model: snapshot.data![i]),
+                              (context) => HistoricoPage(model: snapshot.data![i]),
                         ),
                       );
                     },
@@ -93,7 +93,7 @@ class _ListaPrecoState extends State<ListaPreco> {
                                 MaterialPageRoute(
                                   builder:
                                       (context) =>
-                                          ItemsPage(model: snapshot.data![i]),
+                                          HistoricoPage(model: snapshot.data![i]),
                                 ),
                               );
                             },

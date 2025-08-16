@@ -4,25 +4,25 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lista_de_compras/model/lista.model.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 
-class DBserviceCom {
+class DBServiceHistorico {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  static void createLista(ListaModel lista) {
+/*   static void createLista(HistoricoModel lista) {
     _firestore
         .collection('minhas-listas')
         .add(lista.toMap())
         .then((value) => print("Lista Adicionada"))
         .catchError((error) => print("Failed to add user: $error"));
-  }
+  } */
 
-  static Stream<List<ListaModel>>  fetchAll() {
+  static Stream<List<HistoricoModel>>  fetchAll() {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     if (uid.isNotEmpty){
       return _firestore
-        .collection('users').doc(uid).collection("Listas com Preco")
+        .collection('users').doc(uid).collection("Historico")
         .snapshots()
         .map((querySnapshot) {
-          return querySnapshot.docs.map((e) => ListaModel.map(e)).toList();
+          return querySnapshot.docs.map((e) => HistoricoModel.map(e)).toList();
         });
     }else{
       return const Stream.empty();
@@ -30,11 +30,11 @@ class DBserviceCom {
     
   }
   
-  static void createMyList(ListaModel lista) {
+  static void createMyList(HistoricoModel lista) {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     if (uid.isNotEmpty){
       _firestore
-        .collection('users').doc(uid).collection("Listas com Preco")
+        .collection('users').doc(uid).collection("Historico")
         .add(lista.toMap())
         .then((value) => print("Lista Adicionada"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -50,10 +50,10 @@ class DBserviceListaPersonalizada {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     if (uid.isNotEmpty){
       return _firestore
-        .collection('users').doc(uid).collection("Listas Personalizadas")
+        .collection('users').doc(uid).collection("Personalizadas")
         .snapshots()
         .map((querySnapshot) {
-          return querySnapshot.docs.map((e) => NameModel.map(e)).toList();
+          return querySnapshot.docs.map((e) => ListaModel.map(e)).toList();
         });
     }else{
       return const Stream.empty();
@@ -66,7 +66,7 @@ class DBserviceListaPersonalizada {
     if (uid.isNotEmpty){
       try {
         var collectionRef = _firestore
-          .collection('users').doc(uid).collection("Listas Personalizadas");
+          .collection('users').doc(uid).collection("Personalizadas");
         var snapshots = await collectionRef.get();
         for (var doc in snapshots.docs) {
           await doc.reference.delete();
@@ -80,11 +80,11 @@ class DBserviceListaPersonalizada {
 
 
   
-  static void createMyList(NameModel lista) {
+  static void createMyList(ListaModel lista) {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     if (uid.isNotEmpty){
       _firestore
-        .collection('users').doc(uid).collection("Listas Personalizadas")
+        .collection('users').doc(uid).collection("Personalizadas")
         .add(lista.toMap())
         .then((value) => print("Lista Adicionada"))
         .catchError((error) => print("Failed to add user: $error"));
@@ -93,17 +93,17 @@ class DBserviceListaPersonalizada {
   }
 }
 
-class DBserviceSem {
+class DBServiceLista {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  static Stream<List<NameModel>>  fetchAll() {
+  static Stream<List<ListaModel>>  fetchAll() {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     if (uid.isNotEmpty){
       return _firestore
-        .collection('users').doc(uid).collection("Listas sem Preco")
+        .collection('users').doc(uid).collection("Lista")
         .snapshots()
         .map((querySnapshot) {
-          return querySnapshot.docs.map((e) => NameModel.map(e)).toList();
+          return querySnapshot.docs.map((e) => ListaModel.map(e)).toList();
         });
     }else{
       return const Stream.empty();
@@ -116,7 +116,7 @@ class DBserviceSem {
     if (uid.isNotEmpty){
       try {
         var collectionRef = _firestore
-          .collection('users').doc(uid).collection("Listas sem Preco");
+          .collection('users').doc(uid).collection("Lista");
         var snapshots = await collectionRef.get();
         for (var doc in snapshots.docs) {
           if (doc.get("personalizada") == true) {
@@ -130,11 +130,12 @@ class DBserviceSem {
     }
   }
   
-  static void createMyList(NameModel lista) {
+  
+  static void createMyList(ListaModel lista) {
     var uid = FirebaseAuth.instance.currentUser!.uid;
     if (uid.isNotEmpty){
       _firestore
-        .collection('users').doc(uid).collection("Listas sem Preco")
+        .collection('users').doc(uid).collection("Lista")
         .add(lista.toMap())
         .then((value) => print("Lista Adicionada"))
         .catchError((error) => print("Failed to add user: $error"));

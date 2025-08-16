@@ -3,10 +3,10 @@ import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/model/item.model.dart';
 import 'package:lista_de_compras/model/lista.model.dart';
 
-class ListaPrecoController {
+class ListaHistoricoController {
   final AlertController alert = AlertController();
 
-  addItem(BuildContext context, ListaModel model, Function refresh) {
+  addItem(BuildContext context, HistoricoModel model, Function refresh) {
     final TextEditingController items = TextEditingController();
     final TextEditingController quantidade = TextEditingController();
     final TextEditingController valor = TextEditingController();
@@ -162,7 +162,7 @@ class ListaPrecoController {
         .show();
   }
 
-  deleteItem(BuildContext context, ListaModel model, Function refresh) {
+  deleteItem(BuildContext context, HistoricoModel model, Function refresh) {
     alert
         .bodyMessage(
           context,
@@ -187,7 +187,7 @@ class ListaPrecoController {
 
   editItem(
     BuildContext context,
-    ListaModel model,
+    HistoricoModel model,
     ItemModel item,
     Function refresh,
   ) {

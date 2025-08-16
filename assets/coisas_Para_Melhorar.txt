@@ -5,4 +5,4 @@ Fazer ate uns 5 perfis de lista de compras
 -tela de carrinho: quando passar para o lado o item vai sair do estado pendente para no carrinho 
 
 
--listas sem preco é a lista principal e o com preco seria o Historico
+-Lista é a lista principal e o com preco seria o Historico

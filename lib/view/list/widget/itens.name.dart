@@ -3,17 +3,18 @@ import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/controller/lista.name.controller.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/model/name.model.dart';
+import 'package:lista_de_compras/view/list/shopping/shopping.dart';
 
 class ItemsNamePage extends StatefulWidget {
-  final NameModel model;
+  final ListaModel model;
   const ItemsNamePage({super.key, required this.model});
 
   @override
-  State<ItemsNamePage> createState() => _ItemsPageState();
+  State<ItemsNamePage> createState() => _HistoricoPageState();
 }
 
-class _ItemsPageState extends State<ItemsNamePage> {
-  List<ItensNameModel> itens = [];
+class _HistoricoPageState extends State<ItemsNamePage> {
+  List<ItensListaModel> itens = [];
   AlertController alert = AlertController();
   ListaNameController controller = ListaNameController();
 
@@ -59,7 +60,14 @@ class _ItemsPageState extends State<ItemsNamePage> {
                 },
                 icon: const Icon(Icons.delete),
               )
-              : Container(),
+              : IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => ShoppingPage(model: widget.model, refresh: () => setState(() {}),)),
+                  );
+                },
+                icon: const Icon(Icons.shopping_cart_outlined),
+              ),
         ],
       ),
       body:

@@ -60,8 +60,8 @@ class ExcelController {
       ]);
       semPreco.row(0).forEach((cell) => cell?.cellStyle = boldStyle);
 
-      final listaGeralCom = DBserviceCom.fetchAll();
-      final listaGeralSem = DBserviceSem.fetchAll();
+      final listaGeralCom = DBServiceHistorico.fetchAll();
+      final listaGeralSem = DBServiceLista.fetchAll();
       final listaGeralComSnapshot = await listaGeralCom.first;
       final listaGeralSemSnapshot = await listaGeralSem.first;
 
@@ -99,7 +99,7 @@ class ExcelController {
           .cell(CellIndex.indexByColumnRow(columnIndex: 3, rowIndex: rowIndex  + 1))
           .value = TextCellValue(UtilBrasilFields.obterReal(total).toString());
 
-      final listaCom = await DBserviceCom.fetchAll();
+      final listaCom = await DBServiceHistorico.fetchAll();
       final listaComSnapshot = await listaCom.first;
       for (var item in listaComSnapshot) {
         final items = item.items!;
@@ -118,7 +118,7 @@ class ExcelController {
       }
 
       // Aba sem preço
-      final listaSem = await DBserviceSem.fetchAll();
+      final listaSem = await DBServiceLista.fetchAll();
       final listaSemSnapshot = await listaSem.first;
       for (var item in listaSemSnapshot) {
         final itensName = item.itensName!;
