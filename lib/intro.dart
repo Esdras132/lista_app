@@ -16,6 +16,7 @@ class _IntroState extends State<Intro> {
   final List<String> _imageList = [
     'assets/intro1.png', /* 'assets/intro2.png', */
     'assets/logo_lista.png',
+    'assets/intro2.png',
   ];
 
   @override

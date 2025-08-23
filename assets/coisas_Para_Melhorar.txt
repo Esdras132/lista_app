@@ -1,8 +1,6 @@
--Colocar perfis para lista de compras, por exemplo pessoas que não comem em casa todos os dias so um arroz
-Fazer ate uns 5 perfis de lista de compras
+- excel ajeitar
 
 
--tela de carrinho: quando passar para o lado o item vai sair do estado pendente para no carrinho 
 
 
--Lista é a lista principal e o com preco seria o Historico
+

@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:lista_de_compras/controller/alert.controller.dart';
-import 'package:lista_de_compras/controller/lista.name.controller.dart';
-import 'package:lista_de_compras/model/name.item.model.dart';
-import 'package:lista_de_compras/model/name.model.dart';
-import 'package:lista_de_compras/view/list/shopping/shopping.dart';
 
-class ItemsNamePage extends StatefulWidget {
-  final ListaModel model;
-  const ItemsNamePage({super.key, required this.model});
+import 'package:brasil_fields/brasil_fields.dart';
+import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/controller/lista.preco.controller.dart';
+import 'package:lista_de_compras/model/item.model.dart';
+import 'package:lista_de_compras/model/lista.model.dart';
+
+class HistoricoPage extends StatefulWidget {
+  const HistoricoPage({super.key, required this.model});
+
+  final HistoricoModel model;
 
   @override
-  State<ItemsNamePage> createState() => _HistoricoPageState();
+  State<HistoricoPage> createState() => _HistoricoPageState();
 }
 
-class _HistoricoPageState extends State<ItemsNamePage> {
-  List<ItensListaModel> itens = [];
+class _HistoricoPageState extends State<HistoricoPage> {
+  List<ItemModel> items = [];
   AlertController alert = AlertController();
-  ListaNameController controller = ListaNameController();
+  ListaHistoricoController controller = ListaHistoricoController();
 
   @override
   void initState() {
@@ -38,40 +40,19 @@ class _HistoricoPageState extends State<ItemsNamePage> {
               '${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} ',
               style: const TextStyle(
                 fontSize: 20,
-                color: Colors.white,
                 fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
             ),
             Text(
-              " Qtd: ${widget.model.itensName!.length.toString()}",
+              "Data: ${formatarData(widget.model.data!)}",
               style: const TextStyle(fontSize: 17, color: Colors.white),
             ),
           ],
         ),
-        actions: <Widget>[
-          (widget.model.itensName!.where((a) => a.checked == true).isNotEmpty)
-              ? IconButton(
-                onPressed: () {
-                  controller.deleteItem(
-                    context,
-                    widget.model,
-                    () => setState(() {}),
-                  );
-                },
-                icon: const Icon(Icons.delete),
-              )
-              : IconButton(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => ShoppingPage(model: widget.model, refresh: () => setState(() {}),)),
-                  );
-                },
-                icon: const Icon(Icons.shopping_cart_outlined),
-              ),
-        ],
       ),
       body:
-          widget.model.itensName!.isEmpty
+          widget.model.items!.isEmpty
               ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -86,25 +67,26 @@ class _HistoricoPageState extends State<ItemsNamePage> {
                 ],
               )
               : ListView.builder(
-                itemCount: widget.model.itensName!.length,
+                itemCount: widget.model.items!.length,
                 itemBuilder: (context, index) {
-                  itens = widget.model.itensName!;
-                  final item = widget.model.itensName![index];
+                  items = widget.model.items!;
+                  final item = widget.model.items![index];
+
                   return ListTile(
                     onTap: () {
                       setState(() {
                         item.checked = !item.checked;
                       });
                     },
-                    onLongPress: () {
+                    /*                     onLongPress: () {
                       controller.editItem(
                         context,
                         widget.model,
                         item,
                         () => setState(() {}),
                       );
-                    },
-                    leading: Theme(
+                    }, */
+                    /*                     leading: Theme(
                       data: Theme.of(context).copyWith(
                         checkboxTheme: CheckboxThemeData(
                           shape: RoundedRectangleBorder(
@@ -123,8 +105,7 @@ class _HistoricoPageState extends State<ItemsNamePage> {
                           });
                         },
                       ),
-                    ),
-
+                    ), */
                     title: Text(
                       item.descricao!,
                       style: const TextStyle(fontSize: 25, color: Colors.white),
@@ -136,37 +117,38 @@ class _HistoricoPageState extends State<ItemsNamePage> {
                           'Quantidade ${item.quantidade} ${item.quantidade?.truncateToDouble() == item.quantidade ? 'UN' : 'KG'}',
                           style: const TextStyle(color: Colors.white),
                         ),
+                        Text(
+                          'Valor ${UtilBrasilFields.obterReal(item.valor!.toDouble())}',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                        Text(
+                          'Valor Total ${UtilBrasilFields.obterReal(item.getTotal())}',
+                          style: const TextStyle(color: Colors.white),
+                        ),
                       ],
                     ),
                   );
                 },
               ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          FloatingActionButton(
-            onPressed: () {
-              setState(() {
-                for (var item in itens) {
-                  item.checked = !item.checked;
-                }
-              });
-            },
-            backgroundColor: Colors.green,
-            child: Icon(Icons.select_all, color: Colors.white),
+      floatingActionButton: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+          'Qtd: ${widget.model.items!.length.toString()}/Total: ${UtilBrasilFields.obterReal(widget.model.getTotal())}',
           ),
-          const SizedBox(height: 20),
-          FloatingActionButton(
-            backgroundColor: Colors.green,
-            child: const Icon(Icons.add, color: Colors.white),
-            onPressed: () {
-              controller.addItem(context, widget.model, () {
-                setState(() {});
-              });
-            },
-          ),
-        ],
+        ),
       ),
     );
   }
+    String formatarData(DateTime data) {
+  String dia = data.day.toString().padLeft(2, '0');
+  String mes = data.month.toString().padLeft(2, '0');
+  String ano = data.year.toString();
+  return "$dia/$mes/$ano";
+}
+
 }

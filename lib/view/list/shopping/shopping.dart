@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
@@ -47,17 +45,30 @@ class _ShoppingStatePage extends State<ShoppingPage> {
   }
 
   void save() {
-    alertController.confirmDialog(
-      context,
-      bodyMessage: 'Deseja salvar a lista?',
-      btnOk: () {
-        alertController.showSnackBarSucesso(context, 'Lista salva com sucesso');
-        DBServiceHistorico.createMyList(historicoModel);
-        widget.refresh();
-        Navigator.pop(context);
-        Navigator.pop(context);
-      },
-    ).show();
+    alertController
+        .confirmDialog(
+          context,
+          bodyMessage: 'Deseja salvar a lista?',
+          btnCancel: () {},
+          btnOk: () {
+            alertController.showSnackBarSucesso(
+              context,
+              'Lista salva com sucesso',
+            );
+            final items =
+                historicoModel.items!.where((a) => a.selected == true).toList();
+            final item = HistoricoModel(
+              data: historicoModel.data,
+              descricao: historicoModel.descricao,
+              items: items,
+            );
+            DBServiceHistorico.createMyList(item);
+            widget.refresh();
+            Navigator.pop(context);
+            Navigator.pop(context);
+          },
+        )
+        .show();
   }
 
   void saveitem(ItemModel item, Function refresh) {
@@ -261,15 +272,18 @@ class _ShoppingStatePage extends State<ShoppingPage> {
             ],
           ),
         ),
-        floatingActionButton: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              'Total: ${UtilBrasilFields.obterReal(historicoModel.getTotal())}',
+        floatingActionButton: Hero(
+          tag: 'fab',
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Total: ${UtilBrasilFields.obterReal(historicoModel.getTotal())}',
+              ),
             ),
           ),
         ),
@@ -277,7 +291,9 @@ class _ShoppingStatePage extends State<ShoppingPage> {
           children: [
             ListView.builder(
               itemCount:
-                  historicoModel.items!.where((a) => a.selected == false).length,
+                  historicoModel.items!
+                      .where((a) => a.selected == false)
+                      .length,
               itemBuilder: (context, index) {
                 final item = historicoModel.items!
                     .where((i) => i.selected == false)
@@ -450,3 +466,4 @@ class _ShoppingStatePage extends State<ShoppingPage> {
     );
   }
 }
+

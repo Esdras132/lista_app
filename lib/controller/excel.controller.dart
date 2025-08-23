@@ -25,9 +25,9 @@ class ExcelController {
       }
 
       final excel = Excel.createExcel();
-      final listaGeral = excel['Listas'];
+      final listaGeral = excel['Listas2'];
       final preco = excel['Com Preço'];
-      final semPreco = excel['Sem Preço'];
+      final lista = excel['Lista'];
 
       CellStyle boldStyle = CellStyle(
         bold: true,
@@ -53,12 +53,12 @@ class ExcelController {
       ]);
       preco.row(0).forEach((cell) => cell?.cellStyle = boldStyle);
 
-      semPreco.appendRow([
+      lista.appendRow([
         TextCellValue('Lista'),
         TextCellValue('Item'),
         TextCellValue('Quantidade'),
       ]);
-      semPreco.row(0).forEach((cell) => cell?.cellStyle = boldStyle);
+      lista.row(0).forEach((cell) => cell?.cellStyle = boldStyle);
 
       final listaGeralCom = DBServiceHistorico.fetchAll();
       final listaGeralSem = DBServiceLista.fetchAll();
@@ -123,7 +123,7 @@ class ExcelController {
       for (var item in listaSemSnapshot) {
         final itensName = item.itensName!;
         for (var i = 0; i < itensName.length; i++) {
-          semPreco.appendRow([
+          lista.appendRow([
             TextCellValue(item.descricao ?? ''),
             TextCellValue(itensName[i].descricao ?? ''),
             TextCellValue(itensName[i].quantidade.toString()),
@@ -131,6 +131,8 @@ class ExcelController {
         }
       }
 
+      excel.delete('Listas2');
+      excel.delete('Com Preço');
       excel.delete('Sheet1');
 
       Directory? dir;

@@ -3,7 +3,7 @@ import 'package:lista_de_compras/services/db.service.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 
 
-import 'widget/itens.name.dart';
+import 'items/itens.lista.dart';
 
 class Lista extends StatefulWidget {
   const Lista({super.key});
@@ -77,7 +77,7 @@ class _ListaState extends State<Lista> {
                                 Navigator.of(context).push(
                                   MaterialPageRoute(
                                     builder:
-                                        (context) => ItemsNamePage(
+                                        (context) => ItemsListaPage(
                                           model: snapshot.data![i],
                                         ),
                                   ),
@@ -103,7 +103,7 @@ class _ListaState extends State<Lista> {
                                         Navigator.of(context).push(
                                           MaterialPageRoute(
                                             builder:
-                                                (context) => ItemsNamePage(
+                                                (context) => ItemsListaPage(
                                                   model: snapshot.data![i],
                                                 ),
                                           ),

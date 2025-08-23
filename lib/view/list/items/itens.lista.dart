@@ -1,24 +1,22 @@
 import 'package:flutter/material.dart';
-
-import 'package:brasil_fields/brasil_fields.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
-import 'package:lista_de_compras/controller/lista.preco.controller.dart';
-import 'package:lista_de_compras/model/item.model.dart';
-import 'package:lista_de_compras/model/lista.model.dart';
+import 'package:lista_de_compras/controller/lista.name.controller.dart';
+import 'package:lista_de_compras/model/name.item.model.dart';
+import 'package:lista_de_compras/model/name.model.dart';
+import 'package:lista_de_compras/view/list/shopping/shopping.dart';
 
-class HistoricoPage extends StatefulWidget {
-  const HistoricoPage({super.key, required this.model});
-
-  final HistoricoModel model;
+class ItemsListaPage extends StatefulWidget {
+  final ListaModel model;
+  const ItemsListaPage({super.key, required this.model});
 
   @override
-  State<HistoricoPage> createState() => _HistoricoPageState();
+  State<ItemsListaPage> createState() => _ItemsListaPageState();
 }
 
-class _HistoricoPageState extends State<HistoricoPage> {
-  List<ItemModel> items = [];
+class _ItemsListaPageState extends State<ItemsListaPage> {
+  List<ItensListaModel> itens = [];
   AlertController alert = AlertController();
-  ListaHistoricoController controller = ListaHistoricoController();
+  ListaNameController controller = ListaNameController();
 
   @override
   void initState() {
@@ -40,19 +38,18 @@ class _HistoricoPageState extends State<HistoricoPage> {
               '${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} ',
               style: const TextStyle(
                 fontSize: 20,
-                fontWeight: FontWeight.bold,
                 color: Colors.white,
+                fontWeight: FontWeight.bold,
               ),
             ),
             Text(
-              "${UtilBrasilFields.obterReal(widget.model.getTotal())} Qtd: ${widget.model.items!.length.toString()}",
-              // "Valor ${UtilBrasilFields.obterReal(widget.model.getTotal())} Qtd: ${widget.model.items!.length.toString()}",
+              " Qtd: ${widget.model.itensName!.length.toString()}",
               style: const TextStyle(fontSize: 17, color: Colors.white),
             ),
           ],
         ),
         actions: <Widget>[
-          (widget.model.items!.where((a) => a.checked == true).isNotEmpty)
+          (widget.model.itensName!.where((a) => a.checked == true).isNotEmpty)
               ? IconButton(
                 onPressed: () {
                   controller.deleteItem(
@@ -63,11 +60,18 @@ class _HistoricoPageState extends State<HistoricoPage> {
                 },
                 icon: const Icon(Icons.delete),
               )
-              : Container(),
+              : IconButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => ShoppingPage(model: widget.model, refresh: () => setState(() {}),)),
+                  );
+                },
+                icon: const Icon(Icons.shopping_cart_outlined),
+              ),
         ],
       ),
       body:
-          widget.model.items!.isEmpty
+          widget.model.itensName!.isEmpty
               ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -82,11 +86,10 @@ class _HistoricoPageState extends State<HistoricoPage> {
                 ],
               )
               : ListView.builder(
-                itemCount: widget.model.items!.length,
+                itemCount: widget.model.itensName!.length,
                 itemBuilder: (context, index) {
-                  items = widget.model.items!;
-                  final item = widget.model.items![index];
-
+                  itens = widget.model.itensName!;
+                  final item = widget.model.itensName![index];
                   return ListTile(
                     onTap: () {
                       setState(() {
@@ -121,6 +124,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
                         },
                       ),
                     ),
+
                     title: Text(
                       item.descricao!,
                       style: const TextStyle(fontSize: 25, color: Colors.white),
@@ -132,43 +136,37 @@ class _HistoricoPageState extends State<HistoricoPage> {
                           'Quantidade ${item.quantidade} ${item.quantidade?.truncateToDouble() == item.quantidade ? 'UN' : 'KG'}',
                           style: const TextStyle(color: Colors.white),
                         ),
-                        Text(
-                          'Valor ${UtilBrasilFields.obterReal(item.valor!.toDouble())}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
-                        Text(
-                          'Valor Total ${UtilBrasilFields.obterReal(item.getTotal())}',
-                          style: const TextStyle(color: Colors.white),
-                        ),
                       ],
                     ),
                   );
                 },
               ),
-/*       floatingActionButton: Column(
+      floatingActionButton: Column(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
             onPressed: () {
               setState(() {
-                for (var item in items) {
+                for (var item in itens) {
                   item.checked = !item.checked;
                 }
               });
             },
             backgroundColor: Colors.green,
-            child: const Icon(Icons.select_all, color: Colors.white),
+            child: Icon(Icons.select_all, color: Colors.white),
           ),
-          SizedBox(height: 15),
+          const SizedBox(height: 20),
           FloatingActionButton(
             backgroundColor: Colors.green,
             child: const Icon(Icons.add, color: Colors.white),
             onPressed: () {
-              controller.addItem(context, widget.model, () => setState(() {}));
+              controller.addItem(context, widget.model, () {
+                setState(() {});
+              });
             },
           ),
         ],
-      ), */
+      ),
     );
   }
 }

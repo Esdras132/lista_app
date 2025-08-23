@@ -7,6 +7,7 @@ import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 import 'package:lista_de_compras/services/db.service.dart';
+import 'package:lista_de_compras/view/config/widget/itens.personalizada.dart';
 
 class ListaPersonalizada extends StatefulWidget {
   const ListaPersonalizada({super.key});
@@ -114,7 +115,13 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _buildSaveButton(),
+                      Row(
+                        children: [
+                          _buildSaveButton(),
+                          const SizedBox(width: 6),
+                          _buildViewButton(),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -124,7 +131,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
 
   Widget _buildSaveButton() {
     return SizedBox(
-      width: double.infinity,
+      width: MediaQuery.of(context).size.width * 0.7,
       child: ElevatedButton(
         onPressed: () async {
           _loading = true;
@@ -175,8 +182,14 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
               DBserviceListaPersonalizada.createMyList(model);
             }
             await Future.delayed(Duration(seconds: 2));
-          // ignore: use_build_context_synchronously
-          alertController.successMessage(context, 'Lista personalizada\nCriada com sucesso!').show();
+
+            // ignore: use_build_context_synchronously
+            alertController
+                .successMessage(
+                  context,
+                  'Lista personalizada\nCriada com sucesso!',
+                )
+                .show();
           } catch (e) {
             throw Exception('Erro ao salvar lista personalizada: $e');
           } finally {
@@ -199,6 +212,77 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
             fontWeight: FontWeight.bold,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildViewButton() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.2,
+      child: IconButton(
+        onPressed: () async {
+          final lista = await DBserviceListaPersonalizada.fetchAll().first;
+          alertController
+              .bodyMessage(
+                context,
+                Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Column(
+                    children: [
+                      Text(
+                        'Edite sua Lista:',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        children: [
+                          for (var item in lista)
+                            ElevatedButton(
+                              onPressed: () {
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => ItemsListaPersonalizadaPage(model: item)));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.green,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                  vertical: 10,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: Text(
+                                item.descricao,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
+                ),
+                null,
+                null,
+              )
+              .show();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+        ),
+        icon: Icon(Icons.library_books_sharp, color: Colors.green),
       ),
     );
   }

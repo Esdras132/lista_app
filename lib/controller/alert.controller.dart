@@ -2,26 +2,27 @@ import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 
 class AlertController {
-AwesomeDialog confirmDialog(
-  BuildContext context, {
-  String? bodyMessage,
-  VoidCallback? btnOk,
-}) {
-  return AwesomeDialog(
-    context: context,
-    dialogType: DialogType.infoReverse,
-    buttonsBorderRadius: const BorderRadius.all(Radius.circular(2)),
-    headerAnimationLoop: false,
-    btnOkColor: Colors.green,
-    btnCancelColor: Colors.red,
-    title: 'INFO',
-    desc: bodyMessage,
-    showCloseIcon: true,
-    btnCancelText: 'Cancelar',
-    btnCancelOnPress: () {},
-    btnOkOnPress: btnOk,
-  );
-}
+  AwesomeDialog confirmDialog(
+    BuildContext context, {
+    String? bodyMessage,
+    VoidCallback? btnOk,
+    VoidCallback? btnCancel,
+  }) {
+    return AwesomeDialog(
+      context: context,
+      dialogType: DialogType.infoReverse,
+      buttonsBorderRadius: const BorderRadius.all(Radius.circular(2)),
+      headerAnimationLoop: false,
+      btnOkColor: Colors.green,
+      btnCancelColor: Colors.red,
+      title: 'INFO',
+      desc: bodyMessage,
+      showCloseIcon: true,
+      btnCancelText: 'Cancelar',
+      btnCancelOnPress: btnCancel,
+      btnOkOnPress: btnOk,
+    );
+  }
 
   Future<AwesomeDialog> questionDialog(
     BuildContext context, {
@@ -63,7 +64,7 @@ AwesomeDialog confirmDialog(
     BuildContext context,
     Widget? body,
     VoidCallback? btnOk,
-    VoidCallback? btnCancel,{
+    VoidCallback? btnCancel, {
     String? btnTitle,
   }) {
     return AwesomeDialog(
@@ -80,7 +81,7 @@ AwesomeDialog confirmDialog(
       btnCancelOnPress: btnCancel,
       btnCancelText: 'Cancelar',
       btnOkText: btnTitle,
-      btnOkOnPress: btnOk, 
+      btnOkOnPress: btnOk,
     );
   }
 

@@ -29,6 +29,20 @@ class DBServiceHistorico {
     }
     
   }
+
+  void deleteForever() {
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+    if (uid.isNotEmpty){
+      _firestore
+        .collection('users').doc(uid).collection("Historico")
+        .get()
+        .then((querySnapshot) {
+          for (var doc in querySnapshot.docs) {
+            doc.reference.delete();
+          }
+        });
+    }
+  }
   
   static void createMyList(HistoricoModel lista) {
     var uid = FirebaseAuth.instance.currentUser!.uid;

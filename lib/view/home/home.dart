@@ -9,7 +9,7 @@ import 'package:lista_de_compras/main.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/view/config/lista.personalizada.dart';
 import 'package:lista_de_compras/view/list/lista.dart';
-import 'package:lista_de_compras/view/list/lista.preco.dart';
+import 'package:lista_de_compras/view/list/lista.historico.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -40,35 +40,32 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
 
   @override
   Widget build(BuildContext context) {
-  Future<bool> showExitPopup() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Confirmação'),
-        content: const Text('Deseja sair do app?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Não'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Sim'),
-          ),
-        ],
-      ),
-    );
+    Future<bool> showExitPopup() async {
+      var teste = false;
+      alert
+          .confirmDialog(
+            context,
+            bodyMessage: 'Deseja sair do app?',
+            btnOk: () {
+              teste = true;
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+            },
+            btnCancel: () {
+              teste = false;
+            },
+          )
+          .show();
 
-    // Se result for null, tratamos como "Não"
-    return result ?? false;
-  }
+      return teste;
+    }
 
-  return DefaultTabController(
-    initialIndex: 0,
-    length: 2,
-    // ignore: deprecated_member_use
-    child: WillPopScope(
-      onWillPop: showExitPopup,
+    return DefaultTabController(
+      initialIndex: 0,
+      length: 2,
+      // ignore: deprecated_member_use
+      child: WillPopScope(
+        onWillPop: showExitPopup,
         child: Scaffold(
           appBar: AppBar(
             elevation: 8,
@@ -143,7 +140,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       child: Row(
                         children: [
                           Text(
-                            "Importar Valores \nSem Preço",
+                            "Importar Lista \nPersonalizada",
                             style: TextStyle(color: Colors.white),
                           ),
                           Spacer(),
@@ -179,6 +176,22 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                     ),
                     const PopupMenuItem<int>(
                       value: 5,
+                      child: Row(
+                        children: [
+                          Text(
+                            "Apagar Histórico",
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Spacer(),
+                          Icon(Icons.delete_forever, color: Colors.red),
+                        ],
+                      ),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 6,
                       child: Row(
                         children: [
                           Text(
@@ -265,6 +278,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       MaterialPageRoute(builder: (context) => Config()),
                     );
                   } else if (value == 5) {
+                    DBServiceHistorico().deleteForever();
+                  } else if (value == 6) {
                     alert.bodyMessage(
                       context,
                       Text('Você deseja sair da sua conta?'),
