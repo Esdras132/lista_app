@@ -1,1 +1,3 @@
-teste
+Aplicativo desenvolvido para facilitar e organizar suas compras do dia a dia. Com ele, você pode criar listas totalmente personalizadas, separadas por categorias como café da manhã, almoço, jantar, lanches e até finais de semana. Além disso, o app conta com uma página exclusiva para o momento da compra, ajudando você a visualizar melhor os itens, controlar o que já foi adquirido e evitar esquecimentos.
+
+O objetivo é tornar suas compras mais práticas, rápidas e organizadas, garantindo que você economize tempo e tenha sempre tudo o que precisa à mão.
