@@ -19,6 +19,7 @@ class ExcelController {
       if (Platform.isAndroid) {
         final status = await Permission.manageExternalStorage.request();
         if (!status.isGranted) {
+          // ignore: use_build_context_synchronously
           alert.erroMessage(context, 'Permissão de armazenamento negada.');
           return;
         }
@@ -150,10 +151,6 @@ class ExcelController {
         return;
       }
 
-      final file =
-          File(path)
-            ..createSync(recursive: true)
-            ..writeAsBytesSync(fileBytes);
 
       // ignore: deprecated_member_use
       await Share.shareXFiles([XFile(path)], text: 'Lista de Compras');

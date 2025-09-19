@@ -3,7 +3,6 @@ import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/controller/lista.name.controller.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/model/name.model.dart';
-import 'package:lista_de_compras/view/list/shopping/shopping.dart';
 
 class ItemsListaPersonalizadaPage extends StatefulWidget {
   final ListaModel model;
