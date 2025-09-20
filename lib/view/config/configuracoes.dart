@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/services/db.service.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -46,7 +47,7 @@ class _ConfigState extends State<Config> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.green[700], 
+      backgroundColor: Colors.green[700],
       appBar: AppBar(
         title: const Text(
           'Configurações',
@@ -69,37 +70,36 @@ class _ConfigState extends State<Config> {
                 }
               },
             ),
-/*             const SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildSettingItem(
-              title: 'Mandar Feedback',
-              onLongPress: copiar,
-              onPressed: () async {
-                // ignore: deprecated_member_use
-                if (!await launch(_url.toString())) {
-                  throw Exception('Não foi possível abrir o link');
-                }
+              title: 'Apagar Lista Personalizada',
+              onPressed: () {
+                alertController
+                    .confirmDialog(
+                      context,
+                      bodyMessage:
+                          "Deseja apagar todos os itens do Historico?",
+                      btnOk: () {
+                        try {
+                          DBServiceHistorico().deleteForever();
+                          alertController.showSnackBarSucesso(
+                            context,
+                            "Historico apagado com sucesso!",
+                          );
+                        } catch (e) {
+                          alertController.showSnackBarError(
+                            context,
+                            "Erro ao apagar Historico, tente novamente mais tarde!",
+                          );
+                          print("Erro ao apagar Historico: $e");
+                        }
+                      },
+                      btnCancel: () {},
+                    )
+                    .show();
               },
-            ), 
-            const SizedBox(height: 30),
-            _buildDropdown(
-              title: 'Modo de Tema',
-              value: selectval,
-              items: listitema,
-              onChanged: (value) {
-                setState(() {
-                  selectval = value.toString();
+            ),
 
-                  if (selectval == "Claro") {
-                    themeController.toggleTheme(context, false);
-                  } else {
-                    themeController.toggleTheme(context, true);
-                  }
-                  themeController.get(context).then((isModoEscuro) {
-                    log(isModoEscuro.toString());
-                  });
-                });
-              },
-            ), */
             const SizedBox(height: 20),
             _buildSettingItem(
               title: 'Versão',
@@ -135,7 +135,11 @@ class _ConfigState extends State<Config> {
       child: ListTile(
         title: Text(
           title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
         ),
         subtitle:
             subtitle.isNotEmpty

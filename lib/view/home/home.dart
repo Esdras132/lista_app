@@ -9,7 +9,7 @@ import 'package:lista_de_compras/main.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/view/config/lista.personalizada.dart';
 import 'package:lista_de_compras/view/list/lista.dart';
-import 'package:lista_de_compras/view/list/lista.historico.dart';
+import 'package:lista_de_compras/view/list/historico.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -75,7 +75,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             title: AnimatedTextKit(
               animatedTexts: [
                 TypewriterAnimatedText(
-                  /* 'Bem Vindo${'(a) ${verNome ?? ''}'}', */
+                
                   'Bem Vindo(a)',
                   textStyle: const TextStyle(
                     fontSize: 22,
@@ -179,22 +179,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       child: Row(
                         children: [
                           Text(
-                            "Apagar Histórico",
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Spacer(),
-                          Icon(Icons.delete_forever, color: Colors.red),
-                        ],
-                      ),
-                    ),
-                    const PopupMenuItem<int>(
-                      value: 6,
-                      child: Row(
-                        children: [
-                          Text(
                             "Desconectar",
                             style: TextStyle(
                               color: Colors.red,
@@ -278,8 +262,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       MaterialPageRoute(builder: (context) => Config()),
                     );
                   } else if (value == 5) {
-                    DBServiceHistorico().deleteForever();
-                  } else if (value == 6) {
                     alert.bodyMessage(
                       context,
                       Text('Você deseja sair da sua conta?'),

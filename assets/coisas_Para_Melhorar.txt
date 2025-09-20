@@ -1,6 +1,2 @@
-- excel ajeitar
-
-
-
-
-
+deixa o app mais pratico 
+escolher se vai ficar clicando ou arrastando 

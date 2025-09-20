@@ -102,10 +102,14 @@ class AlertController {
   void showSnackBarSucesso(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+
         backgroundColor: Colors.greenAccent,
         behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 4),
       ),
     );
   }
@@ -116,7 +120,7 @@ class AlertController {
         content: Text(message),
         backgroundColor: Colors.redAccent,
         behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 4),
       ),
     );
   }

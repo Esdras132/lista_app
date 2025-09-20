@@ -68,29 +68,23 @@ class _ListaHistoricoState extends State<ListaHistorico> {
                             Expanded(
                               child: Column(
                                 children: [
+                                  SizedBox(
+                                    height: 5,
+                                  ),
                                   Text(
                                     item.descricao.toString(),
                                     textAlign: TextAlign.center,
                                     style: const TextStyle(color: Colors.black),
                                   ),
                                   Text(
+                                    
                                     formatarData(item.data!),
                                     
                                   ),
                                 ],
                               ),
                             ),
-                            IconButton(
-                              color: Colors.black,
-                              icon: const Icon(Icons.folder_open),
-                              onPressed: () {
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(
-                                    builder: (context) => HistoricoPage(model: item),
-                                  ),
-                                );
-                              },
-                            ),
+
                           ],
                         ),
                       ),
