@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/services/db.service.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 import 'package:lista_de_compras/view/list/shopping/shopping.dart';
@@ -13,6 +14,7 @@ class Lista extends StatefulWidget {
 }
 
 class _ListaState extends State<Lista> {
+  AlertController alertController = AlertController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -73,38 +75,24 @@ class _ListaState extends State<Lista> {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder:
-                              (context) =>
-                                  ShoppingPage(model: snapshot.data![i], refresh: () => setState(() {})),
+                              (context) => ShoppingPage(
+                                model: snapshot.data![i],
+                                refresh: () => setState(() {}),
+                              ),
                         ),
                       );
                       return false;
                     } else if (direction == DismissDirection.endToStart) {
-                      bool confirm = await showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text("Confirmar exclusão"),
-                            content: const Text(
-                              "Tem certeza que deseja deletar esta lista?",
-                            ),
-                            actions: [
-                              TextButton(
-                                onPressed: () => Navigator.pop(context, false),
-                                child: const Text("Cancelar"),
-                              ),
-                              ElevatedButton(
-                                onPressed: () => Navigator.pop(context, true),
-                                child: const Text("Deletar"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                      if (confirm == true) {
-                        snapshot.data![i].reference!.delete();
-                        return true;
-                      }
-                      return false;
+                      alertController
+                          .confirmDialog(
+                            context,
+                            bodyMessage: 'Deseja excluir a lista?',
+                            btnOk: () {
+                              snapshot.data![i].reference!.delete();
+                            },
+                            btnCancel: () {},
+                          )
+                          .show();
                     }
                     return false;
                   },
@@ -142,39 +130,102 @@ class _ListaState extends State<Lista> {
                       ),
                     ),
 
-
                     onLongPress: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) {
-                          return AlertDialog(
-                            title: const Text("Editar Lista"),
-                            content: TextField(
-                              controller: controller,
-                              decoration: const InputDecoration(
-                                labelText: "Descrição",
+    final formKey = GlobalKey<FormState>();
+                      alertController
+                          .bodyMessage(
+                            context,
+                            btnTitle: 'Editar',
+
+                            Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: Form(
+                                key: formKey,
+                                child: Column(
+                                  children: [
+                                    TextFormField(
+                                      controller: controller,
+                                      decoration: const InputDecoration(
+                                        labelText: 'Nome da lista',
+                                      ),
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Por favor, insira um nome';
+                                        }
+                                        return null;
+                                      },
+                                    ),
+                                    SizedBox(height: 10),
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                ),
+                                              ),
+                                              child: const Text(
+                                                'Cancelar',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                            ),
+                                          ),
+                                        ),
+                                
+                                        SizedBox(width: 5),
+                                        Expanded(
+                                          child: SizedBox(
+                                            width: double.infinity,
+                                            child: TextButton(
+                                              style: TextButton.styleFrom(
+                                                backgroundColor: Colors.green,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(2),
+                                                ),
+                                              ),
+                                              onPressed: () {
+                                                if (formKey.currentState!
+                                                    .validate()) {
+                                                  snapshot.data![i].reference!
+                                                      .update({
+                                                        "descricao":
+                                                            controller.text,
+                                                      });
+                                                  Navigator.of(context).pop();
+                                                } else {
+                                                  return;
+                                                }
+                                              },
+                                              child: Text(
+                                                'Salvar',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
-                            actions: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Cancelar"),
-                              ),
-                              ElevatedButton(
-                                onPressed: () {
-                                  snapshot.data![i].reference!.update({
-                                    "descricao": controller.text,
-                                  });
-                                  Navigator.pop(context);
-                                },
-                                child: const Text("Salvar"),
-                              ),
-                            ],
-                          );
-                        },
-                      );
+                            null,
+                            null,
+                          )
+                          .show();
                     },
 
                     onTap: () {

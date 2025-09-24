@@ -40,31 +40,31 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
       id: 'cafe',
       table: 'Café',
       title: 'Lista do Café',
-      subtitle: 'Você come em casa?',
+      subtitle: 'Você toma café em casa?',
     ),
     ListaItem(
       id: 'almoco',
       table: 'Almoço',
       title: 'Lista do Almoço',
-      subtitle: 'Você come em casa?',
+      subtitle: 'Você almoça em casa?',
     ),
     ListaItem(
       id: 'janta',
       table: 'Jantar',
       title: 'Lista do Jantar',
-      subtitle: 'Vocês come em casa?',
+      subtitle: 'Você janta em casa?',
     ),
     ListaItem(
       id: 'higiene',
       table: 'Higiene',
       title: 'Lista de Higiene',
-      subtitle: 'Produtos de limpeza e higiene',
+      subtitle: 'Produtos predefinidos \npara limpeza e higiene',
     ),
     ListaItem(
       id: 'lanche',
       table: 'Lanche',
       title: 'Lista do Lanche',
-      subtitle: 'Ingredientes para o lanche',
+      subtitle: 'Ingredientes predefinidos para lanches',
     ),
   ];
 
@@ -181,7 +181,46 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
 
               DBserviceListaPersonalizada.createMyList(model);
             }
-            await Future.delayed(Duration(seconds: 2));
+            await Future.delayed(Duration(seconds: 1));
+
+            try {
+              final lista = await DBserviceListaPersonalizada.fetchAll().first;
+              log('Lista personalizada: ${lista.length}');
+              if (lista.length > 0) {
+                DBServiceLista.deleteMyList();
+                await Future.delayed(Duration(seconds: 1));
+                for (var item in lista) {
+                  DBServiceLista.createMyList(item);
+                }
+                log('Lista personalizada salva: ${lista.length}');
+              } else {
+                final String resposta = await rootBundle.loadString(
+                  'assets/definicoes/definicoes.json',
+                );
+
+                final dados = json.decode(resposta);
+                List<String> nomes = (dados.keys.toList()).toList();
+                for (var nome in nomes) {
+                  List<ItensListaModel> listaItens = [];
+                  for (var item in (dados[nome] as List)) {
+                    ItensListaModel itemModel = ItensListaModel(
+                      descricao: (item['descricao'] as String?) ?? '',
+                      quantidade: (item['quantidade'] as num?)?.toDouble(),
+                    );
+                    listaItens.add(itemModel);
+                  }
+                  ListaModel model = ListaModel(
+                    descricao: nome,
+                    itensName: listaItens,
+                  );
+
+                  DBServiceLista.createMyList(model);
+                }
+                log('Lista padrão salva: ${nomes.length}');
+              }
+            } catch (e) {
+              throw Exception('Erro ao salvar lista personalizada: $e');
+            }
 
             // ignore: use_build_context_synchronously
             alertController
@@ -243,10 +282,20 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                           for (var item in lista)
                             ElevatedButton(
                               onPressed: () {
-                                Navigator.push(context, MaterialPageRoute(builder: (context) => ItemsListaPersonalizadaPage(model: item)));
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) =>
+                                            ItemsListaPersonalizadaPage(
+                                              model: item,
+                                            ),
+                                  ),
+                                );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
+
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
                                   vertical: 10,
@@ -264,6 +313,102 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                 ),
                               ),
                             ),
+                          Divider(),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.height * 0.8,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                Navigator.pop(context);
+                                setState(() {
+                                  _loading = true;
+                                });
+                                try {
+                                  final lista =
+                                      await DBserviceListaPersonalizada.fetchAll()
+                                          .first;
+                                  log('Lista personalizada: ${lista.length}');
+                                  if (lista.length > 0) {
+                                    DBServiceLista.deleteMyList();
+                                    await Future.delayed(Duration(seconds: 1));
+                                    for (var item in lista) {
+                                      DBServiceLista.createMyList(item);
+                                    }
+                                    log(
+                                      'Lista personalizada salva: ${lista.length}',
+                                    );
+                                  } else {
+                                    final String resposta = await rootBundle
+                                        .loadString(
+                                          'assets/definicoes/definicoes.json',
+                                        );
+
+                                    final dados = json.decode(resposta);
+                                    List<String> nomes =
+                                        (dados.keys.toList()).toList();
+                                    for (var nome in nomes) {
+                                      List<ItensListaModel> listaItens = [];
+                                      for (var item in (dados[nome] as List)) {
+                                        ItensListaModel itemModel =
+                                            ItensListaModel(
+                                              descricao:
+                                                  (item['descricao']
+                                                      as String?) ??
+                                                  '',
+                                              quantidade:
+                                                  (item['quantidade'] as num?)
+                                                      ?.toDouble(),
+                                            );
+                                        listaItens.add(itemModel);
+                                      }
+                                      ListaModel model = ListaModel(
+                                        descricao: nome,
+                                        itensName: listaItens,
+                                      );
+
+                                      DBServiceLista.createMyList(model);
+                                    }
+                                    log('Lista padrão salva: ${nomes.length}');
+                                  }
+                                  alertController
+                                      .successMessage(
+                                        context,
+                                        'Lista personalizada\nRecriada com sucesso!',
+                                      )
+                                      .show();
+                                } catch (e) {
+                                  throw Exception(
+                                    'Erro ao salvar lista personalizada: $e',
+                                  );
+                                } finally {
+                                  setState(() {
+                                    _loading = false;
+                                  });
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                alignment: Alignment.center,
+                                maximumSize: Size(
+                                  MediaQuery.of(context).size.width * 0.8,
+                                  MediaQuery.of(context).size.height * 0.8,
+                                ),
+                                backgroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              child: const Text(
+                                'Recriar Lista!',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 20),

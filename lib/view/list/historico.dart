@@ -30,7 +30,7 @@ class _ListaHistoricoState extends State<ListaHistorico> {
                     padding: const EdgeInsets.all(16.0),
                     child: Image.asset("assets/naotemnada.png"),
                   ),
-                  const Text("Não tem listas", style: TextStyle(fontSize: 27)),
+                  const Text("Não tem Historicos", style: TextStyle(fontSize: 27)),
                 ],
               );
             }

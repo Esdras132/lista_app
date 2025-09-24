@@ -75,7 +75,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             title: AnimatedTextKit(
               animatedTexts: [
                 TypewriterAnimatedText(
-                
                   'Bem Vindo(a)',
                   textStyle: const TextStyle(
                     fontSize: 22,
@@ -135,7 +134,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                         ],
                       ),
                     ),
-                    const PopupMenuItem<int>(
+                    /*                     const PopupMenuItem<int>(
                       value: 2,
                       child: Row(
                         children: [
@@ -147,7 +146,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                           Icon(Icons.upload_file, color: Colors.white),
                         ],
                       ),
-                    ),
+                    ), */
                     const PopupMenuItem<int>(
                       value: 3,
                       child: Row(
@@ -302,10 +301,10 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                   alert
                       .bodyMessage(
                         context,
-                        Form(
-                          key: _formKey,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
+                        Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: Form(
+                            key: _formKey,
                             child: Column(
                               children: [
                                 TextFormField(
@@ -401,283 +400,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
               );
             },
           ),
-          /*           floatingActionButton: Builder(
-            builder: (BuildContext context) {
-              return FloatingActionButton(
-                backgroundColor: Colors.green,
-                child: const Icon(Icons.add, color: Colors.white),
-                onPressed: () {
-                  final RenderBox button =
-                      context.findRenderObject() as RenderBox;
-                  final RenderBox overlay =
-                      Overlay.of(context).context.findRenderObject()
-                          as RenderBox;
-                  final Offset buttonPosition = button.localToGlobal(
-                    Offset.zero,
-                    ancestor: overlay,
-                  );
-                  final RelativeRect position = RelativeRect.fromLTRB(
-                    buttonPosition.dx,
-                    buttonPosition.dy -
-                        115, // Ajuste o valor conforme necessário
-                    buttonPosition.dx + button.size.width,
-                    buttonPosition.dy + button.size.height - 100,
-                  );
-
-                  showMenu(
-                    context: context,
-                    color: Colors.green,
-                    position: position,
-                    items: <PopupMenuEntry<String>>[
-                      PopupMenuItem<String>(
-                        onTap:
-                            () =>
-                                alert
-                                    .bodyMessage(
-                                      context,
-                                      Form(
-                                        key: _formKey,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(15.0),
-                                          child: Column(
-                                            children: [
-                                              TextFormField(
-                                                autofocus: true,
-                                                cursorColor: Colors.green,
-                                                validator:
-                                                    (value) =>
-                                                        value!.isEmpty
-                                                            ? 'Este campo é obrigatorio'
-                                                            : null,
-                                                controller: _nomeController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                      labelText: 'Nome do Item',
-                                                    ),
-                                              ),
-                                              SizedBox(height: 10),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: SizedBox(
-                                                      width: double.infinity,
-                                                      child: TextButton(
-                                                        style: TextButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors.red,
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  2,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Cancelar',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(
-                                                            context,
-                                                          ).pop();
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  SizedBox(width: 5),
-                                                  Expanded(
-                                                    child: SizedBox(
-                                                      width: double.infinity,
-                                                      child: TextButton(
-                                                        style: TextButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors.green,
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  2,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          if (_formKey
-                                                              .currentState!
-                                                              .validate()) {
-                                                            setState(() {
-                                                              HistoricoModel
-                                                              model = HistoricoModel(
-                                                                descricao:
-                                                                    _nomeController
-                                                                        .text,
-                                                                items: [],
-                                                              );
-                                                              DBServiceHistorico.createMyList(
-                                                                model,
-                                                              );
-                                                              _nomeController
-                                                                  .text = '';
-                                                              Navigator.of(
-                                                                context,
-                                                              ).pop();
-                                                            });
-                                                          }
-                                                        },
-                                                        child: Text(
-                                                          'Salvar',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      null,
-                                      null,
-                                    )
-                                    .show(),
-
-                        child: Text(
-                          'Lista com preço',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                      PopupMenuItem<String>(
-                        onTap:
-                            () =>
-                                alert
-                                    .bodyMessage(
-                                      context,
-                                      Form(
-                                        key: _formKey,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(15.0),
-                                          child: Column(
-                                            children: [
-                                              TextFormField(
-                                                autofocus: true,
-                                                cursorColor: Colors.green,
-                                                validator:
-                                                    (value) =>
-                                                        value!.isEmpty
-                                                            ? 'Este campo é obrigatorio'
-                                                            : null,
-                                                controller: _nomeController,
-                                                decoration:
-                                                    const InputDecoration(
-                                                      labelText: 'Nome do Item',
-                                                    ),
-                                              ),
-                                              SizedBox(height: 10),
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: SizedBox(
-                                                      width: double.infinity,
-                                                      child: TextButton(
-                                                        style: TextButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors.red,
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  2,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                        child: const Text(
-                                                          'Cancelar',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          Navigator.of(
-                                                            context,
-                                                          ).pop();
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ),
-
-                                                  SizedBox(width: 5),
-                                                  Expanded(
-                                                    child: SizedBox(
-                                                      width: double.infinity,
-                                                      child: TextButton(
-                                                        style: TextButton.styleFrom(
-                                                          backgroundColor:
-                                                              Colors.green,
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  2,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                        onPressed: () {
-                                                          if (_formKey
-                                                              .currentState!
-                                                              .validate()) {
-                                                            setState(() {
-                                                              ListaModel
-                                                              model = ListaModel(
-                                                                descricao:
-                                                                    _nomeController
-                                                                        .text,
-                                                                personalizada:
-                                                                    false,
-                                                                itensName: [],
-                                                              );
-                                                              DBServiceLista.createMyList(
-                                                                model,
-                                                              );
-                                                              _nomeController
-                                                                  .text = '';
-                                                              Navigator.of(
-                                                                context,
-                                                              ).pop();
-                                                            });
-                                                          }
-                                                        },
-                                                        child: Text(
-                                                          'Salvar',
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      null,
-                                      null,
-                                    )
-                                    .show(),
-                        child: Text(
-                          'Lista sem preço',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            },
-          ), */
           body: TabBarView(
             children: [
               _isloading

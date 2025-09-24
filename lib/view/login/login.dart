@@ -11,7 +11,6 @@ import 'package:lista_de_compras/view/login/Redefinir_senha.dart';
 import 'package:lista_de_compras/view/login/sign-up_page.dart';
 import 'package:lista_de_compras/view/login/verifyEmail.dart';
 
-
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
 
@@ -200,7 +199,7 @@ class _LoginState extends State<Loginpage> {
         onPressed: () async {
           if (_formKey.currentState!.validate()) {
             setState(() => _indicador = true);
- try {
+            try {
               await FirebaseAuth.instance.signInWithEmailAndPassword(
                 email: _login.text,
                 password: _senha.text,
@@ -220,7 +219,10 @@ class _LoginState extends State<Loginpage> {
               _senha.clear();
             } catch (e) {
               // ignore: use_build_context_synchronously
-              alertController.showSnackBarError(context, 'Login ou Senha incorretos');
+              alertController.showSnackBarError(
+                context,
+                'Login ou Senha incorretos',
+              );
               log(e.toString());
             } finally {
               setState(() => _indicador = false);
@@ -278,7 +280,4 @@ class _LoginState extends State<Loginpage> {
       ],
     );
   }
-
 }
-
-

@@ -72,7 +72,7 @@ class _ConfigState extends State<Config> {
             ),
             const SizedBox(height: 20),
             _buildSettingItem(
-              title: 'Apagar Lista Personalizada',
+              title: 'Apagar Historico',
               onPressed: () {
                 alertController
                     .confirmDialog(

@@ -400,6 +400,8 @@ class _ShoppingStatePage extends State<ShoppingPage> {
                 );
               },
             ),
+
+            
             ListView.builder(
               itemCount:
                   historicoModel.items!.where((a) => a.selected == true).length,
@@ -466,4 +468,3 @@ class _ShoppingStatePage extends State<ShoppingPage> {
     );
   }
 }
-

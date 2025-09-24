@@ -1,2 +1,3 @@
 deixa o app mais pratico 
 escolher se vai ficar clicando ou arrastando 
+quando a pessoa tiver começado a compra fique no historico como em andamento 
