@@ -35,6 +35,7 @@ class ListaItem {
 class _ListaPersonalizadaState extends State<ListaPersonalizada> {
   AlertController alertController = AlertController();
   bool _loading = false;
+  final personalizada = DBserviceListaPersonalizada.fetchAll().first;
   final List<ListaItem> _itens = [
     ListaItem(
       id: 'cafe',
@@ -117,9 +118,9 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                       const SizedBox(height: 16),
                       Row(
                         children: [
-                          _buildSaveButton(),
+                          _buildSaveButton(0.7),
                           const SizedBox(width: 6),
-                          _buildViewButton(),
+                          _buildViewButton(0.2),
                         ],
                       ),
                     ],
@@ -129,9 +130,9 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
     );
   }
 
-  Widget _buildSaveButton() {
+  Widget _buildSaveButton(double porcentagem) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.7,
+      width: MediaQuery.of(context).size.width * porcentagem,
       child: ElevatedButton(
         onPressed: () async {
           _loading = true;
@@ -255,9 +256,9 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
     );
   }
 
-  Widget _buildViewButton() {
+  Widget _buildViewButton(double porcentagem) {
     return SizedBox(
-      width: MediaQuery.of(context).size.width * 0.2,
+      width: MediaQuery.of(context).size.width * porcentagem,
       child: IconButton(
         onPressed: () async {
           final lista = await DBserviceListaPersonalizada.fetchAll().first;
