@@ -1,13 +1,16 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/controller/shared.preferences.controller.dart';
 import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 import 'package:lista_de_compras/services/db.service.dart';
 import 'package:lista_de_compras/view/config/widget/itens.personalizada.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ListaPersonalizada extends StatefulWidget {
   const ListaPersonalizada({super.key});
@@ -41,33 +44,142 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
       id: 'cafe',
       table: 'Café',
       title: 'Lista do Café',
-      subtitle: 'Você toma café em casa?',
+      subtitle: 'Café, Pão, Leite, Açúcar, Achocolatado, Filtro para Café',
     ),
     ListaItem(
       id: 'almoco',
       table: 'Almoço',
       title: 'Lista do Almoço',
-      subtitle: 'Você almoça em casa?',
+      subtitle: 'Arroz, Feijão, Óleo, Sal, Macarrão, Molho de tomate, Tempero pronto',
     ),
     ListaItem(
       id: 'janta',
       table: 'Jantar',
       title: 'Lista do Jantar',
-      subtitle: 'Você janta em casa?',
+      subtitle: 'Sopa, Pão, Macarrão, Cebola, Alface',
     ),
     ListaItem(
       id: 'higiene',
       table: 'Higiene',
       title: 'Lista de Higiene',
-      subtitle: 'Produtos predefinidos \npara limpeza e higiene',
+      subtitle: 'Shampoo, Condicionador, Sabonete, Desodorante, Papel higiênico, Creme dental, Fio dental, Escova de dentes, Cotonete, Algodão, Absorvente ',
     ),
     ListaItem(
       id: 'lanche',
       table: 'Lanche',
       title: 'Lista do Lanche',
-      subtitle: 'Ingredientes predefinidos para lanches',
+      subtitle: 'Pão, Achocolatado, Leite, Biscoito, Queijo, Presunto',
     ),
   ];
+
+  // Chaves para o tutorial
+  final GlobalKey _titleKey = GlobalKey();
+  final GlobalKey _descriptionKey = GlobalKey();
+  final GlobalKey _simOrNoKey = GlobalKey();
+
+  SharedPreferencesController sharedPreferencesController =
+      SharedPreferencesController();
+      
+  @override
+  void initState() {
+    super.initState();
+
+ sharedPreferencesController.get(context, 'personalizada_user_id').then((value) {
+      value == null
+          ? {
+
+            sharedPreferencesController.set(
+              context,
+              'personalizada_user_id',
+              FirebaseAuth.instance.currentUser!.uid,
+            ),
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showTutorial();
+            }),
+          }
+          : {
+            if (value != FirebaseAuth.instance.currentUser!.uid)
+              {
+                sharedPreferencesController.set(
+                  context,
+                  'personalizada_user_id',
+                  FirebaseAuth.instance.currentUser!.uid,
+                ),
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _showTutorial();
+                }),
+              },
+          };
+    });
+  }
+
+  void _showTutorial() {
+    List<TargetFocus> targets = [
+      TargetFocus(
+        identify: "Title",
+        keyTarget: _titleKey,
+        alignSkip: Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Text(
+              "Aqui você vê o nome da lista.",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "Description",
+        keyTarget: _descriptionKey,
+        alignSkip: Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Text(
+              "Esta é uma breve descrição do que a lista contém.",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "YesNoToggle",
+        keyTarget: _simOrNoKey,
+        alignSkip: Alignment.bottomLeft,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            child: Text(
+              "Use 'Sim' ou 'Não' para decidir se os itens predefinidos desta lista farão parte da sua lista de compras final.",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ],
+      )
+    ];
+
+    TutorialCoachMark(
+      targets: targets,
+      colorShadow: Colors.green.shade900,
+      textSkip: "PULAR",
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      alignSkip: Alignment.bottomRight,
+    ).show(context: context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,51 +194,50 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      body:
-          _loading
-              ? const Center(
+      body: _loading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: Colors.white),
+                  SizedBox(height: 16),
+                  Text(
+                    'Carregando Sua \n Lista Personalizada...',
+                    style: TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16),
+              child: Center(
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CircularProgressIndicator(color: Colors.white),
-                    SizedBox(height: 16),
-                    Text(
-                      'Carregando Sua \n Lista Personalizada...',
-                      style: TextStyle(color: Colors.white),
-                      textAlign: TextAlign.center,
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: _itens.length,
+                        itemBuilder: (context, index) {
+                          final item = _itens[index];
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 12),
+                            child: _buildSettingItem(item, index),
+                          );
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        _buildSaveButton(0.7),
+                        const SizedBox(width: 6),
+                        _buildViewButton(0.2),
+                      ],
                     ),
                   ],
                 ),
-              )
-              : Padding(
-                padding: const EdgeInsets.all(16),
-                child: Center(
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView.builder(
-                          itemCount: _itens.length,
-                          itemBuilder: (context, index) {
-                            final item = _itens[index];
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 12),
-                              child: _buildSettingItem(item),
-                            );
-                          },
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      Row(
-                        children: [
-                          _buildSaveButton(0.7),
-                          const SizedBox(width: 6),
-                          _buildViewButton(0.2),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
               ),
+            ),
     );
   }
 
@@ -135,10 +246,11 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
       width: MediaQuery.of(context).size.width * porcentagem,
       child: ElevatedButton(
         onPressed: () async {
-          _loading = true;
-          DBServiceLista.deleteMyList();
+          setState(() {
+            _loading = true;
+          });
 
-          setState(() {});
+          DBServiceLista.deleteMyList();
 
           final lista = await DBserviceListaPersonalizada.fetchAll().first;
           log('Lista personalizada: ${lista.length}');
@@ -223,18 +335,20 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
               throw Exception('Erro ao salvar lista personalizada: $e');
             }
 
-            // ignore: use_build_context_synchronously
-            alertController
+            if(mounted) {
+              alertController
                 .successMessage(
                   context,
                   'Lista personalizada\nCriada com sucesso!',
                 )
                 .show();
+            }
           } catch (e) {
             throw Exception('Erro ao salvar lista personalizada: $e');
           } finally {
-            _loading = false;
-            setState(() {});
+            setState(() {
+              _loading = false;
+            });
           }
         },
         style: ElevatedButton.styleFrom(
@@ -269,7 +383,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                   padding: const EdgeInsets.all(15.0),
                   child: Column(
                     children: [
-                      Text(
+                      const Text(
                         'Edite sua Lista:',
                         style: TextStyle(
                           fontSize: 16,
@@ -286,17 +400,15 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            ItemsListaPersonalizadaPage(
-                                              model: item,
-                                            ),
+                                    builder: (context) =>
+                                        ItemsListaPersonalizadaPage(
+                                      model: item,
+                                    ),
                                   ),
                                 );
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green,
-
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 20,
                                   vertical: 10,
@@ -314,7 +426,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                 ),
                               ),
                             ),
-                          Divider(),
+                          const Divider(),
                           SizedBox(
                             width: MediaQuery.of(context).size.height * 0.8,
                             child: ElevatedButton(
@@ -324,13 +436,14 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                   _loading = true;
                                 });
                                 try {
-                                  final lista =
-                                      await DBserviceListaPersonalizada.fetchAll()
-                                          .first;
+                                  final lista = await DBserviceListaPersonalizada
+                                      .fetchAll()
+                                      .first;
                                   log('Lista personalizada: ${lista.length}');
-                                  if (lista.length > 0) {
+                                  if (lista.isNotEmpty) {
                                     DBServiceLista.deleteMyList();
-                                    await Future.delayed(Duration(seconds: 1));
+                                    await Future.delayed(
+                                        const Duration(seconds: 1));
                                     for (var item in lista) {
                                       DBServiceLista.createMyList(item);
                                     }
@@ -338,10 +451,10 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                       'Lista personalizada salva: ${lista.length}',
                                     );
                                   } else {
-                                    final String resposta = await rootBundle
-                                        .loadString(
-                                          'assets/definicoes/definicoes.json',
-                                        );
+                                    final String resposta =
+                                        await rootBundle.loadString(
+                                      'assets/definicoes/definicoes.json',
+                                    );
 
                                     final dados = json.decode(resposta);
                                     List<String> nomes =
@@ -351,14 +464,13 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                       for (var item in (dados[nome] as List)) {
                                         ItensListaModel itemModel =
                                             ItensListaModel(
-                                              descricao:
-                                                  (item['descricao']
-                                                      as String?) ??
+                                          descricao:
+                                              (item['descricao'] as String?) ??
                                                   '',
-                                              quantidade:
-                                                  (item['quantidade'] as num?)
-                                                      ?.toDouble(),
-                                            );
+                                          quantidade:
+                                              (item['quantidade'] as num?)
+                                                  ?.toDouble(),
+                                        );
                                         listaItens.add(itemModel);
                                       }
                                       ListaModel model = ListaModel(
@@ -370,12 +482,14 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                     }
                                     log('Lista padrão salva: ${nomes.length}');
                                   }
-                                  alertController
-                                      .successMessage(
-                                        context,
-                                        'Lista personalizada\nRecriada com sucesso!',
-                                      )
-                                      .show();
+                                  if (mounted) {
+                                      alertController
+                                        .successMessage(
+                                          context,
+                                          'Lista personalizada\nRecriada com sucesso!',
+                                        )
+                                        .show();
+                                  }
                                 } catch (e) {
                                   throw Exception(
                                     'Erro ao salvar lista personalizada: $e',
@@ -428,12 +542,12 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
             borderRadius: BorderRadius.circular(30),
           ),
         ),
-        icon: Icon(Icons.library_books_sharp, color: Colors.green),
+        icon: const Icon(Icons.library_books_sharp, color: Colors.green),
       ),
     );
   }
 
-  Widget _buildSettingItem(ListaItem item) {
+  Widget _buildSettingItem(ListaItem item, int index) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10),
@@ -450,6 +564,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
       child: ListTile(
         title: Text(
           item.title,
+          key: index == 0 ? _titleKey : null,
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -464,11 +579,13 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                 padding: const EdgeInsets.only(bottom: 8, top: 4),
                 child: Text(
                   item.subtitle,
+                  key: index == 0 ? _descriptionKey : null,
                   style: const TextStyle(fontSize: 16, color: Colors.white70),
                 ),
               ),
             const SizedBox(height: 8),
             _buildToggleRow(
+              index: index,
               label: 'Personalizada:',
               value: item.personalizada,
               onChanged: (value) {
@@ -484,6 +601,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
   }
 
   Widget _buildToggleRow({
+    required int index,
     required String label,
     required bool value,
     required ValueChanged<bool> onChanged,
@@ -496,6 +614,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
           style: const TextStyle(fontSize: 16, color: Colors.white70),
         ),
         Row(
+          key: index == 0 ? _simOrNoKey : null,
           children: [
             _buildToggleButton(
               label: 'Sim',

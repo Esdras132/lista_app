@@ -1,10 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:brasil_fields/brasil_fields.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/controller/lista.preco.controller.dart';
+import 'package:lista_de_compras/controller/shared.preferences.controller.dart';
 import 'package:lista_de_compras/model/item.model.dart';
 import 'package:lista_de_compras/model/lista.model.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class HistoricoPage extends StatefulWidget {
   const HistoricoPage({super.key, required this.model});
@@ -20,9 +23,90 @@ class _HistoricoPageState extends State<HistoricoPage> {
   AlertController alert = AlertController();
   ListaHistoricoController controller = ListaHistoricoController();
 
+  final GlobalKey _totalKey = GlobalKey();
+  final GlobalKey _titleKey = GlobalKey();
+
+  List<TargetFocus> targets = [];
+
+  SharedPreferencesController sharedPreferencesController =
+      SharedPreferencesController();
+
   @override
   void initState() {
     super.initState();
+     sharedPreferencesController.get(context, 'historico_user_id').then((value) {
+      value == null
+          ? {
+            sharedPreferencesController.set(
+              context,
+              'historico_user_id',
+              FirebaseAuth.instance.currentUser!.uid,
+            ),
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showTutorial();
+            }),
+          }
+          : {
+            if (value != FirebaseAuth.instance.currentUser!.uid)
+              {
+                sharedPreferencesController.set(
+                  context,
+                  'historico_user_id',
+                  FirebaseAuth.instance.currentUser!.uid,
+                ),
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _showTutorial();
+                }),
+              },
+          };
+    }); 
+  }
+
+  void _showTutorial() {
+    targets.clear();
+
+    targets.add(
+      TargetFocus(
+        identify: "ADDITEM",
+        keyTarget: _totalKey,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            child: Text(
+              "Aqui está o total gasto e a quantidade de itens na lista",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+
+
+
+    targets.add(
+      TargetFocus(
+        identify: "TITLE",
+        keyTarget: _titleKey,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Text(
+              "Aqui está o título da sua lista e a data",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    TutorialCoachMark(
+      targets: targets,
+      colorShadow: Colors.green.shade900,
+      textSkip: "PULAR",
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      alignSkip: Alignment.bottomRight,
+    ).show(context: context);
   }
 
   @override
@@ -38,6 +122,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
           children: [
             Text(
               '${widget.model.descricao!.length > 20 ? '${widget.model.descricao!.substring(0, 20)}...' : widget.model.descricao!} ',
+              key: _titleKey,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -136,19 +221,20 @@ class _HistoricoPageState extends State<HistoricoPage> {
           borderRadius: BorderRadius.circular(10),
         ),
         child: Padding(
+          key: _totalKey,
           padding: const EdgeInsets.all(8.0),
           child: Text(
-          'Qtd: ${widget.model.items!.length.toString()}/Total: ${UtilBrasilFields.obterReal(widget.model.getTotal())}',
+            'Qtd: ${widget.model.items!.length.toString()}/Total: ${UtilBrasilFields.obterReal(widget.model.getTotal())}',
           ),
         ),
       ),
     );
   }
-    String formatarData(DateTime data) {
-  String dia = data.day.toString().padLeft(2, '0');
-  String mes = data.month.toString().padLeft(2, '0');
-  String ano = data.year.toString();
-  return "$dia/$mes/$ano";
-}
 
+  String formatarData(DateTime data) {
+    String dia = data.day.toString().padLeft(2, '0');
+    String mes = data.month.toString().padLeft(2, '0');
+    String ano = data.year.toString();
+    return "$dia/$mes/$ano";
+  }
 }

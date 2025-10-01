@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/services/db.service.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
@@ -22,11 +23,97 @@ class _ConfigState extends State<Config> {
   final Uri _url = Uri.parse('https://www.instagram.com/esdrasleviti/');
 
   AlertController alertController = AlertController();
+  final GlobalKey _redesKey = GlobalKey();
+  final GlobalKey _apagarHistoricoKey = GlobalKey();
+  final GlobalKey _versaoKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     _initPackageInfo();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showTutorial();
+    });
+  }
+
+  void _showTutorial() {
+    List<TargetFocus> targets = [
+      TargetFocus(
+        identify: "Title",
+        keyTarget: _redesKey,
+        contents: [
+          TargetContent(
+            // ✅ ADICIONADO AQUI para mover o texto para baixo
+            align: ContentAlign.bottom,
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.black38,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: const Text(
+              "Aqui você pode acessar as redes sociais do desenvolvedor.",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            )
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "Description",
+        keyTarget: _apagarHistoricoKey,
+        contents: [
+          TargetContent(
+            // ✅ ADICIONADO AQUI para mover o texto para baixo
+            align: ContentAlign.bottom,
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.black38,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+              "Aqui você pode apagar o histórico de compras.",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),)
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "Description",
+        keyTarget: _versaoKey,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: const Text(
+              "Aqui você pode ver a versão do aplicativo. Sempre que tiver uma atualização, você verá a nova versão aqui.",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ];
+
+    TutorialCoachMark(
+      targets: targets,
+      colorShadow: Colors.green.shade900,
+      textSkip: "PULAR",
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      alignSkip: Alignment.bottomRight,
+    ).show(context: context);
   }
 
   Future<void> _initPackageInfo() async {
@@ -61,37 +148,37 @@ class _ConfigState extends State<Config> {
         child: ListView(
           children: [
             _buildSettingItem(
+              key: _redesKey,
               title: 'Redes Sociais, Desenvolvedor',
               onLongPress: copiar,
               onPressed: () async {
-                // ignore: deprecated_member_use
-                if (!await launch(_url.toString())) {
-                  throw Exception('Não foi possível abrir o link');
+                if (!await launchUrl(_url)) {
+                  throw Exception('Não foi possível abrir o link $_url');
                 }
               },
             ),
             const SizedBox(height: 20),
             _buildSettingItem(
-              title: 'Apagar Historico',
+              key: _apagarHistoricoKey,
+              title: 'Apagar Histórico',
               onPressed: () {
                 alertController
                     .confirmDialog(
                       context,
-                      bodyMessage:
-                          "Deseja apagar todos os itens do Historico?",
+                      bodyMessage: "Deseja apagar todos os itens do Histórico?",
                       btnOk: () {
                         try {
                           DBServiceHistorico().deleteForever();
                           alertController.showSnackBarSucesso(
                             context,
-                            "Historico apagado com sucesso!",
+                            "Histórico apagado com sucesso!",
                           );
                         } catch (e) {
                           alertController.showSnackBarError(
                             context,
-                            "Erro ao apagar Historico, tente novamente mais tarde!",
+                            "Erro ao apagar Histórico, tente novamente mais tarde!",
                           );
-                          print("Erro ao apagar Historico: $e");
+                          print("Erro ao apagar Histórico: $e");
                         }
                       },
                       btnCancel: () {},
@@ -99,9 +186,9 @@ class _ConfigState extends State<Config> {
                     .show();
               },
             ),
-
             const SizedBox(height: 20),
             _buildSettingItem(
+              key: _versaoKey,
               title: 'Versão',
               subtitle: _packageInfo?.version ?? 'error',
             ),
@@ -114,84 +201,52 @@ class _ConfigState extends State<Config> {
   Widget _buildSettingItem({
     required String title,
     String subtitle = '',
+    Key? key,
     VoidCallback? onLongPress,
     VoidCallback? onPressed,
   }) {
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.green,
-        boxShadow: [
-          BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.green,
-            spreadRadius: 4,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        title: Text(
-          title,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-          ),
+    // Note que a key do item da lista está no ListTile, não no Text.
+    // Para o tutorial funcionar, a key precisa estar no widget que você quer destacar.
+    // Vamos mover a key para o Container, que engloba todo o item.
+    return InkWell(
+      key: key, // Key aplicada aqui
+      onTap: onPressed,
+      onLongPress: onLongPress,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        height: 60,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: Colors.green,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.shade900.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 8,
+              offset: const Offset(0, 4),
+            ),
+          ],
         ),
-        subtitle:
-            subtitle.isNotEmpty
-                ? Text(
-                  subtitle,
-                  style: TextStyle(fontSize: 16, color: Colors.white70),
-                )
-                : null,
-        onLongPress: onLongPress,
-        onTap: onPressed,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            if (subtitle.isNotEmpty)
+              Text(
+                subtitle,
+                style: const TextStyle(fontSize: 16, color: Colors.white70),
+              ),
+          ],
+        ),
       ),
     );
   }
-
-  /* Widget _buildDropdown({
-    required String title,
-    required String value,
-    required List<String> items,
-    required ValueChanged<String?> onChanged,
-  }) {
-    return Container(
-      height: 60,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10),
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            // ignore: deprecated_member_use
-            color: Colors.black.withOpacity(0.1),
-            spreadRadius: 4,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ListTile(
-        title: Text(
-          title,
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        trailing: DropdownButton<String>(
-          value: value,
-          onChanged: onChanged,
-          items:
-              items.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-        ),
-      ),
-    );
-  } */
 }

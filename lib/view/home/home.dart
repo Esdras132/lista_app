@@ -1,12 +1,11 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/services.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
 import 'package:lista_de_compras/controller/excel.controller.dart';
+import 'package:lista_de_compras/controller/shared.preferences.controller.dart';
 import 'package:lista_de_compras/main.dart';
-import 'package:lista_de_compras/model/name.item.model.dart';
 import 'package:lista_de_compras/view/config/lista.personalizada.dart';
 import 'package:lista_de_compras/view/list/lista.dart';
 import 'package:lista_de_compras/view/list/historico.dart';
@@ -17,6 +16,8 @@ import 'package:lista_de_compras/services/db.service.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 import 'package:lista_de_compras/view/config/calculadora.dart';
 import 'package:lista_de_compras/view/config/configuracoes.dart';
+
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ListaComprasPage extends StatefulWidget {
   const ListaComprasPage({super.key});
@@ -37,6 +38,126 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
 
   var checkedList = [];
   final dbService = DBServiceHistorico();
+
+  final GlobalKey _fabKey = GlobalKey();
+  final GlobalKey _menuKey = GlobalKey();
+  final GlobalKey _tabHistoricoKey = GlobalKey();
+  final GlobalKey _tabListaKey = GlobalKey();
+
+  List<TargetFocus> targets = [];
+
+  SharedPreferencesController sharedPreferencesController =
+      SharedPreferencesController();
+
+  @override
+  void initState() {
+    super.initState();
+    sharedPreferencesController.get(context, 'home_user_id').then((value) {
+      value == null
+          ? {
+            sharedPreferencesController.set(
+              context,
+              'home_user_id',
+              FirebaseAuth.instance.currentUser!.uid,
+            ),
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showTutorial();
+            }),
+          }
+          : {
+            if (value == FirebaseAuth.instance.currentUser!.uid)
+              {log(value.toString())}
+            else
+              {
+                sharedPreferencesController.set(
+                  context,
+                  'home_user_id',
+                  FirebaseAuth.instance.currentUser!.uid,
+                ),
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _showTutorial();
+                }),
+              },
+          };
+    });
+  }
+
+  void _showTutorial() {
+    targets.clear();
+
+    targets.add(
+      TargetFocus(
+        identify: "FAB",
+        keyTarget: _fabKey,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            child: Text(
+              "Aqui você adiciona um novo item à sua lista",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "Menu",
+        keyTarget: _menuKey,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Text(
+              "Aqui ficam as configurações, exportação, criar uma lista personalizada e outras opções",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "Aba Lista",
+        keyTarget: _tabListaKey,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Text(
+              "Aqui você acessa sua lista de compras",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    targets.add(
+      TargetFocus(
+        identify: "Aba Histórico",
+        keyTarget: _tabHistoricoKey,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Text(
+              "Aqui você acessa o histórico de suas listas",
+              style: TextStyle(color: Colors.white, fontSize: 18),
+            ),
+          ),
+        ],
+      ),
+    );
+
+    TutorialCoachMark(
+      targets: targets,
+      colorShadow: Colors.green.shade900,
+      textSkip: "PULAR",
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      alignSkip: Alignment.bottomRight,
+    ).show(context: context);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,14 +184,14 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
     return DefaultTabController(
       initialIndex: 0,
       length: 2,
-      // ignore: deprecated_member_use
+
       child: WillPopScope(
         onWillPop: showExitPopup,
         child: Scaffold(
           appBar: AppBar(
             elevation: 8,
             shadowColor: Colors.black87,
-            leading: null, // Removes the back button
+            leading: null,
             automaticallyImplyLeading: false,
             title: AnimatedTextKit(
               animatedTexts: [
@@ -92,9 +213,11 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
               dividerColor: Colors.green,
               tabs: [
                 Tab(
+                  key: _tabListaKey,
                   child: Text("Lista", style: TextStyle(color: Colors.white)),
                 ),
                 Tab(
+                  key: _tabHistoricoKey,
                   child: Text(
                     'Histórico',
                     style: TextStyle(color: Colors.white),
@@ -104,12 +227,14 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
             ),
             actions: [
               PopupMenuButton(
+                key: _menuKey,
                 color: Colors.green,
                 icon: Icon(Icons.more_vert, color: Colors.white),
                 itemBuilder: (context) {
                   return [
                     const PopupMenuItem<int>(
                       value: 0,
+
                       child: Row(
                         children: [
                           Text(
@@ -134,19 +259,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                         ],
                       ),
                     ),
-                    /*                     const PopupMenuItem<int>(
-                      value: 2,
-                      child: Row(
-                        children: [
-                          Text(
-                            "Importar Lista \nPersonalizada",
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          Spacer(),
-                          Icon(Icons.upload_file, color: Colors.white),
-                        ],
-                      ),
-                    ), */
                     const PopupMenuItem<int>(
                       value: 3,
                       child: Row(
@@ -200,54 +312,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                       context,
                       MaterialPageRoute(builder: (context) => CalculatorView()),
                     );
-                  } else if (value == 2) {
-                    setState(() {
-                      _isloading = true;
-                    });
-                    try {
-                      final lista =
-                          await DBserviceListaPersonalizada.fetchAll().first;
-                      log('Lista personalizada: ${lista.length}');
-                      if (lista.length > 0) {
-                        DBServiceLista.deleteMyList();
-                        await Future.delayed(Duration(seconds: 1));
-                        for (var item in lista) {
-                          DBServiceLista.createMyList(item);
-                        }
-                      } else {
-                        final String resposta = await rootBundle.loadString(
-                          'assets/definicoes/definicoes.json',
-                        );
-
-                        final dados = json.decode(resposta);
-                        List<String> nomes = (dados.keys.toList()).toList();
-                        for (var nome in nomes) {
-                          List<ItensListaModel> listaItens = [];
-                          for (var item in (dados[nome] as List)) {
-                            ItensListaModel itemModel = ItensListaModel(
-                              descricao: (item['descricao'] as String?) ?? '',
-                              quantidade:
-                                  (item['quantidade'] as num?)?.toDouble(),
-                            );
-                            listaItens.add(itemModel);
-                          }
-                          ListaModel model = ListaModel(
-                            descricao: nome,
-                            itensName: listaItens,
-                          );
-
-                          DBServiceLista.createMyList(model);
-                        }
-                      }
-                      setState(() {
-                        _isloading = false;
-                      });
-                    } catch (e) {
-                      setState(() {
-                        _isloading = false;
-                      });
-                      throw Exception('Erro ao carregar o arquivo JSON: $e');
-                    }
                   } else if (value == 3) {
                     Navigator.push(
                       context,
@@ -269,7 +333,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                           await FirebaseAuth.instance.signOut();
 
                           Navigator.pushReplacement(
-                            // ignore: use_build_context_synchronously
                             context,
                             MaterialPageRoute(
                               builder: (context) => const MyApp(),
@@ -277,9 +340,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                           );
                         } catch (e) {
                           log(e.toString());
-                          // ignore: use_build_context_synchronously
+
                           alert.showSnackBarError(
-                            // ignore: use_build_context_synchronously
                             context,
                             'Erro ao sair da conta',
                           );
@@ -295,6 +357,7 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
           floatingActionButton: Builder(
             builder: (BuildContext context) {
               return FloatingActionButton(
+                key: _fabKey,
                 backgroundColor: Colors.green,
                 child: const Icon(Icons.add, color: Colors.white),
                 onPressed: () {
@@ -346,7 +409,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                                         ),
                                       ),
                                     ),
-
                                     SizedBox(width: 5),
                                     Expanded(
                                       child: SizedBox(
@@ -410,7 +472,6 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                     ),
                   )
                   : Lista(),
-
               ListaHistorico(),
             ],
           ),
