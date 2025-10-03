@@ -1,0 +1,93 @@
+Ótima pergunta\! Essa "tela preta" (ou às vezes branca) que você vê é a tela de inicialização nativa, que aparece antes que o Flutter consiga carregar e renderizar sua primeira tela.
+
+Para substituí-la por uma imagem (o que chamamos de *Splash Screen*), a maneira mais fácil e recomendada hoje em dia é usar um pacote que automatiza todo o processo para Android e iOS. O pacote mais popular para isso é o `flutter_native_splash`.
+
+Aqui está o passo a passo completo:
+
+-----
+
+### \#\#\# Método Recomendado: Usando o Pacote `flutter_native_splash`
+
+Este método é o melhor porque ele configura tudo para você, tanto no Android quanto no iOS, com um único comando.
+
+#### **Passo 1: Adicionar a Dependência**
+
+No terminal do seu projeto, execute o comando:
+
+```bash
+flutter pub add flutter_native_splash
+```
+
+Isso adicionará o pacote ao seu arquivo `pubspec.yaml`.
+
+#### **Passo 2: Preparar sua Imagem**
+
+1.  Crie uma pasta na raiz do seu projeto chamada `assets` (se ainda não existir).
+
+2.  Dentro da pasta `assets`, coloque a imagem que você quer usar como splash screen. Por exemplo: `assets/splash.png`.
+
+      * **Dica:** Use uma imagem com fundo transparente (PNG) para que a cor de fundo que você definirá apareça corretamente. O ideal é que a imagem seja um ícone ou logo, e não uma imagem que preencha a tela inteira, para evitar distorções em diferentes tamanhos de tela.
+
+#### **Passo 3: Configurar o Pacote no `pubspec.yaml`**
+
+Abra seu arquivo `pubspec.yaml` e adicione a seguinte seção no final do arquivo. **Atenção à indentação (espaços)**, ela é muito importante em arquivos YAML.
+
+```yaml
+flutter_native_splash:
+  # Cor de fundo da sua splash screen.
+  color: "#FFFFFF" # Use "#000000" para preto
+
+  # A imagem que você colocou na pasta assets.
+  image: assets/splash.png
+
+  # (Opcional) Você pode ter uma imagem diferente para o modo escuro.
+  # color_dark: "#000000"
+  # image_dark: assets/splash_dark.png
+
+  # Configurações específicas para cada plataforma.
+  android_12:
+    # No Android 12+, a splash screen é um pouco diferente.
+    # A imagem aqui deve ser apenas o ícone central.
+    image: assets/splash.png
+    color: "#FFFFFF"
+    # icon_background_color: "#FFFFFF"
+
+  # Para garantir que a splash screen ocupe a tela inteira.
+  fullscreen: true
+```
+
+**Personalize os valores:**
+
+  * `color`: Mude `"#FFFFFF"` para a cor de fundo que você deseja (em formato hexadecimal).
+  * `image`: Certifique-se de que o caminho `assets/splash.png` corresponde exatamente ao nome e local da sua imagem.
+
+#### **Passo 4: Gerar os Arquivos da Splash Screen**
+
+Depois de salvar o `pubspec.yaml`, execute o seguinte comando no terminal:
+
+```bash
+dart run flutter_native_splash:create
+```
+
+Você verá uma mensagem no console informando que os arquivos da splash screen foram gerados com sucesso para Android e iOS. Esse comando pega suas configurações do `pubspec.yaml` e cria/modifica os arquivos nativos necessários.
+
+#### **Passo 5: Rodar o Aplicativo**
+
+Agora, pare completamente a execução do seu aplicativo (se ele estiver rodando) e inicie-o novamente com:
+
+```bash
+flutter run
+```
+
+Pronto\! A tela preta terá desaparecido e, em seu lugar, você verá sua imagem com a cor de fundo que você configurou.
+
+-----
+
+### \#\#\# Por que não fazer manualmente?
+
+  * **Complexidade:** O processo manual é diferente para Android e iOS.
+      * No **Android**, você precisa criar arquivos XML de *drawable*, adicionar imagens em diferentes pastas de densidade (`mipmap-hdpi`, `mipmap-xxhdpi`, etc.) e modificar o `AndroidManifest.xml` e os temas nativos.
+      * No **iOS**, você precisa abrir o projeto no Xcode e editar o `LaunchScreen.storyboard`, um editor visual que pode ser confuso para quem não está acostumado.
+  * **Manutenção:** Qualquer alteração na splash screen exigiria que você repetisse o processo manual nas duas plataformas.
+
+O pacote `flutter_native_splash` cuida de toda essa complexidade para você com um único comando, tornando-se a abordagem padrão para a comunidade Flutter.

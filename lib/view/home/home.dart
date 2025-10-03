@@ -52,7 +52,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   @override
   void initState() {
     super.initState();
-    sharedPreferencesController.get(context, 'home_user_id').then((value) {
+    Future.delayed(const Duration(seconds: 2), () {
+        sharedPreferencesController.get(context, 'home_user_id').then((value) {
       value == null
           ? {
             sharedPreferencesController.set(
@@ -66,7 +67,9 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
           }
           : {
             if (value == FirebaseAuth.instance.currentUser!.uid)
-              {log(value.toString())}
+              {
+                
+              }
             else
               {
                 sharedPreferencesController.set(
@@ -80,6 +83,8 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
               },
           };
     });
+    });
+ 
   }
 
   void _showTutorial() {
@@ -148,14 +153,13 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
         ],
       ),
     );
-
     TutorialCoachMark(
       targets: targets,
       colorShadow: Colors.green.shade900,
       textSkip: "PULAR",
       paddingFocus: 10,
       opacityShadow: 0.8,
-      alignSkip: Alignment.bottomRight,
+      alignSkip: Alignment.bottomLeft,
     ).show(context: context);
   }
 

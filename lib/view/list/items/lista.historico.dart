@@ -105,7 +105,7 @@ class _HistoricoPageState extends State<HistoricoPage> {
       textSkip: "PULAR",
       paddingFocus: 10,
       opacityShadow: 0.8,
-      alignSkip: Alignment.bottomRight,
+      alignSkip: Alignment.bottomLeft,
     ).show(context: context);
   }
 

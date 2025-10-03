@@ -1,10 +1,13 @@
 import 'package:brasil_fields/brasil_fields.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/controller/shared.preferences.controller.dart';
 import 'package:lista_de_compras/model/item.model.dart';
 import 'package:lista_de_compras/model/lista.model.dart';
 import 'package:lista_de_compras/model/name.model.dart';
 import 'package:lista_de_compras/services/db.service.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 class ShoppingPage extends StatefulWidget {
   const ShoppingPage({super.key, required this.model, required this.refresh});
@@ -20,6 +23,14 @@ class _ShoppingStatePage extends State<ShoppingPage> {
   late List<double> _dragOffsets;
   AlertController alertController = AlertController();
   late final HistoricoModel historicoModel;
+  
+  SharedPreferencesController sharedPreferencesController =
+      SharedPreferencesController();
+
+  final GlobalKey _saveButtonKey = GlobalKey();
+  final GlobalKey _tabBarKey = GlobalKey();
+  final GlobalKey _totalKey = GlobalKey();
+  final GlobalKey _firstItemKey = GlobalKey();
 
   @override
   void initState() {
@@ -42,6 +53,144 @@ class _ShoppingStatePage extends State<ShoppingPage> {
       historicoModel.items!.where((a) => a.selected == false).length,
       0,
     );
+
+     sharedPreferencesController.get(context, 'shopping_user_id').then((value) {
+      value == null
+          ? {
+            sharedPreferencesController.set(
+              context,
+              'shopping_user_id',
+              FirebaseAuth.instance.currentUser!.uid,
+            ),
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              _showTutorial();
+            }),
+          }
+          : {
+            if (value != FirebaseAuth.instance.currentUser!.uid)
+              {
+                sharedPreferencesController.set(
+                  context,
+                  'shopping_user_id',
+                  FirebaseAuth.instance.currentUser!.uid,
+                ),
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  _showTutorial();
+                }),
+              },
+          };
+    }); 
+  }
+
+  void _showTutorial() {
+    // Inicia a lista de alvos vazia
+    List<TargetFocus> targets = [];
+
+    // Só adiciona o alvo do primeiro item se a lista "A Comprar" não estiver vazia.
+    if (historicoModel.items!.any((item) => item.selected == false)) {
+      targets.add(
+        TargetFocus(
+          identify: "firstItem",
+          keyTarget: _firstItemKey,
+          alignSkip: Alignment.topRight,
+          contents: [
+            TargetContent(
+              align: ContentAlign.bottom,
+              child: Container(
+                padding: const EdgeInsets.all(8.0),
+                decoration: BoxDecoration(
+                  color: Colors.black38,
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                child: const Text(
+                  "Arraste um item para a direita para marcá-lo como comprado, ou para a esquerda para excluí-lo da lista.",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Adiciona os outros alvos que sempre existem na tela.
+    targets.addAll([
+      TargetFocus(
+        identify: "tabBar",
+        keyTarget: _tabBarKey,
+        alignSkip: Alignment.bottomRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.black38,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: const Text(
+                "Alterne entre os itens 'A Comprar' e os que já estão 'No Carrinho'.",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "total",
+        keyTarget: _totalKey,
+        alignSkip: Alignment.topRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.top,
+            child: const Text(
+              "Aqui você vê o valor total dos itens que estão no seu carrinho.",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+      TargetFocus(
+        identify: "saveButton",
+        keyTarget: _saveButtonKey,
+        alignSkip: Alignment.bottomRight,
+        contents: [
+          TargetContent(
+            align: ContentAlign.bottom,
+            child: const Text(
+              "Quando terminar, clique aqui para salvar sua compra no histórico.",
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ]);
+
+
+    TutorialCoachMark(
+      targets: targets,
+      colorShadow: Colors.green.shade900,
+      textSkip: "PULAR",
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      alignSkip: Alignment.bottomLeft,
+    ).show(context: context);
   }
 
   void save() {
@@ -165,7 +314,6 @@ class _ShoppingStatePage extends State<ShoppingPage> {
                           ),
                         ),
                       ),
-
                       SizedBox(width: 5),
                       Expanded(
                         child: SizedBox(
@@ -214,21 +362,18 @@ class _ShoppingStatePage extends State<ShoppingPage> {
 
   void _handleDragUpdate(int index, double delta) {
     setState(() {
-      _dragOffsets[index] = (_dragOffsets[index] + delta).clamp(
-        -150,
-        150,
-      ); // agora pode ir pros dois lados
+      _dragOffsets[index] = (_dragOffsets[index] + delta).clamp(-150, 150);
     });
   }
 
   void _handleDragEnd(int index) {
     setState(() {
       if (_dragOffsets[index] > 80) {
-        _dragOffsets[index] = 150; // trava no lado direito
+        _dragOffsets[index] = 150;
       } else if (_dragOffsets[index] < -80) {
-        _dragOffsets[index] = -150; // trava no lado esquerdo
+        _dragOffsets[index] = -150;
       } else {
-        _dragOffsets[index] = 0; // volta pro centro
+        _dragOffsets[index] = 0;
       }
     });
   }
@@ -245,6 +390,7 @@ class _ShoppingStatePage extends State<ShoppingPage> {
           iconTheme: const IconThemeData(color: Colors.white),
           actions: [
             IconButton(
+              key: _saveButtonKey,
               onPressed: () {
                 save();
               },
@@ -252,6 +398,7 @@ class _ShoppingStatePage extends State<ShoppingPage> {
             ),
           ],
           bottom: TabBar(
+            key: _tabBarKey,
             indicatorColor: Colors.white,
             dividerColor: Colors.green,
             tabs: [
@@ -273,6 +420,7 @@ class _ShoppingStatePage extends State<ShoppingPage> {
           ),
         ),
         floatingActionButton: Hero(
+          key: _totalKey,
           tag: 'fab',
           child: Container(
             decoration: BoxDecoration(
@@ -300,12 +448,12 @@ class _ShoppingStatePage extends State<ShoppingPage> {
                     .elementAt(index);
 
                 return GestureDetector(
+                  key: index == 0 ? _firstItemKey : null,
                   onHorizontalDragUpdate:
                       (details) => _handleDragUpdate(index, details.delta.dx),
                   onHorizontalDragEnd: (_) => _handleDragEnd(index),
                   child: Stack(
                     children: [
-                      // Fundo com dois ícones sempre visível
                       Container(
                         margin: const EdgeInsets.symmetric(
                           vertical: 6,
@@ -333,16 +481,13 @@ class _ShoppingStatePage extends State<ShoppingPage> {
                                   setState(() {});
                                   widget.refresh();
                                 });
-                                /* item.selected = true; */
-                                /* widget.model.update(); */
                               },
                               icon: Icon(Icons.check, size: 36),
                               color: Colors.green,
                             ),
                             IconButton(
                               onPressed: () {
-                                historicoModel.items!.removeAt(index);
-                                widget.model.update();
+                                historicoModel.items!.remove(item);
                                 setState(() {});
                                 widget.refresh();
                               },
@@ -352,8 +497,6 @@ class _ShoppingStatePage extends State<ShoppingPage> {
                           ],
                         ),
                       ),
-
-                      // Card que se move pros dois lados
                       AnimatedContainer(
                         duration: const Duration(milliseconds: 200),
                         transform: Matrix4.translationValues(
@@ -400,8 +543,6 @@ class _ShoppingStatePage extends State<ShoppingPage> {
                 );
               },
             ),
-
-            
             ListView.builder(
               itemCount:
                   historicoModel.items!.where((a) => a.selected == true).length,
@@ -438,8 +579,7 @@ class _ShoppingStatePage extends State<ShoppingPage> {
                         trailing: IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
-                            historicoModel.items!.removeAt(index);
-                            widget.model.update();
+                            historicoModel.items!.remove(item);
                             setState(() {});
                             widget.refresh();
                           },

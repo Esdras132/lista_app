@@ -50,7 +50,8 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
       id: 'almoco',
       table: 'Almoço',
       title: 'Lista do Almoço',
-      subtitle: 'Arroz, Feijão, Óleo, Sal, Macarrão, Molho de tomate, Tempero pronto',
+      subtitle:
+          'Arroz, Feijão, Óleo, Sal, Macarrão, Molho de tomate, Tempero pronto',
     ),
     ListaItem(
       id: 'janta',
@@ -62,7 +63,8 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
       id: 'higiene',
       table: 'Higiene',
       title: 'Lista de Higiene',
-      subtitle: 'Shampoo, Condicionador, Sabonete, Desodorante, Papel higiênico, Creme dental, Fio dental, Escova de dentes, Cotonete, Algodão, Absorvente ',
+      subtitle:
+          'Shampoo, Condicionador, Sabonete, Desodorante, Papel higiênico, Creme dental, Fio dental, Escova de dentes, Cotonete, Algodão, Absorvente ',
     ),
     ListaItem(
       id: 'lanche',
@@ -79,15 +81,16 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
 
   SharedPreferencesController sharedPreferencesController =
       SharedPreferencesController();
-      
+
   @override
   void initState() {
     super.initState();
 
- sharedPreferencesController.get(context, 'personalizada_user_id').then((value) {
+    sharedPreferencesController.get(context, 'personalizada_user_id').then((
+      value,
+    ) {
       value == null
           ? {
-
             sharedPreferencesController.set(
               context,
               'personalizada_user_id',
@@ -122,13 +125,20 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Text(
-              "Aqui você vê o nome da lista.",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 20,
+            child:Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.black38,
+                borderRadius: BorderRadius.circular(8.0),
               ),
+              child: Text(
+                "Aqui você vê o nome da lista.",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 20,
+                )
+              )
             ),
           ),
         ],
@@ -140,12 +150,19 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
         contents: [
           TargetContent(
             align: ContentAlign.bottom,
-            child: Text(
-              "Esta é uma breve descrição do que a lista contém.",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-                fontSize: 20,
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                color: Colors.black38,
+                borderRadius: BorderRadius.circular(8.0),
+              ),
+              child: Text(
+                "Esta é uma breve descrição do que a lista contém.",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                  fontSize: 20,
+                ),
               ),
             ),
           ),
@@ -168,7 +185,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
             ),
           ),
         ],
-      )
+      ),
     ];
 
     TutorialCoachMark(
@@ -194,50 +211,51 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
-      body: _loading
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(color: Colors.white),
-                  SizedBox(height: 16),
-                  Text(
-                    'Carregando Sua \n Lista Personalizada...',
-                    style: TextStyle(color: Colors.white),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
-              ),
-            )
-          : Padding(
-              padding: const EdgeInsets.all(16),
-              child: Center(
+      body:
+          _loading
+              ? const Center(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _itens.length,
-                        itemBuilder: (context, index) {
-                          final item = _itens[index];
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12),
-                            child: _buildSettingItem(item, index),
-                          );
-                        },
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        _buildSaveButton(0.7),
-                        const SizedBox(width: 6),
-                        _buildViewButton(0.2),
-                      ],
+                    CircularProgressIndicator(color: Colors.white),
+                    SizedBox(height: 16),
+                    Text(
+                      'Carregando Sua \n Lista Personalizada...',
+                      style: TextStyle(color: Colors.white),
+                      textAlign: TextAlign.center,
                     ),
                   ],
                 ),
+              )
+              : Padding(
+                padding: const EdgeInsets.all(16),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: _itens.length,
+                          itemBuilder: (context, index) {
+                            final item = _itens[index];
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 12),
+                              child: _buildSettingItem(item, index),
+                            );
+                          },
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          _buildSaveButton(0.7),
+                          const SizedBox(width: 6),
+                          _buildViewButton(0.2),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ),
     );
   }
 
@@ -335,13 +353,13 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
               throw Exception('Erro ao salvar lista personalizada: $e');
             }
 
-            if(mounted) {
+            if (mounted) {
               alertController
-                .successMessage(
-                  context,
-                  'Lista personalizada\nCriada com sucesso!',
-                )
-                .show();
+                  .successMessage(
+                    context,
+                    'Lista personalizada\nCriada com sucesso!',
+                  )
+                  .show();
             }
           } catch (e) {
             throw Exception('Erro ao salvar lista personalizada: $e');
@@ -400,10 +418,11 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        ItemsListaPersonalizadaPage(
-                                      model: item,
-                                    ),
+                                    builder:
+                                        (context) =>
+                                            ItemsListaPersonalizadaPage(
+                                              model: item,
+                                            ),
                                   ),
                                 );
                               },
@@ -436,14 +455,15 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                   _loading = true;
                                 });
                                 try {
-                                  final lista = await DBserviceListaPersonalizada
-                                      .fetchAll()
-                                      .first;
+                                  final lista =
+                                      await DBserviceListaPersonalizada.fetchAll()
+                                          .first;
                                   log('Lista personalizada: ${lista.length}');
                                   if (lista.isNotEmpty) {
                                     DBServiceLista.deleteMyList();
                                     await Future.delayed(
-                                        const Duration(seconds: 1));
+                                      const Duration(seconds: 1),
+                                    );
                                     for (var item in lista) {
                                       DBServiceLista.createMyList(item);
                                     }
@@ -451,10 +471,10 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                       'Lista personalizada salva: ${lista.length}',
                                     );
                                   } else {
-                                    final String resposta =
-                                        await rootBundle.loadString(
-                                      'assets/definicoes/definicoes.json',
-                                    );
+                                    final String resposta = await rootBundle
+                                        .loadString(
+                                          'assets/definicoes/definicoes.json',
+                                        );
 
                                     final dados = json.decode(resposta);
                                     List<String> nomes =
@@ -464,13 +484,14 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                       for (var item in (dados[nome] as List)) {
                                         ItensListaModel itemModel =
                                             ItensListaModel(
-                                          descricao:
-                                              (item['descricao'] as String?) ??
+                                              descricao:
+                                                  (item['descricao']
+                                                      as String?) ??
                                                   '',
-                                          quantidade:
-                                              (item['quantidade'] as num?)
-                                                  ?.toDouble(),
-                                        );
+                                              quantidade:
+                                                  (item['quantidade'] as num?)
+                                                      ?.toDouble(),
+                                            );
                                         listaItens.add(itemModel);
                                       }
                                       ListaModel model = ListaModel(
@@ -483,7 +504,7 @@ class _ListaPersonalizadaState extends State<ListaPersonalizada> {
                                     log('Lista padrão salva: ${nomes.length}');
                                   }
                                   if (mounted) {
-                                      alertController
+                                    alertController
                                         .successMessage(
                                           context,
                                           'Lista personalizada\nRecriada com sucesso!',
