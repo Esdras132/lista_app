@@ -1,31 +1,27 @@
-
-import 'package:lista_de_compras/firebase_options.dart';
-import 'package:lista_de_compras/intro.dart';
-import 'package:lista_de_compras/view/login/verifyEmail.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
-import 'package:lista_de_compras/view/home/home.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:flutter/material.dart';
+import 'package:lista_de_compras/firebase_options.dart';
+import 'package:lista_de_compras/splash_screen.dart'; // Importe a nova tela
 
+// Variável global para ser acessada em outros arquivos, como o auth_gate
 late final FirebaseAuth auth;
 
 Future<void> main() async {
+  // Garante que os bindings do Flutter foram inicializados
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inicializar Firebase apenas uma vez
+  // Inicializa o Firebase
   final app = await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
+  // Instancia o FirebaseAuth
   auth = FirebaseAuth.instanceFor(app: app);
 
-  // Ativar App Check
-  await FirebaseAppCheck.instance.activate(
-    webProvider: ReCaptchaV3Provider('23e675ad-c211-4e2d-9ef2-e08b9fb8af7e'),
-    androidProvider: AndroidProvider.playIntegrity,
-    appleProvider: AppleProvider.appAttest,
-  );
+  // Desativa o App Check para seguran a
+  await FirebaseAppCheck.instance.activate();
 
   runApp(const MyApp());
 }
@@ -48,23 +44,8 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: StreamBuilder<User?>(
-        stream: auth.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (snapshot.data == null) {
-            return const Intro();
-          }
-
-          if (!snapshot.data!.emailVerified) {
-            return const VerifyEmail();
-          }
-          return const ListaComprasPage();
-        },
-      ),
+      // A tela inicial do app agora é a tela com o vídeo
+      home: const SplashScreenVideo(),
     );
   }
 }

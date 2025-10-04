@@ -52,26 +52,15 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 2), () {
+
+    sharedPreferencesController.get(context, 'user_id').then((value) async {
+      if (value == null) {
+        log('Usuário não autenticado');
+      }
+      if (value == '1') {
         sharedPreferencesController.get(context, 'home_user_id').then((value) {
-      value == null
-          ? {
-            sharedPreferencesController.set(
-              context,
-              'home_user_id',
-              FirebaseAuth.instance.currentUser!.uid,
-            ),
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              _showTutorial();
-            }),
-          }
-          : {
-            if (value == FirebaseAuth.instance.currentUser!.uid)
-              {
-                
-              }
-            else
-              {
+          value == null
+              ? {
                 sharedPreferencesController.set(
                   context,
                   'home_user_id',
@@ -80,11 +69,25 @@ class _ListaComprasPageState extends State<ListaComprasPage> {
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   _showTutorial();
                 }),
-              },
-          };
+              }
+              : {
+                if (value == FirebaseAuth.instance.currentUser!.uid)
+                  {}
+                else
+                  {
+                    sharedPreferencesController.set(
+                      context,
+                      'home_user_id',
+                      FirebaseAuth.instance.currentUser!.uid,
+                    ),
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      _showTutorial();
+                    }),
+                  },
+              };
+        });
+      }
     });
-    });
- 
   }
 
   void _showTutorial() {

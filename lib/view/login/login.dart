@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lista_de_compras/controller/alert.controller.dart';
+import 'package:lista_de_compras/controller/shared.preferences.controller.dart';
 import 'package:lista_de_compras/view/login/Redefinir_senha.dart';
 import 'package:lista_de_compras/view/login/sign-up_page.dart';
 import 'package:lista_de_compras/view/login/verifyEmail.dart';
@@ -25,7 +26,8 @@ class _LoginState extends State<Loginpage> {
   final _formKey = GlobalKey<FormState>();
   bool passenable = true;
   bool _indicador = false;
-
+  SharedPreferencesController sharedPreferencesController =
+      SharedPreferencesController();
   // Armazenamento seguro
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
 
@@ -211,6 +213,8 @@ class _LoginState extends State<Loginpage> {
               // Integrar com Google Smart Lock (Opcional)
               GoogleSignIn googleSignIn = GoogleSignIn();
               await googleSignIn.signInSilently();
+              // ignore: use_build_context_synchronously
+              sharedPreferencesController.set(context, 'user_id', '1');
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => VerifyEmail()),
